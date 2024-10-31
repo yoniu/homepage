@@ -14,4 +14,8 @@ export default defineConfig({
       plugins: [new Dotenv()]
     }
   },
+  html: {
+    title: '油油',
+    favicon: 'https://p2.music.126.net/cPyfIo_ZV6lfQnZa7J-HOg==/109951165991680568.jpg',
+  }
 });

@@ -1,4 +1,10 @@
-# Rsbuild Project
+# Homepage
+
+个人主页。
+
+基于 React / TypeScript / Rsbuild / ShadcnUI / TailwindCSS 开发。
+
+![屏幕截图](./screenshot.png)
 
 ## Setup
 
