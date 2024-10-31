@@ -31,10 +31,19 @@ export default function Avatar() {
     }
   }
 
+  const playEffectClassName = () => {
+    const defaultClassName = "w-10 rounded"
+    if (playing) {
+      return defaultClassName
+    } else {
+      return defaultClassName + " animate-bounce-xs group-hover/player:animate-none transition-all"
+    }
+  }
+
   return (
     <>
-      <div className="relative leading-none">
-        <img className="w-10 rounded" src="https://p2.music.126.net/cPyfIo_ZV6lfQnZa7J-HOg==/109951165991680568.jpg" alt="yoniu" />
+      <div className="group/player relative leading-none">
+        <img className={playEffectClassName()} src="https://p2.music.126.net/cPyfIo_ZV6lfQnZa7J-HOg==/109951165991680568.jpg" alt="yoniu" />
         {/* Player */}
         <div onClick={handlePlay} className="group/item absolute inset-0 flex items-center justify-center  cursor-pointer">
           { !playing && <PlayIcon className={playBtnClass} /> }
