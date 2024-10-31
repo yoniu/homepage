@@ -18,6 +18,8 @@
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
+    "graphql-hooks": "^8.0.1",
     "howler": "^2.2.4",
     "leancloud-storage": "^4.15.2",
     "lucide-react": "^0.454.0",
