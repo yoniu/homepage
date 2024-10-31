@@ -4,6 +4,8 @@ import Header from "@/src/components/header"
 import Navigator from "@/src/components/navigator"
 import Friends from "@/src/components/friends"
 
+import Articles from "@/src/components/articles"
+
 export default function App() {
 
   return (
@@ -13,6 +15,8 @@ export default function App() {
         <Header />
         <Separator className="my-4" />
         <Navigator />
+        <Separator className="my-4" />
+        <Articles />
         <Separator className="my-4" />
         <Friends />
       </div>
