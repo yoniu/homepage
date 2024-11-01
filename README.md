@@ -2,7 +2,7 @@
 
 个人主页。
 
-基于 React / TypeScript / Rsbuild / ShadcnUI / TailwindCSS 开发。
+基于 NextJS / React / TypeScript / ShadcnUI / TailwindCSS 开发。
 
 ![屏幕截图](./screenshot.png)
 
@@ -26,10 +26,4 @@ Build the app for production:
 
 ```bash
 pnpm build
-```
-
-Preview the production build locally:
-
-```bash
-pnpm preview
 ```
