@@ -26,8 +26,10 @@ export default function Avatar() {
   const handlePlay = () => {
     if (playing) {
       sound.pause()
+      setPlay(false)
     } else {
       sound.play()
+      setPlay(true)
     }
   }
 
