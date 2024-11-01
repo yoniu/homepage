@@ -30,8 +30,6 @@ const POSTS_QUERY = `query Publication {
 export default function Articles() {
   const { loading, error, data } = useQuery(POSTS_QUERY)
 
-  if (error) return 'Something Bad Happened'
-
   const formatDay = (date: string) => {
     return dayjs(date).format('MMM D, YYYY')
   }
