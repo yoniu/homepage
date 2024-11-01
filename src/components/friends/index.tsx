@@ -12,7 +12,7 @@ interface ILink {
 function Friend_Item(item: ILink) {
   return (
     <a className="flex items-center text-xs me-3 mt-2 last:me-0 hover:underline underline-offset-4" href={item.link} key={item.name} target="_blank" rel="noreferrer">
-      <img className="me-1 rounded-full w-4" src={item.image} />
+      <img className="me-1 rounded-full w-4" src={item.image} alt={item.name} />
       { item.name }
     </a>
   )
