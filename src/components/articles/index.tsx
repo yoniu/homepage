@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from 'graphql-hooks'
 import dayjs from "dayjs"
 
@@ -50,7 +52,7 @@ export default function Articles() {
         data.publication.posts.edges.map(({ node }: { node: IPost }) => {
           return (
             <div key={node.id} className="group/article flex items-center justify-between space-x-2">
-              <a className="text-xs text-black-600 rounded group-hover/article:text-white group-hover/article:bg-black px-0 py-1 group-hover/article:px-2 transition-all" href={node.url} target="_blank">{node.title}</a>
+              <a className="text-xs text-black-600 rounded group-hover/article:text-white group-hover/article:bg-black px-0 py-1 group-hover/article:px-2 transition-all" target="_blank" href={node.url} rel="noreferrer">{node.title}</a>
               <span className="text-xs text-gray-500 group-hover/article:text-gray-200">
                 {formatDay(node.publishedAt)}
               </span>
