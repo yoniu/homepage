@@ -2,7 +2,7 @@ import { Separator } from "@/components/ui/separator"
 
 import Header from "@/src/components/header"
 import Navigator from "@/src/components/navigator"
-import Friends from "@/src/components/friends"
+import Footer from "@/src/components/footer"
 
 import { Inter } from 'next/font/google'
 
@@ -35,8 +35,7 @@ export default function RootLayout({
             <Navigator />
             <Separator className="my-4" />
             { children }
-            <Separator className="my-4" />
-            <Friends />
+            <Footer />
           </div>
         </div>
       </body>

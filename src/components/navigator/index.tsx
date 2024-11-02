@@ -16,10 +16,6 @@ export default function Navigator() {
   const handleClickGithub = () => {
     window.open("https://github.com/yoniu", "_blank")
   }
-
-  const handleClickICP = () => {
-    window.open("https://beian.miit.gov.cn/", "_blank")
-  }
   
   return (
     <div className="flex h-5 items-center space-x-4 text-sm">
@@ -33,10 +29,6 @@ export default function Navigator() {
       <Separator orientation="vertical" />
       <div>
         <Button className="py-0 px-0" variant="link" onClick={handleClickGithub}>Github</Button>
-      </div>
-      <Separator orientation="vertical" />
-      <div>
-        <Button className="py-0 px-0" variant="link" onClick={handleClickICP}>粤ICP备18152975号</Button>
       </div>
     </div>
   )
