@@ -17,7 +17,7 @@ export default function Navigator() {
   const className = (item: TNav) => {
     const url = item.url.includes("/") ? item.url : `/${item.url}`
     if (pathname === url)
-      return "shadow-[inset_0_-5px_0_rgba(0,0,0,0.2)] hover:shadow-[inset_0_0_0_black] hover:underline underline-offset-4 transition-all"
+      return "shadow-[inset_0_-5px_0_rgba(100,116,139,1)] hover:shadow-[inset_0_0_0_black] hover:underline underline-offset-4 transition-all"
     else 
       return "hover:underline underline-offset-4"
   }
