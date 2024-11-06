@@ -1,21 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import useLeancloud from "@/src/hooks/leancloud";
+
+import { logged } from "@/src/utils/login";
 
 import MomentLogin from "@/src/components/moments/login";
 
 
 export default function Page() {
-  const AV = useLeancloud();
 
   const [login, setLogin] = useState(false)
 
   useEffect(() => {
-    if (AV.User.current() ) {
+    if (logged()) {
       setLogin(true)
     }
-  }, [])
+  }, [setLogin])
 
   const handleLogin = () => {
     setLogin(true)

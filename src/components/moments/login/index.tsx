@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import useLeancloud from "@/src/hooks/leancloud";
 import { message } from "antd"
 
 import { cn } from "@/lib/utils"
@@ -9,6 +8,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { login } from "@/src/utils/login";
+import { TResponseError } from "@/src/utils/axiosInstance";
 
 interface IProps {
   onLogin: ReturnType<typeof Function>;
@@ -16,7 +17,6 @@ interface IProps {
 
 export default function MomentLogin(props: IProps) {
 
-  const AV = useLeancloud()
   const [messageApi, contextHolder] = message.useMessage()
 
   const [visible, setVisible] = useState(false)
@@ -38,18 +38,21 @@ export default function MomentLogin(props: IProps) {
 
   const handleLogin = () => {
     setLoading(true)
-    AV.User.logIn(username, password).then(
-      (user) => {
-        // 登录成功
-        messageApi.success("欢迎回来，" + user.getUsername())
-        setVisible(false)
-        props.onLogin()
-      },
-      (error) => {
-        // 登录失败
-        messageApi.error(error.message)
+    login({ name: username, password }).then((user) => {
+      // 登录成功
+      messageApi.success("欢迎回来，" + user.name)
+      setVisible(false)
+      props.onLogin()
+    })
+    .catch((error) => {
+      const err = error as TResponseError
+      if (Array.isArray(err.message)) {
+        err.message.map((msg) => messageApi.error(msg))
+      } else {
+        messageApi.error(err.message)
       }
-    ).finally(() => {
+    })
+    .finally(() => {
       setLoading(false)
     })
   }
