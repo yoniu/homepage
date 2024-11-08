@@ -24,6 +24,9 @@ export default function Page() {
   return (
     <>
       { !login && <MomentLogin onLogin={handleLogin} /> }
+      <div className="min-w-72 text-center text-sm py-12">
+        coming soon...
+      </div>
     </>
   )
 }
