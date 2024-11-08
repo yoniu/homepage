@@ -1,43 +1,55 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation"
+
 import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
+
+import navigator from "@/src/configs/navigator.json"
+import { Fragment } from "react";
+
+type TNav = typeof navigator[0]
 
 export default function Navigator() {
 
-  const handleClickBlog = () => {
-    window.open("https://blog.200011.net", "_blank")
+  const pathname = usePathname()
+
+  const className = (item: TNav) => {
+    const url = item.url.includes("/") ? item.url : `/${item.url}`
+    if (pathname === url)
+      return "shadow-[inset_0_-5px_0_rgba(100,116,139,1)] hover:shadow-[inset_0_0_0_black] hover:underline underline-offset-4 transition-all"
+    else 
+      return "hover:underline underline-offset-4"
   }
 
-  const handleClickAbout = () => {
-    window.open("https://blog.200011.net/about", "_blank")
-  }
+  const linkItem = (item: TNav, index: number) => (
+    <Fragment key={item.name}>
+      <Link className={className(item)} href={item.url} title={item.description}>{ item.name }</Link>
+      {
+        index !== navigator.length - 1 && <Separator orientation="vertical" />
+      }
+    </Fragment>
+  )
+  const aItem = (item: TNav, index: number) => (
+    <Fragment key={item.name}>
+      <a className={className(item)} href={item.url} target="_blank" rel="noreferrer" title={item.description}>{ item.name }</a>
+      {
+        index !== navigator.length - 1 && <Separator orientation="vertical" />
+      }
+    </Fragment>
+  )
 
-  const handleClickGithub = () => {
-    window.open("https://github.com/yoniu", "_blank")
-  }
-
-  const handleClickICP = () => {
-    window.open("https://beian.miit.gov.cn/", "_blank")
-  }
   
   return (
     <div className="flex h-5 items-center space-x-4 text-sm">
-      <div>
-        <Button className="py-0 px-0" variant="link" onClick={handleClickBlog}>Blog</Button>
-      </div>
-      <Separator orientation="vertical" />
-      <div>
-        <Button className="py-0 px-0" variant="link" onClick={handleClickAbout}>About</Button>
-      </div>
-      <Separator orientation="vertical" />
-      <div>
-        <Button className="py-0 px-0" variant="link" onClick={handleClickGithub}>Github</Button>
-      </div>
-      <Separator orientation="vertical" />
-      <div>
-        <Button className="py-0 px-0" variant="link" onClick={handleClickICP}>粤ICP备18152975号</Button>
-      </div>
+      {
+        navigator.map((item, index) => (
+          item.type === "link" ?
+          linkItem(item, index) :
+          aItem(item, index)
+        ))
+      }
+      
     </div>
   )
 }

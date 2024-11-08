@@ -1,0 +1,26 @@
+[
+  {
+    "type": "link",
+    "name": "Home",
+    "url": "/",
+    "description": "主页"
+  },
+  {
+    "type": "a",
+    "name": "Blog",
+    "url": "https://blog.200011.net",
+    "description": "博客"
+  },
+  {
+    "type": "link",
+    "name": "Moment",
+    "url": "moment",
+    "description": "瞬间"
+  },
+  {
+    "type": "a",
+    "name": "Github",
+    "url": "https://github.com/yoniu",
+    "description": "代码仓库"
+  }
+]
