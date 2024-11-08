@@ -5,6 +5,8 @@ import { message } from "antd"
 
 import { cn } from "@/lib/utils"
 
+import useIcon from '@/src/hooks/icon'
+
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -18,6 +20,8 @@ interface IProps {
 export default function MomentLogin(props: IProps) {
 
   const [messageApi, contextHolder] = message.useMessage()
+
+  const IconFont = useIcon()
 
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -60,9 +64,10 @@ export default function MomentLogin(props: IProps) {
   return (
     <>
       {contextHolder}
-      <div className="fixed bottom-2 right-2">
-        <button className="text-xs text-white bg-black px-2 py-1 rounded-md hover:bg-slate-500 transition-all" onClick={() => setVisible(true)}>
-          Moment Login
+      <div className="fixed bottom-3 right-3">
+        <button className="group/button flex items-center leading-1 text-xs bg-white px-2 py-1 rounded-full border border-gray-200 shadow-lg transition-all" onClick={() => setVisible(true)}>
+          <IconFont className="text-lg" type="icon-yonghu" />
+          <span className="overflow-hidden w-0 group-hover/button:pl-2 group-hover/button:w-auto h-0 group-hover/button:h-auto opacity-50 group-hover/button:opacity-80 transition-all">登录</span>
         </button>
         <div className={cn("fixed top-0 left-0 size-full flex flex-col items-center justify-center z-10", isVisible())}>
           <div className="absolute top-0 left-0 size-full bg-black bg-opacity-50 backdrop-blur-sm" onClick={() => setVisible(false)}></div>
