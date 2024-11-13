@@ -1,24 +1,21 @@
 "use client";
 
-import { GraphQLClient, ClientContext } from 'graphql-hooks'
+import { StateProvider as PlayerStateProvider } from '@/src/stores/audio';
+import { StateProvider as UserStateProvider } from '@/src/stores/user';
 
-import { Separator } from "@/components/ui/separator"
+import MomentLoading from '@/src/components/moments/item/loading';
 
-import Articles from "@/src/components/articles"
-import Friends from "@/src/components/friends"
-
-const client = new GraphQLClient({
-  url: 'https://gql.hashnode.com'
-})
 
 export default function Page() {
+
   return (
-    <>
-      <ClientContext.Provider value={client}>
-        <Articles />
-        <Separator className="my-4" />
-        <Friends />
-      </ClientContext.Provider>
-    </>
+    <UserStateProvider>
+      <PlayerStateProvider>
+        <div className="flex items-center justify-center w-full h-full">
+          <MomentLoading />
+          {/* <span className="text-sm text-gray-400">comming soon...</span> */}
+        </div>
+      </PlayerStateProvider>
+    </UserStateProvider>
   )
 }
