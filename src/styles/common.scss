@@ -12,10 +12,10 @@
 }
 
 #sidebar {
-    width: 30%;
+    width: 0;
+    overflow: hidden;
 
-    @media screen and (max-width: 800px) {
-        width: 0;
-        overflow: hidden;
+    @media (min-width: 768px) {
+        width: 30%;
     }
 }

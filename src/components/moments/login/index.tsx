@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { login } from "@/src/utils/login";
 import { TResponseError } from "@/src/utils/axiosInstance";
 import { useStateContext as useUserStateContext } from "@/src/stores/user";
+import ReactDOM from "react-dom";
 
 export default function MomentLogin() {
 
@@ -71,27 +72,32 @@ export default function MomentLogin() {
         <IconFont className="text-lg" type="icon-yonghu" />
         <span className="text-xs">Login</span>
       </button>
-      <div className={cn("fixed top-0 left-0 size-full flex flex-col items-center justify-center z-10", isVisible())}>
-        <div className="absolute top-0 left-0 size-full bg-black bg-opacity-50 backdrop-blur-sm" onClick={() => setVisible(false)}></div>
-        <div className="bg-white pt-6 pb-4 px-4 rounded-lg shadow-sm z-10 min-w-80">
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="username">Username</Label>
-                <Input id="username" placeholder="Your Username" value={username} onChange={handleUsernameChange} />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="password">Password</Label>
-                <Input type="password" id="password" placeholder="Your Password" value={password} onChange={handlePasswordChange} />
+      {
+        ReactDOM.createPortal(
+          <div className={cn("fixed top-0 left-0 size-full flex flex-col items-center justify-center z-50", isVisible())}>
+            <div className="absolute top-0 left-0 size-full bg-black bg-opacity-50 backdrop-blur-sm" onClick={() => setVisible(false)}></div>
+            <div className="bg-white pt-6 pb-4 px-4 rounded-lg shadow-sm z-10 min-w-80">
+              <form>
+                <div className="grid w-full items-center gap-4">
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username" placeholder="Your Username" value={username} onChange={handleUsernameChange} />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="password">Password</Label>
+                    <Input type="password" id="password" placeholder="Your Password" value={password} onChange={handlePasswordChange} />
+                  </div>
+                </div>
+              </form>
+              <div className="flex items-center justify-between mt-3">
+                <Button variant="outline" onClick={() => setVisible(false)}>Cancel</Button>
+                <Button onClick={handleLogin} disabled={loading}>Login</Button>
               </div>
             </div>
-          </form>
-          <div className="flex items-center justify-between mt-3">
-            <Button variant="outline" onClick={() => setVisible(false)}>Cancel</Button>
-            <Button onClick={handleLogin} disabled={loading}>Login</Button>
-          </div>
-        </div>
-      </div>
+          </div>,
+          document.body
+        )
+      }
     </>
   )
 }
