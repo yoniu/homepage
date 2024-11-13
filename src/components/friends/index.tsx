@@ -22,8 +22,8 @@ export default function Friends() {
 
   return (
     <>
-      <div className="space-y-1">
-        <h4 className="text-sm font-bold leading-none">Links 👭</h4>
+      <div className="space-y-1 mb-4">
+        <h4 className="text-sm font-bold leading-none">友情链接</h4>
         <div className="flex align-items-center flex-wrap max-w-sm">
           {
             friend_links.map((link: ILink) => {

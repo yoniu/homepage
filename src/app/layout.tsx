@@ -1,13 +1,8 @@
-import { Separator } from "@/components/ui/separator"
-
-import Header from "@/src/components/header"
-import Navigator from "@/src/components/navigator"
-import Footer from "@/src/components/footer"
-
 import { Inter } from 'next/font/google'
 
 import '@/src/styles/common.scss'
 import '@/styles/globals.css'
+import Sidebar from "../components/sidebar"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,14 +23,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div id="root">
-          <img className="fixed w-2/3 max-w-96 blur-2xl saturate-100 opacity-50" src="https://p2.music.126.net/cPyfIo_ZV6lfQnZa7J-HOg==/109951165991680568.jpg" alt="yoniu" />
-          <div className="relative flex justify-center flex-col h-dvh px-8 z-1">
-            <Header />
-            <Separator className="my-4" />
-            <Navigator />
-            <Separator className="my-4" />
+          <div id="main">
             { children }
-            <Footer />
+          </div>
+          <div id="sidebar">
+            <Sidebar />
           </div>
         </div>
       </body>

@@ -1,10 +1,33 @@
 #root {
     position: fixed;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     top: 0;
-    left: 0;
-    width: 100vw;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 800px;
     height: 100vh;
+    padding: 2rem 3rem;
+    overflow: hidden;
+
+    @media screen and (max-width: 800px) {
+        justify-content: center;
+    }
+}
+
+#main {
+    width: 68%;
+
+    @media screen and (max-width: 800px) {
+        width: 100%;
+    }
+}
+
+#sidebar {
+    width: 30%;
+
+    @media screen and (max-width: 800px) {
+        display: none;
+    }
 }
