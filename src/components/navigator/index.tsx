@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation"
 
 import navigator from "@/src/configs/navigator.json"
 import { Fragment } from "react";
 import useIcon from "@/src/hooks/icon";
-import MomentLogin from "@/src/components/moments/login";
 import { useStateContext as useUserstateContext } from "@/src/stores/user";
+
+// 动态导入，禁止服务端渲染
+const MomentLogin = dynamic(() => import("@/src/components/moments/login"), {
+  ssr: false,
+})
 
 type TNav = typeof navigator[0]
 
