@@ -1,7 +1,7 @@
 export default function Footer() {
 
   return (
-    <div className="flex items-center flex-col text-xs mt-3 text-gray-500">
+    <div className="flex items-start justify-end flex-col h-full text-xs mt-3 text-gray-500">
       <span>
         Copyright © 2015-2024 Yoniu.
       </span>
