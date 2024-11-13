@@ -1,14 +1,11 @@
 #root {
-    position: fixed;
     display: flex;
     justify-content: space-between;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
     width: 100%;
     max-width: 800px;
     height: 100vh;
     padding: 2rem 3rem;
+    margin: 0 auto;
     overflow: hidden;
 
     @media screen and (max-width: 800px) {

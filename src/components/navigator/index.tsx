@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation"
 import navigator from "@/src/configs/navigator.json"
 import { Fragment } from "react";
 import useIcon from "@/src/hooks/icon";
+import MomentLogin from "@/src/components/moments/login";
+import { useStateContext as useUserstateContext } from "@/src/stores/user";
 
 type TNav = typeof navigator[0]
 
@@ -14,12 +16,14 @@ export default function Navigator() {
   const pathname = usePathname()
   const IconFont = useIcon()
 
+  const { state } = useUserstateContext()
+
   const className = (item: TNav) => {
     const url = item.url.includes("/") ? item.url : `/${item.url}`
     if (pathname === url)
-      return "flex flex-col items-center bg-gray-100 hover:bg-gray-200 text-lg rounded px-3 py-2 space-y-1 transition-all"
+      return "flex flex-col items-center bg-gray-100 hover:bg-gray-200 text-lg rounded px-3 py-2 space-y-1 mb-2 transition-all"
     else 
-      return "flex flex-col items-center hover:bg-gray-100 text-lg rounded px-3 py-2 space-y-1 transition-all"
+      return "flex flex-col items-center hover:bg-gray-100 text-lg rounded px-3 py-2 space-y-1 mb-2 transition-all"
   }
 
   const linkItem = (item: TNav) => (
@@ -49,7 +53,7 @@ export default function Navigator() {
           aItem(item)
         ))
       }
-      
+      { !state.isLogin && <MomentLogin /> }
     </div>
   )
 }
