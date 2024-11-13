@@ -3,6 +3,8 @@
 import { StateProvider as PlayerStateProvider } from '@/src/stores/audio';
 import { StateProvider as UserStateProvider } from '@/src/stores/user';
 
+import MomentLoading from '@/src/components/moments/item/loading';
+
 
 export default function Page() {
 
@@ -10,7 +12,8 @@ export default function Page() {
     <UserStateProvider>
       <PlayerStateProvider>
         <div className="flex items-center justify-center w-full h-full">
-          <span className="text-sm text-gray-400">comming soon...</span>
+          <MomentLoading />
+          {/* <span className="text-sm text-gray-400">comming soon...</span> */}
         </div>
       </PlayerStateProvider>
     </UserStateProvider>

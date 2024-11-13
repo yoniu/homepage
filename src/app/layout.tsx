@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div id="root">
+        <div id="root" className="space-x-8">
           <div id="main">
             { children }
           </div>
