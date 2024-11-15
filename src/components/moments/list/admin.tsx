@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react"
-import { App } from "antd"
+import { App, Button, Popconfirm } from "antd"
 
 import api from "@/src/utils/api";
 
@@ -9,6 +9,7 @@ import { TResponseError } from "@/src/utils/axiosInstance"
 import { useRouter } from "next/navigation";
 
 import dayFormat from "@/src/utils/dayFormat";
+import Link from "next/link";
 
 export default function AdminMomentList() {
   
@@ -16,6 +17,8 @@ export default function AdminMomentList() {
   const router = useRouter()
 
   const pageSize = 1;
+
+  const [loading, setLoading] = useState(true)
 
   const [page, setPage] = useState(1)
 
@@ -36,7 +39,7 @@ export default function AdminMomentList() {
   }
 
   const getMomentList = () => {
-    console.log(page)
+    setLoading(true)
     getList(page, pageSize).then(res => {
       setHasNextPage(res.data.hasNextPage)
       if (page > 1) {
@@ -52,34 +55,69 @@ export default function AdminMomentList() {
         messageApi.error(message)
       }
       router.replace('/')
+    }).finally(() => {
+      setLoading(false)
     })
   }
 
+  const MomentItem = (item: IMomentItem<any>) => {
+
+    const { id, title, content, create_time, update_time, attributes } = item
+
+    let type = 'text'
+
+    if (attributes && Object.keys(attributes).includes('type')) {
+      type = attributes.type
+    }
+
+    return (
+      <div className="w-full py-2 border-b border-gray-200" key={id}>
+        <div className="flex space-x-2">
+          <div className="text font-bold">{ title  ?? '无标题' }</div>
+        </div>
+        <div className="text text-gray-500 text-wrap">
+          { content ? content.slice(0, 50) : '无内容' }
+        </div>
+        <div className="flex justify-between space-x-2 w-full">
+          <div className="text-gray-400">#{ type }</div>
+          <div className="flex space-x-2">
+            <div className="text-gray-400">{dayFormat(create_time)}</div>
+            <div className="text-gray-400">最后修改：{dayFormat(update_time)}</div>
+            <Link
+              href={`/editor/${id}`}
+              className="text-blue-500 hover:underline"
+            >
+              编辑
+            </Link>
+            <Popconfirm
+              placement="bottomRight"
+              title="Delete Moment"
+              description="Are you sure to delete this Moment?"
+              okText="Yes"
+              cancelText="No"
+            >
+              <button className="text-red-500 hover:underline">
+                删除
+              </button>
+            </Popconfirm>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-3">
+    <div className="absolute space-y-3 top-0 left-0 w-full h-full overflow-y-auto">
       <div className="text-lg font-bold">Moment List</div>
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-2">
         {
-          items && items.map(item => (
-            <div key={item.id}>
-              { item.id } - { item.author } - 
-              { dayFormat(new Date(item.create_time).getTime()) }
-            </div>
-          ))
+          items && items.map(item => MomentItem(item))
         }
       </div>
       <div className="flex items-center justify-center">
-        <button
-          className={
-            "rounded px-3 py-1" +
-            (hasNextPage ? " bg-blue-500 text-white" : " bg-gray-200")
-          }
-          onClick={handlePageChange}
-        >
-          {
-            hasNextPage ? "Load More" : "No More"
-          }
-        </button>
+        <Button onClick={handlePageChange} disabled={!hasNextPage} loading={loading}>
+          { hasNextPage ? "Load More" : "No More" }
+        </Button>
       </div>
     </div>
   )

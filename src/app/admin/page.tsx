@@ -11,7 +11,7 @@ export default function Page() {
     <UserStateProvider>
       <PlayerStateProvider>
         <div id="main">
-          <div className="flex flex-col w-full h-full">
+          <div className="relative flex flex-col w-full h-full">
             <AdminMomentList />
           </div>
         </div>

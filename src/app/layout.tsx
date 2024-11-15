@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import '@/src/styles/common.scss'
 import '@/styles/globals.css'
 import { App } from 'antd'
+import { AntdRegistry } from '@ant-design/nextjs-registry'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,11 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <App>
-          <div id="root" className="space-x-0 justify-center px-4 py-4 md:space-x-8 md:justify-between md:px-8 md:py-12">
-          { children }
-          </div>
-        </App>
+        <AntdRegistry>
+          <App>
+            <div id="root" className="space-x-0 justify-center px-4 py-4 md:space-x-8 md:justify-between md:px-8 md:py-12">
+            { children }
+            </div>
+          </App>
+        </AntdRegistry>
       </body>
     </html>
   )
