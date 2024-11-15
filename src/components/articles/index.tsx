@@ -1,14 +1,8 @@
 "use client";
 
-import { useQuery } from 'graphql-hooks'
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import 'dayjs/locale/zh-cn';
+import dayFormat from '@/src/utils/dayFormat'
 
-// 设置为中文
-dayjs.locale('zh-cn');
-// 加载插件
-dayjs.extend(relativeTime);
+import { useQuery } from 'graphql-hooks'
 
 interface IPost {
   id: string;
@@ -38,7 +32,7 @@ export default function Articles() {
   const { loading, error, data } = useQuery(POSTS_QUERY)
 
   const formatDay = (date: string) => {
-    return dayjs(date).fromNow()
+    return dayFormat(date)
   }
 
   return (
