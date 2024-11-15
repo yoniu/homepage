@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { message } from "antd"
+import { App } from "antd"
 
 import { cn } from "@/lib/utils"
 
@@ -16,8 +16,8 @@ import { useStateContext as useUserStateContext } from "@/src/stores/user";
 import ReactDOM from "react-dom";
 
 export default function MomentLogin() {
-
-  const [messageApi, contextHolder] = message.useMessage()
+  
+  const { message: messageApi } = App.useApp()
 
   const { dispatch } = useUserStateContext()
 
@@ -67,7 +67,6 @@ export default function MomentLogin() {
 
   return (
     <>
-      {contextHolder}
       <button className="flex flex-col items-center hover:bg-gray-100 text-lg rounded px-3 py-2 space-y-1 transition-all" onClick={() => setVisible(true)}>
         <IconFont className="text-lg" type="icon-yonghu" />
         <span className="text-xs">Login</span>

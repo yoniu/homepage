@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react"
-import { message } from "antd"
+import { App } from "antd"
 
 import api from "@/src/utils/api";
 
@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 import dayFormat from "@/src/utils/dayFormat";
 
 export default function AdminMomentList() {
-
-  const [messageApi, contextHolder] = message.useMessage()
+  
+  const { message: messageApi } = App.useApp()
   const router = useRouter()
 
   const pageSize = 1;
@@ -57,7 +57,6 @@ export default function AdminMomentList() {
 
   return (
     <div className="space-y-3">
-      {contextHolder}
       <div className="text-lg font-bold">Moment List</div>
       <div className="flex flex-col">
         {
