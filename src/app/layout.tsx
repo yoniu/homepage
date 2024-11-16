@@ -5,6 +5,10 @@ import '@/styles/globals.css'
 import { App, ConfigProvider } from 'antd'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 
+import { StateProvider as PlayerStateProvider } from '@/src/stores/audio';
+import { StateProvider as UserStateProvider } from '@/src/stores/user';
+import { StateProvider as EditorStateProvider } from '@/src/stores/editor';
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -30,9 +34,15 @@ export default function RootLayout({
             },
           }}>
             <App>
+    <UserStateProvider>
+      <PlayerStateProvider>
+        <EditorStateProvider>
               <div id="root" className="space-x-0 justify-center px-4 py-4 md:space-x-8 md:justify-between md:px-8 md:py-12">
               { children }
               </div>
+        </EditorStateProvider>
+      </PlayerStateProvider>
+    </UserStateProvider>
             </App>
           </ConfigProvider>
         </AntdRegistry>
