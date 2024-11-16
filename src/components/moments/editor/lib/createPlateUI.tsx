@@ -1,5 +1,4 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { withProps } from '@udecode/cn';
 import {
   BoldPlugin,
@@ -11,22 +10,12 @@ import {
   PlateLeaf,
 } from '@udecode/plate-common/react';
 
-export const createPlateUI = ({
-  draggable,
-  placeholder,
-}: { draggable?: boolean; placeholder?: boolean } = {}) => {
-  let components: Record<string, NodeComponent> = {
+export const createPlateUI = () => {
+  const components: Record<string, NodeComponent> = {
     [BoldPlugin.key]: withProps(PlateLeaf, { as: 'strong' }),
     [ItalicPlugin.key]: withProps(PlateLeaf, { as: 'em' }),
     [UnderlinePlugin.key]: withProps(PlateLeaf, { as: 'u' }),
   };
-
-  if (placeholder) {
-    components = withPlaceholders(components);
-  }
-  if (draggable) {
-    components = withDraggables(components);
-  }
 
   return components;
 };

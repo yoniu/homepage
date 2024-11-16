@@ -77,7 +77,6 @@ export default function TextEditor() {
             <Editor placeholder="Type..." />
           </EditorContainer>
         </Plate>
-        {state.content}
       </div>
     </>
   )
