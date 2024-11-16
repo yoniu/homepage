@@ -1,13 +1,13 @@
 "use client";
 
-import AdminSidebar from '@/src/components/sidebar/admin';
 import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
 import { logged } from '@/src/utils/login';
 import { App } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 import api from '@/src/utils/api';
-import TextEditor from '@/src/components/moments/editor/text';
+import TextEditor from '@/src/components/editor/text';
+import EditorSidebar from '@/src/components/sidebar/editor';
 
 export default function Page() {
   return (
@@ -65,7 +65,7 @@ function Editor() {
         </div>
       </div>
       <div id="sidebar">
-        <AdminSidebar />
+        <EditorSidebar />
       </div>
     </>
   )
