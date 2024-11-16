@@ -5,11 +5,19 @@ import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
 import { logged } from '@/src/utils/login';
 import { App } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import api from '@/src/utils/api';
 import TextEditor from '@/src/components/moments/editor/text';
 
 export default function Page() {
+  return (
+    <Suspense>
+      <Editor />
+    </Suspense>
+  )
+}
+
+function Editor() {
 
   const router = useRouter()
   const query = useSearchParams()
