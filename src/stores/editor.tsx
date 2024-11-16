@@ -8,7 +8,16 @@ import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 type TState = Partial<IMomentItem<any>>
 
 // 定义初始状态
-const initialState: TState = {};
+const initialState: TState = {
+  id: undefined,
+  title: '',
+  content: '',
+  author: undefined,
+  attributes: undefined,
+  status: undefined,
+  create_time: undefined,
+  update_time: undefined
+};
 
 type TAction = 
   | { type: 'UPDATE', states: TState } // 更新状态
