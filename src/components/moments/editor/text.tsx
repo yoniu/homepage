@@ -18,11 +18,10 @@ import { Editor, EditorContainer } from './lib/editorContainer';
 
 export default function TextEditor() {
 
-  // 是否初始化，防止重复设置内容导致编辑器失焦
-  const [ initial, setInitial ] = useState(false)
-
-  const { state, dispatch } = useEditorStateContext()
+  const [initialized, setInitialized] = useState(false)
+  const { state, dispatch } = useEditorStateContext() 
   const editor = usePlateEditor({
+    value: state.content ? [{ children: [{ text: state.content }], type: 'p' }] : undefined,
     plugins: [
       MarkdownPlugin,
       BoldPlugin,
@@ -47,24 +46,20 @@ export default function TextEditor() {
     dispatch({
       type: "UPDATE",
       states: {
-        content: editor.api.markdown.serialize()
+        content: editor.api.markdown.serialize({
+          ignoreParagraphNewline: true
+        })
       }
     })
   }
 
   // 设置编辑器默认内容
   useEffect(() => {
-    if (initial) return
+    if (initialized) return
     if (state.content) {
       const content = editor.api.markdown.deserialize(state.content);
-      dispatch({
-        type: "UPDATE",
-        states: {
-          content
-        }
-      })
       editor.tf.setValue(content)
-      setInitial(true)
+      setInitialized(true)
     }
   }, [state.content])
 
@@ -82,6 +77,7 @@ export default function TextEditor() {
             <Editor placeholder="Type..." />
           </EditorContainer>
         </Plate>
+        {state.content}
       </div>
     </>
   )
