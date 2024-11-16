@@ -4,6 +4,13 @@ declare enum EMomentStatus {
   Self = 2,
 }
 
+declare enum EMomentType {
+  Text = 'text',
+  Image = 'image',
+  Video = 'video',
+  Live = 'live',
+}
+
 declare interface IMomentItem<T> {
   id: number
   title?: string
