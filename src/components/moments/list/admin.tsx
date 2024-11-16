@@ -110,7 +110,7 @@ export default function AdminMomentList() {
             <div className="text-gray-400">{dayFormat(create_time)}</div>
             <div className="text-gray-400">最后修改：{dayFormat(update_time)}</div>
             <Link
-              href={`/editor/${id}`}
+              href={`/editor`}
               className="text-blue-500 hover:underline"
             >
               编辑
