@@ -2,12 +2,13 @@
 
 import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
 import { logged } from '@/src/utils/login';
-import { App } from 'antd';
+import { App, Spin } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import api from '@/src/utils/api';
 import TextEditor from '@/src/components/editor/text';
 import EditorSidebar from '@/src/components/sidebar/editor';
+import { TResponseError } from '@/src/utils/axiosInstance';
 
 export default function Page() {
   return (
@@ -21,21 +22,23 @@ function Editor() {
 
   const router = useRouter()
   const query = useSearchParams()
-  const { modal, message } = App.useApp()
+  const { modal, message: messageApi } = App.useApp()
 
   const { dispatch } = useEditorStateContext()
+
+  const [loading, setLoading] = useState(true)
 
   // 守卫：如果无 ID 则弹窗是否创建
   useEffect(() => {
     if (!logged()) {
-      message.error('请先登录')
+      messageApi.error('请先登录')
       return router.replace('/')
     }
     const id  = query.get('id')
     if (id === null) {
       modal.confirm({
-        title: 'No Id Number',
-        content: "Create A New Moment?",
+        title: '检测到无传入 id',
+        content: "是否新建为草稿？",
         closable: true,
         onOk: () => {},
         onCancel: () => {
@@ -43,6 +46,7 @@ function Editor() {
         }
       })
     } else {
+      setLoading(true)
       getMomentDetail(+id).then(res => {
         if (res.data) {
           dispatch({
@@ -50,15 +54,25 @@ function Editor() {
             states: res.data
           })
         } else {
-          message.error('Moment Not Found')
+          messageApi.error('未找到该 Moment')
           router.replace('/admin')
         }
+      }).catch(err => {
+        const { message } = err as TResponseError
+        if (Array.isArray(message)) {
+          message.map((msg) => messageApi.error(msg))
+        } else {
+          messageApi.error(message)
+        }
+      }).finally(() => {
+        setLoading(false)
       })
     }
   }, [])
 
   return (
     <>
+      <Spin spinning={loading} fullscreen={true} />
       <div id="main">
         <div className="relative flex flex-col w-full h-full">
           <TextEditor />
