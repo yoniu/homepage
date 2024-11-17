@@ -9,21 +9,25 @@ import {
   ItalicPlugin,
   UnderlinePlugin,
 } from '@udecode/plate-basic-marks/react';
-import { MarkdownPlugin } from '@udecode/plate-markdown';
+import { deserializeMd, MarkdownPlugin } from '@udecode/plate-markdown';
 
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
 import { useEffect, useState } from 'react';
 import { createPlateUI } from './lib/createPlateUI';
 import { Editor, EditorContainer } from './lib/editorContainer';
+import { SlateEditor } from '@udecode/plate-common';
+
+const markdownPlugin = MarkdownPlugin.configure({
+  options: { indentList: false },
+});
 
 export default function TextEditor() {
 
   const [initialized, setInitialized] = useState(false)
   const { state, dispatch } = useEditorStateContext() 
   const editor = usePlateEditor({
-    value: state.content ? [{ children: [{ text: state.content }], type: 'p' }] : undefined,
     plugins: [
-      MarkdownPlugin,
+      markdownPlugin,
       BoldPlugin,
       ItalicPlugin,
       UnderlinePlugin,
@@ -31,6 +35,7 @@ export default function TextEditor() {
     override: {
       components: createPlateUI(),
     },
+    value: (editor: SlateEditor) => deserializeMd(editor, state.content ?? ''),
   })
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,9 +51,7 @@ export default function TextEditor() {
     dispatch({
       type: "UPDATE",
       states: {
-        content: editor.api.markdown.serialize({
-          ignoreParagraphNewline: true
-        })
+        content: editor.api.markdown.serialize()
       }
     })
   }
