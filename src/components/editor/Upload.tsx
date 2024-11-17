@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 import api from "@/src/utils/api";
-import { CaretRightOutlined, UploadOutlined } from "@ant-design/icons";
-import { App, Button, Col, Row, Spin, Upload as UploadAntd, UploadProps } from "antd";
+import { CaretRightOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import { App, Button, Col, Popconfirm, Row, Spin, Upload as UploadAntd, UploadProps } from "antd";
 import { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "next/navigation";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
@@ -99,6 +99,18 @@ export default function Upload(
     });
   }
 
+  const handleDeleteFile = (id: number) => {
+    setLoading(true);
+    deleteFile(id).then(() => {
+      message.success('删除成功');
+      if (state.id) handleGetFileList(state.id);
+    }).catch(() => {
+      message.error('删除失败');
+    }).finally(() => {
+      setLoading(false);
+    });
+  }
+
   useEffect(() => {
     if (state.id) {
       handleGetFileList(state.id);
@@ -142,13 +154,27 @@ export default function Upload(
       <Row gutter={[6, 6]}>
         {
           list.filter(item => item.format.includes('image')).map(item => (
-            <Col span={8} key={item.id}>
+            <Col className="space-y-1" span={8} key={item.id}>
               <div
-                className="relative aspect-square border border-gray-200 rounded overflow-hidden"
+                className="relative aspect-square border border-gray-200 rounded overflow-hidden cursor-pointer"
                 onClick={() => handleClickItem(item)}
               >
                 <img src={item.url} alt={item.filename} className="absolute w-full h-full object-cover" />
                 { fileItemDecorate && fileItemDecorate(item)  }
+              </div>
+              <div className="text-right">
+                <Popconfirm
+                  title="删除图片"
+                  description="是否删除该图片？"
+                  placement="bottom"
+                  onConfirm={ () => handleDeleteFile(item.id)}
+                  okText="确认"
+                  cancelText="取消"
+                >
+                  <button className="text-red-600">
+                    <DeleteOutlined />
+                  </button>
+                </Popconfirm>
               </div>
             </Col>
           ))
@@ -170,6 +196,10 @@ export default function Upload(
 
 function uploadFile(data: object, options?: AxiosRequestConfig<any>) {
   return api.put('/file/upload', data, options)
+}
+
+function deleteFile(id: number) {
+  return api.del(`/file/remove/${id}`)
 }
 
 function getList(id: number) {
