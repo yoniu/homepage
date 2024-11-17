@@ -68,7 +68,7 @@ export default function TextEditor() {
       <div className="absolute left-0 top-0 w-full h-full overflow-y-auto space-y-3">
         <input
           value={state.title ?? ''}
-          className="w-full border-gray-300 rounded-md text-lg outline-none"
+          className="w-full border-gray-300 rounded-md text-2xl font-bold outline-none"
           placeholder="Write your title..."
           onChange={handleTitleChange}
         ></input>
