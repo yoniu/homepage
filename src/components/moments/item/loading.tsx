@@ -1,6 +1,6 @@
 export default function MomentLoading() {
   return (
-    <div className="flex flex-col shadow-lg rounded-md overflow-hidden w-full h-full">
+    <div className="flex flex-col shadow-lg rounded-md overflow-hidden w-full h-full border">
       <div className="flex items-center justify-between px-3 py-2">
         <div className="flex space-x-1">
           <div className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
