@@ -8,6 +8,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { StateProvider as PlayerStateProvider } from '@/src/stores/audio';
 import { StateProvider as UserStateProvider } from '@/src/stores/user';
 import { StateProvider as EditorStateProvider } from '@/src/stores/editor';
+import { StateProvider as EditorMomentProvider } from '@/src/stores/moment';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -34,15 +35,17 @@ export default function RootLayout({
             },
           }}>
             <App>
-    <UserStateProvider>
-      <PlayerStateProvider>
-        <EditorStateProvider>
-              <div id="root" className="space-x-0 justify-center px-4 py-4 md:space-x-8 md:justify-between md:px-8 md:py-12">
-              { children }
-              </div>
-        </EditorStateProvider>
-      </PlayerStateProvider>
-    </UserStateProvider>
+              <UserStateProvider>
+                <PlayerStateProvider>
+                  <EditorStateProvider>
+                    <EditorMomentProvider>
+                      <div id="root" className="space-x-0 justify-center px-4 py-4 md:space-x-8 md:justify-between md:px-8 md:py-12">
+                      { children }
+                      </div>
+                    </EditorMomentProvider>
+                  </EditorStateProvider>
+                </PlayerStateProvider>
+              </UserStateProvider>
             </App>
           </ConfigProvider>
         </AntdRegistry>
