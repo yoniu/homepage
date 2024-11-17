@@ -1,6 +1,7 @@
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import api from "@/src/utils/api";
 import { TResponseError } from "@/src/utils/axiosInstance";
+import { SaveOutlined } from "@ant-design/icons";
 import { App, Button } from "antd";
 import { useState } from "react";
 
@@ -40,6 +41,7 @@ export default function Save() {
         variant="solid"
         loading={loading}
         onClick={handleSave}
+        icon={<SaveOutlined />}
       >保存</Button>
     </div>
   )
