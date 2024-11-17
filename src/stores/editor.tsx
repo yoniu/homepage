@@ -1,28 +1,32 @@
 "use client";
 /**
- * User Store
- * 2024.11.13 / 油油
+ * Editor Store
+ * 2024.11.16 / 油油
  */
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { logged } from '@/src/utils/login';
 
-interface IState {
-  isLogin: boolean;
-}
+type TState = Partial<IMomentItem<any>>
 
 // 定义初始状态
-const initialState: IState = {
-  isLogin: false,
+const initialState: TState = {
+  id: undefined,
+  title: '',
+  content: '',
+  author: undefined,
+  attributes: undefined,
+  status: undefined,
+  create_time: undefined,
+  update_time: undefined
 };
 
 type TAction = 
-  | { type: 'UPDATELOGIN' } // 更新登录状态
+  | { type: 'UPDATE', states: TState } // 更新状态
 
 // 定义 reducer 函数
-const reducer = (state: IState, action: TAction): IState => {
+const reducer = (state: TState, action: TAction): TState => {
   switch (action.type) {
-    case 'UPDATELOGIN':
-      return { ...state, isLogin: logged() };
+    case 'UPDATE':
+      return { ...state, ...action.states };
     default:
       return state;
   }
@@ -30,7 +34,7 @@ const reducer = (state: IState, action: TAction): IState => {
 
 // 定义 Context 类型
 interface StateContextProps {
-  state: IState;
+  state: TState;
   dispatch: React.Dispatch<TAction>;
 }
 

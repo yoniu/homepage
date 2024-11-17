@@ -1,28 +1,47 @@
 "use client";
 /**
- * User Store
- * 2024.11.13 / 油油
+ * Moment Store
+ * 2024.11.17 / 油油
  */
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { logged } from '@/src/utils/login';
 
 interface IState {
-  isLogin: boolean;
+  currentIndex: number;
+  page: number;
+  pageSize: number;
+  hasNextPage: boolean;
+  momentList: IMomentItem<any>[];
 }
 
 // 定义初始状态
 const initialState: IState = {
-  isLogin: false,
+  currentIndex: 0,
+  page: 1,
+  pageSize: 5,
+  hasNextPage: false,
+  momentList: [],
 };
 
 type TAction = 
-  | { type: 'UPDATELOGIN' } // 更新登录状态
+  | { type: 'UPDATELIST', momentList: IMomentItem<any>[], page: number, hasNextPage: boolean } // 更新 list
+  | { type: 'PREVINDEX' } // 上一条
+  | { type: 'NEXTINDEX' } // 下一条
 
 // 定义 reducer 函数
 const reducer = (state: IState, action: TAction): IState => {
   switch (action.type) {
-    case 'UPDATELOGIN':
-      return { ...state, isLogin: logged() };
+    case 'UPDATELIST':
+      return { ...state, momentList: action.momentList, page: action.page, hasNextPage: action.hasNextPage };
+    case 'PREVINDEX':
+      if (state.currentIndex > 0)
+        return { ...state, currentIndex: state.currentIndex - 1 };
+      else
+        return state;
+    case 'NEXTINDEX':
+      if (state.currentIndex < state.momentList.length - 1)
+        return { ...state, currentIndex: state.currentIndex + 1 };
+      else
+        return state;
     default:
       return state;
   }
