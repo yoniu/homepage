@@ -1,6 +1,6 @@
 "use client";
 
-import Upload, { IFileItem } from "@/src/components/editor/upload";
+import Upload, { IFileItem } from "@/src/components/editor/Upload";
 import EditorMusic from "@/src/components/editor/music";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 

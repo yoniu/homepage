@@ -1,4 +1,4 @@
-import Upload from "@/src/components/editor/upload";
+import Upload from "@/src/components/editor/Upload";
 
 export default function ImageEditorSidebar() {
   return (

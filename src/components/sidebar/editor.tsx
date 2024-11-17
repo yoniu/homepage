@@ -9,7 +9,7 @@ import SidebarSpread from "./spread";
 import SelectType from "@/src/components/editor/selectType";
 import SelectVisible from "@/src/components/editor/selectVisible";
 import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
-import Save from "@/src/components/editor/save";
+import Save from "@/src/components/editor/Save";
 import Link from "next/link";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import TextEditorSidebar from "@/src/components/editor/text/sidebar";

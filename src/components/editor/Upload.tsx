@@ -9,7 +9,7 @@ import { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "next/navigation";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import React from "react";
-import SidebarCollapse from "./collapse";
+import SidebarCollapse from "./collapse"; 
 
 export enum EFileStatus {
   deleted,
