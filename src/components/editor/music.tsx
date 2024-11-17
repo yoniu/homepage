@@ -4,6 +4,13 @@ import { Input } from "antd";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import SidebarCollapse from "./collapse";
 
+export interface IMusicItem {
+  name: string;
+  singer: string;
+  url: string;
+  cover?: string;
+}
+
 export default function EditorMusic() {
 
   const { state, dispatch } = useEditorStateContext();
