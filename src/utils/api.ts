@@ -1,4 +1,5 @@
 import axiosInstance from '@/src/utils/axiosInstance';
+import { AxiosRequestConfig } from 'axios';
 
 export interface ApiResult<T> {
   statusCode: number;
@@ -16,8 +17,8 @@ async function post<T>(url: string, data?: any): Promise<ApiResult<T>> {
   return response.data;
 }
 
-async function put<T>(url: string, data?: any): Promise<ApiResult<T>> {
-  const response = await axiosInstance.put<ApiResult<T>>(url, data);
+async function put<T>(url: string, data?: any, options?: AxiosRequestConfig<any>): Promise<ApiResult<T>> {
+  const response = await axiosInstance.put<ApiResult<T>>(url, data, options);
   return response.data;
 }
 
