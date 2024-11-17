@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { createPlateUI } from '@/src/components/editor/lib/createPlateUI';
 import { Editor, EditorContainer } from '@/src/components/editor/lib/editorContainer';
 import { SlateEditor } from '@udecode/plate-common';
+import EditorPhotosets from '@/src/components/editor/photosets';
 
 const markdownPlugin = MarkdownPlugin.configure({
   options: { indentList: false },
@@ -68,7 +69,7 @@ export default function TextEditor() {
 
   return (
     <>
-      <div className="absolute left-0 top-0 w-full h-full overflow-y-auto space-y-3">
+      <div className="absolute left-0 top-0 w-full h-full overflow-y-auto overflow-x-hidden space-y-3">
         <input
           value={state.title ?? ''}
           className="w-full border-gray-300 rounded-md text-2xl font-bold outline-none"
@@ -80,6 +81,7 @@ export default function TextEditor() {
             <Editor placeholder="Type..." />
           </EditorContainer>
         </Plate>
+        <EditorPhotosets />
       </div>
     </>
   )
