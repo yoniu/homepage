@@ -8,14 +8,24 @@ import OtherFooter from "@/src/components/footer/other";
 import SidebarSpread from "./spread";
 import SelectType from "@/src/components/editor/selectType";
 import SelectVisible from "@/src/components/editor/selectVisible";
-import Upload from "@/src/components/editor/upload";
+import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
 import Save from "@/src/components/editor/save";
 import Link from "next/link";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import TextEditorSidebar from "@/src/components/editor/text/sidebar";
+import ImageEditorSidebar from "@/src/components/editor/image/sidebar";
 
 export default function EditorSidebar() {
 
+  const { state } = useEditorStateContext()
   const [show, setShow] = useState(false)
+
+  const editorSidebar: Record<EMomentType, JSX.Element> = {
+    text: <TextEditorSidebar />,
+    image: <ImageEditorSidebar />,
+    video: <TextEditorSidebar />,
+    live: <TextEditorSidebar />,
+  }
 
   const isShow = () => {
     return show ? 'translate-x-0' : 'translate-x-full'
@@ -38,7 +48,11 @@ export default function EditorSidebar() {
       <div className="flex-1 space-y-3 overflow-y-auto">
         <SelectVisible />
         <SelectType />
-        <Upload />
+        {
+          (state.attributes && state.attributes.type) ?
+          editorSidebar[state.attributes.type as EMomentType] :
+          editorSidebar.text
+        }
       </div>
       <OtherFooter />
     </div>

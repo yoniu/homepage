@@ -24,9 +24,16 @@ function Editor() {
   const query = useSearchParams()
   const { modal, message: messageApi } = App.useApp()
 
-  const { dispatch } = useEditorStateContext()
+  const { state, dispatch } = useEditorStateContext()
 
   const [loading, setLoading] = useState(true)
+
+  const editors: Record<EMomentType, JSX.Element> = {
+    text: <TextEditor />,
+    image: <TextEditor />,
+    video: <TextEditor />,
+    live: <TextEditor />,
+  }
 
   // 守卫：如果无 ID 则弹窗是否创建
   useEffect(() => {
@@ -75,7 +82,11 @@ function Editor() {
       <Spin spinning={loading} fullscreen={true} />
       <div id="main">
         <div className="relative flex flex-col w-full h-full">
-          <TextEditor />
+          {
+            (state.attributes && state.attributes.type) ?
+            editors[state.attributes.type as EMomentType] :
+            editors.text
+          }
         </div>
       </div>
       <div id="sidebar">

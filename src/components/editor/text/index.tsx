@@ -13,8 +13,8 @@ import { deserializeMd, MarkdownPlugin } from '@udecode/plate-markdown';
 
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
 import { useEffect, useState } from 'react';
-import { createPlateUI } from './lib/createPlateUI';
-import { Editor, EditorContainer } from './lib/editorContainer';
+import { createPlateUI } from '@/src/components/editor/lib/createPlateUI';
+import { Editor, EditorContainer } from '@/src/components/editor/lib/editorContainer';
 import { SlateEditor } from '@udecode/plate-common';
 
 const markdownPlugin = MarkdownPlugin.configure({
