@@ -14,7 +14,7 @@ export default function AdminMomentList() {
   
   const { message: messageApi } = App.useApp()
 
-  const pageSize = 1;
+  const pageSize = 5;
 
   const [loading, setLoading] = useState(true)
 
@@ -28,15 +28,11 @@ export default function AdminMomentList() {
     getMomentList()
   }, [])
 
-  // 监听 page 改变获取新列表
-  useEffect(() => {
-    getMomentList()
-  }, [page])
-
   // 点击加载更多
   const handlePageChange = () => {
     if (!hasNextPage) return
     setPage(page + 1)
+    getMomentList()
   }
 
   // 点击删除确认
@@ -46,6 +42,7 @@ export default function AdminMomentList() {
     deleteMoment(id).then(() => {
       messageApi.success('删除成功')
       setPage(1)
+      getMomentList()
     }).catch(err => {
       const { message } = err as TResponseError
       if (Array.isArray(message)) {
