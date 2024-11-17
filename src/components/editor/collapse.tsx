@@ -13,7 +13,7 @@ export default function SidebarCollapse({ className, title, children, defaultOpe
   const [ open, setOpen ] = useState(defaultOpen);
   
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-1">
       <div className="flex items-center justify-between text-gray-500 cursor-pointer" onClick={() => setOpen(!open)}>
         <h4 className="">{ title }</h4>
         <CaretRightOutlined className={'transition-all' + (open ? ' rotate-90' : '')} />

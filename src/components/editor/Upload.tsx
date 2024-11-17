@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 
 import api from "@/src/utils/api";
-import { CaretRightOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import { App, Button, Col, Popconfirm, Row, Spin, Upload as UploadAntd, UploadProps } from "antd";
 import { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "next/navigation";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import React from "react";
+import SidebarCollapse from "./collapse";
 
 export enum EFileStatus {
   deleted,
@@ -52,7 +53,6 @@ export default function Upload(
 
   const [ fileList, setFileList ] = useState<IFileItem<any>[]>([]);
 
-  const [ open, setOpen ] = useState(true);
   const [ loading, setLoading ] = useState(false);
 
   const handleUpload: UploadProps['customRequest'] = (options) =>  {
@@ -127,12 +127,10 @@ export default function Upload(
 
   const Container = () => (
     <Spin spinning={loading}>
-      <div className={ 'transition-all overflow-hidden' + (open ? ' max-h-[auto] opacity-100' : ' max-h-0 opacity-0') }>
-        <FileList list={fileList} />
-        <UploadAntd {...uploadProps}>
-          <Button className="mt-2" icon={<UploadOutlined />} size="small">Upload</Button>
-        </UploadAntd>
-      </div>
+      <FileList list={fileList} />
+      <UploadAntd {...uploadProps}>
+        <Button className="mt-2" icon={<UploadOutlined />} size="small">Upload</Button>
+      </UploadAntd>
     </Spin>
   )
 
@@ -184,13 +182,12 @@ export default function Upload(
   }
 
   return (
-    <div className="w-full space-y-2">
-      <div className="flex items-center justify-between text-gray-500 cursor-pointer" onClick={() => setOpen(!open)}>
-        <h4 className="">{ title }</h4>
-        <CaretRightOutlined className={'transition-all' + (open ? ' rotate-90' : '')} />
-      </div>
+    <SidebarCollapse
+      title={title}
+      defaultOpen={true}
+    >
       <Container />
-    </div>
+    </SidebarCollapse>
   )
 }
 
