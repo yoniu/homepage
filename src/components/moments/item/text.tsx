@@ -1,9 +1,9 @@
 import { IPhotosetItem } from "@/src/components/editor/text/sidebar";
 import { IMusicItem } from "@/src/components/editor/music";
 import MomentControl from "@/src/components/moments/control";
-import CONST from "@/src/configs/consts";
 import markdownit from 'markdown-it';
 import { Col, Image, Row } from "antd";
+import MusicPlayer from "../../play/music";
 
 export interface ITextItem {
   music?: IMusicItem
@@ -20,16 +20,7 @@ export default function TextItem({ item }: IProps) {
 
   const Music = () => {
     if (item && item.attributes && item.attributes.music) {
-      const { name, singer, cover } = item.attributes.music
-      return (
-        <div className="flex items-center justify-between px-3 py-2 border-b">
-          <div className="flex items-center space-x-2">
-            <img className="w-6 h-6 rounded" src={cover ?? CONST.LUTHER} />
-            <div className="text-gray-500">{name} - {singer}</div>
-          </div>
-          <div className="w-16 h-6 bg-gray-300 rounded animate-pulse"></div>
-        </div>
-      )
+      return <MusicPlayer {...item.attributes.music} />
     } else {
       return <></>
     }
@@ -41,7 +32,7 @@ export default function TextItem({ item }: IProps) {
         <Row className="mx-0 mt-2" gutter={[6, 6]}>
           {
             item.attributes.photosets?.map((photo) => (
-              <Col key={item.id} span={8}>
+              <Col key={photo.id} span={8}>
                 <Image
                   wrapperClassName="relative aspect-square w-full overflow-hidden rounded"
                   className="absolute w-full !h-full object-cover"
