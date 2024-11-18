@@ -1,5 +1,5 @@
 import { useStateContext } from "@/src/stores/audio.tsx"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Howl } from 'howler';
 import { IMusicItem } from "@/src/components/editor/music";
 import CONST from "@/src/configs/consts";
@@ -8,7 +8,7 @@ import Marquee from "react-fast-marquee";
 import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
 
-interface IProps extends IMusicItem {}
+type IProps = IMusicItem
 
 export default function MusicPlayer(props: IProps) {
   const {state, dispatch} = useStateContext()
@@ -17,10 +17,13 @@ export default function MusicPlayer(props: IProps) {
 
   const [loading, setLoading] = useState(true)
 
+  const playerRef = useRef<Howl | null>(null)
+
   // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
     if (!props.url) return;
     dispatch({type: 'CLEAN'})
+    if (playerRef.current) return dispatch({type: 'SET', howler: playerRef.current})
     setLoading(true)
     const howler = new Howl({
       src: [props.url],
@@ -33,10 +36,13 @@ export default function MusicPlayer(props: IProps) {
         setPlaying(false)
       }
     });
+    dispatch({type: 'SET', howler: howler})
+    playerRef.current = howler
     howler.once('load', () => {
+      // 播放音频
+      howler.play();
       setLoading(false)
     })
-    dispatch({type: 'SET', howler: howler})
 
     return () => {
       dispatch({type: 'CLEAN'})

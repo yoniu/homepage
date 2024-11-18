@@ -68,7 +68,7 @@ export default function ImageItem({ item }: IProps) {
 
   return (
     <div className="flex flex-col shadow-lg rounded-md overflow-hidden w-full h-full border">
-      <Music />
+      {(item && item.attributes && item.attributes.music) ? <MusicPlayer {...item.attributes.music} /> : null }
       <div className="relative w-full h-full flex-1 bg-white">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden flex items-center justify-center">
           { bg ? <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> : null }
