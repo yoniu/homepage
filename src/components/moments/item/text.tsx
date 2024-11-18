@@ -1,7 +1,6 @@
 import { IPhotosetItem } from "@/src/components/editor/text/sidebar";
 import { IMusicItem } from "@/src/components/editor/music";
 import MomentControl from "@/src/components/moments/control";
-import CONST from "@/src/configs/consts";
 import markdownit from 'markdown-it';
 import { Col, Image, Row } from "antd";
 import MusicPlayer from "../../play/music";
