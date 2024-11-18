@@ -3,8 +3,9 @@ import { useEffect, useState } from "react"
 import { Howl } from 'howler';
 import { IMusicItem } from "@/src/components/editor/music";
 import CONST from "@/src/configs/consts";
-import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import { CaretRightFilled, PauseOutlined } from "@ant-design/icons";
 import Marquee from "react-fast-marquee";
+import { Tooltip } from "antd";
 
 interface IProps extends IMusicItem {}
 
@@ -51,9 +52,11 @@ export default function MusicPlayer(props: IProps) {
           </Marquee>
         </div>
       </div>
-      <button onClick={togglePlay}>
-        { playing ? <PauseCircleOutlined /> : <PlayCircleOutlined /> }
-      </button>
+      <Tooltip title={ playing ? '暂停' : '播放' } placement="bottom">
+        <button onClick={togglePlay}>
+            { playing ? <PauseOutlined /> : <CaretRightFilled /> }
+        </button>
+      </Tooltip>
     </div>
   )
 }
