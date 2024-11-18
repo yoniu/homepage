@@ -9,6 +9,7 @@ import api from '@/src/utils/api';
 import TextEditor from '@/src/components/editor/text';
 import EditorSidebar from '@/src/components/sidebar/editor';
 import { TResponseError } from '@/src/utils/axiosInstance';
+import ImageEditor from '@/src/components/editor/image';
 
 export default function Page() {
   return (
@@ -32,7 +33,7 @@ function Editor() {
 
   const editors: Record<EMomentType, JSX.Element> = {
     text: <TextEditor />,
-    image: <TextEditor />,
+    image: <ImageEditor />,
     video: <TextEditor />,
     live: <TextEditor />,
   }
