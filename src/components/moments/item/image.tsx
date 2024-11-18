@@ -31,14 +31,6 @@ export default function ImageItem({ item }: IProps) {
     }
   }, [item.attributes])
 
-  const Music = () => {
-    if (item && item.attributes && item.attributes.music) {
-      return <MusicPlayer {...item.attributes.music} />
-    } else {
-      return <></>
-    }
-  }
-
   const Photosets = memo(() => {
     if (item.attributes && item.attributes.photosets) {
       return (
