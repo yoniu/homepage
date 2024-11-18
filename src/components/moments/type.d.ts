@@ -11,11 +11,17 @@ declare enum EMomentType {
   Live = 'live',
 }
 
+declare interface IUser {
+  email: string
+  id: number
+  name: string
+}
+
 declare interface IMomentItem<T> {
   id: number
   title?: string
   content?: string
-  author: number
+  author: IUser
   attributes?: T
   status: EMomentStatus
   create_time: Date
