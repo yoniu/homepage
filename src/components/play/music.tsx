@@ -4,6 +4,7 @@ import { Howl } from 'howler';
 import { IMusicItem } from "@/src/components/editor/music";
 import CONST from "@/src/configs/consts";
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import Marquee from "react-fast-marquee";
 
 interface IProps extends IMusicItem {}
 
@@ -41,12 +42,16 @@ export default function MusicPlayer(props: IProps) {
   }
 
   return (
-    <div className="flex items-center justify-between px-3 py-2 border-b">
-      <div className="flex items-center space-x-2">
+    <div className="flex items-center justify-between px-3 py-2 border-b space-x-2">
+      <div className="flex items-center space-x-2 w-full">
         <img className="w-6 h-6 rounded" src={props.cover ?? CONST.LUTHER} />
-        <div className="text-gray-500">{props.name} - {props.singer}</div>
+        <div className="text-gray-500 max-w-64 w-[2/3]">
+          <Marquee play={playing}>
+            { `${props.name} - ${props.singer}` }
+          </Marquee>
+        </div>
       </div>
-      <button className="" onClick={togglePlay}>
+      <button onClick={togglePlay}>
         { playing ? <PauseCircleOutlined /> : <PlayCircleOutlined /> }
       </button>
     </div>
