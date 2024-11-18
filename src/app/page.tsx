@@ -9,6 +9,7 @@ import api from '@/src/utils/api';
 import { App, Spin } from 'antd';
 import { TResponseError } from '@/src/utils/axiosInstance';
 import TextItem from '../components/moments/item/text';
+import ImageItem from '../components/moments/item/image';
 
 export default function Page() {
 
@@ -19,7 +20,7 @@ export default function Page() {
 
   const displayer: Record<EMomentType, JSX.Element> = {
     text: <TextItem item={state.momentList[state.currentIndex]} />,
-    image: <div>image</div>,
+    image: <ImageItem item={state.momentList[state.currentIndex]} />,
     video: <div>video</div>,
     live: <div>live</div>,
   }
