@@ -3,9 +3,10 @@ import { useEffect, useState } from "react"
 import { Howl } from 'howler';
 import { IMusicItem } from "@/src/components/editor/music";
 import CONST from "@/src/configs/consts";
-import { CaretRightFilled, PauseOutlined } from "@ant-design/icons";
+import { CaretRightFilled, LoadingOutlined, PauseOutlined } from "@ant-design/icons";
 import Marquee from "react-fast-marquee";
 import { Tooltip } from "antd";
+import { cn } from "@udecode/cn";
 
 interface IProps extends IMusicItem {}
 
@@ -14,10 +15,13 @@ export default function MusicPlayer(props: IProps) {
 
   const [playing, setPlaying] = useState(false)
 
+  const [loading, setLoading] = useState(true)
+
   // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
     if (!props.url) return;
     dispatch({type: 'CLEAN'})
+    setLoading(true)
     const howler = new Howl({
       src: [props.url],
       volume: 1.0,
@@ -29,6 +33,9 @@ export default function MusicPlayer(props: IProps) {
         setPlaying(false)
       }
     });
+    howler.once('load', () => {
+      setLoading(false)
+    })
     dispatch({type: 'SET', howler: howler})
 
     return () => {
@@ -45,7 +52,10 @@ export default function MusicPlayer(props: IProps) {
   return (
     <div className="flex items-center justify-between px-3 py-2 border-b space-x-2">
       <div className="flex items-center space-x-2 w-full">
-        <img className="w-6 h-6 rounded" src={props.cover ?? CONST.LUTHER} />
+        <img
+          className={cn("w-6 h-6 rounded", loading ? "animate-pulse" : "")}
+          src={props.cover ?? CONST.LUTHER}
+        />
         <div className="text-gray-500 max-w-64 w-[2/3]">
           <Marquee play={playing}>
             { `${props.name} - ${props.singer}` }
@@ -54,7 +64,11 @@ export default function MusicPlayer(props: IProps) {
       </div>
       <Tooltip title={ playing ? '暂停' : '播放' } placement="bottom">
         <button onClick={togglePlay}>
-            { playing ? <PauseOutlined /> : <CaretRightFilled /> }
+            {
+              loading ?
+              <LoadingOutlined /> :
+              playing ? <PauseOutlined /> : <CaretRightFilled />
+            }
         </button>
       </Tooltip>
     </div>
