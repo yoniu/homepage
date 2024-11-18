@@ -2,7 +2,6 @@
 
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import { Col, Row } from "antd";
-import { IPhotosetItem } from "./text/sidebar";
 import { DeleteOutlined } from "@ant-design/icons";
 
 export default function EditorPhotosets() {

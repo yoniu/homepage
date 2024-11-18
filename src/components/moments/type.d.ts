@@ -33,3 +33,9 @@ declare interface IGetMomentListResponse {
   totalCount: number
   moments: IMomentItem<any>[]
 }
+declare interface IPhotosetItem {
+  id: number;
+  url: string;
+  type: string;
+  name: string;
+}

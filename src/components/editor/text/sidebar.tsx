@@ -4,13 +4,6 @@ import Upload, { IFileItem } from "@/src/components/editor/Upload";
 import EditorMusic from "@/src/components/editor/music";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 
-export interface IPhotosetItem {
-  id: number;
-  url: string;
-  type: string;
-  name: string;
-}
-
 export default function TextEditorSidebar() {
 
   const { state, dispatch } = useEditorStateContext();
