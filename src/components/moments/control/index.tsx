@@ -1,5 +1,6 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
+import { cn } from "@/lib/utils";
 
 export default function MomentControl () {
 
@@ -12,13 +13,14 @@ export default function MomentControl () {
   const handleNext = () => {
     dispatch({ type: "NEXTINDEX" });
   }
+  const publicClassName = "text-black flex items-center justify-center w-8 group-hover/control:w-10 transition-all"
 
   return (
-    <div className="group/control absolute bottom-0 left-0 flex items-center justify-end w-full p-3">
-      <button className="bg-opacity-30 bg-white text-white rounded-l border-r border-gray-400 border-opacity-20 w-5 h-5 flex items-center justify-center backdrop-brightness-50 group-hover/control:w-8 group-hover/control:h-8 transition-all" onClick={handlePrev}>
+    <div className="group/control absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center p-3  backdrop-blur bg-white opacity-70 hover:opacity-100 rounded-full border shadow-md transition-all z-50">
+      <button className={cn("border-r border-gray-400 border-opacity-50", publicClassName)} onClick={handlePrev}>
         <ArrowUpOutlined />
       </button>
-      <button className="bg-opacity-30 bg-white text-white rounded-r w-5 h-5 flex items-center justify-center backdrop-brightness-50 group-hover/control:w-8 group-hover/control:h-8 transition-all" onClick={handleNext}>
+      <button className={cn(publicClassName)} onClick={handleNext}>
         <ArrowDownOutlined />
       </button>
     </div>
