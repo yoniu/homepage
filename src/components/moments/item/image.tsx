@@ -2,7 +2,7 @@ import { IMusicItem } from "@/src/components/editor/music";
 import MomentControl from "@/src/components/moments/control";
 import MusicPlayer from "@/src/components/play/music";
 import { useEffect, useState } from "react";
-import CarouselImage from "../../carousel";
+import CarouselImage from "@/src/components/carousel";
 
 export interface IImageItem {
   music?: IMusicItem
