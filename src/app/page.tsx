@@ -18,11 +18,11 @@ export default function Page() {
 
   const [loading, setLoading] = useState(true);
 
-  const displayer: Record<EMomentType, () => JSX.Element> = {
-    text: () => <TextItem item={state.momentList[state.currentIndex]} />,
-    image: () => <ImageItem item={state.momentList[state.currentIndex]} />,
-    video: () => <div>video</div>,
-    live: () => <div>live</div>,
+  const displayer: Record<EMomentType, (key: number) => JSX.Element> = {
+    text: (key) => <TextItem key={key} item={state.momentList[state.currentIndex]} />,
+    image: (key) => <ImageItem key={key} item={state.momentList[state.currentIndex]} />,
+    video: (key) => <div key={key}>video</div>,
+    live: (key) => <div key={key}>live</div>,
   }
 
   useEffect(() => {
@@ -68,12 +68,19 @@ export default function Page() {
     return 'text'
   }, [state.momentList[state.currentIndex]])
 
+  const currentMoment = useMemo(() => {
+    if (state.momentList && state.momentList[state.currentIndex]) {
+      return state.momentList[state.currentIndex]
+    }
+    return null
+  }, [state.momentList[state.currentIndex]])
+
   return (
     <>
       <Spin spinning={loading} fullscreen={true} />
       <div id="main">
         <div className="flex items-center justify-center w-full h-full">
-          { !state.momentList.length ? <MomentLoading /> : displayer[currentMomentType]() }
+          { !currentMoment ? <MomentLoading /> : displayer[currentMomentType](currentMoment.id) }
         </div>
       </div>
       <div id="sidebar">
