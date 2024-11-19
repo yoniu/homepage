@@ -19,7 +19,6 @@ export default function EditorPlainContent() {
         content: e.target.value
       }
     })
-    console.log(state.content)
   }
   
   return (
