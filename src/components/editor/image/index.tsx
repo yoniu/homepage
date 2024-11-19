@@ -1,8 +1,8 @@
 "use client";
 
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
-import { Carousel } from "antd";
 import { useEffect, useMemo, useState } from "react";
+import CarouselImage from "@/src/components/carousel";
 
 export default function ImageEditor() {
 
@@ -32,16 +32,8 @@ export default function ImageEditor() {
       <div className="absolute left-0 top-0 w-full h-full rounded-md border overflow-hidden flex items-center justify-center">
         { bg && hasCarousel ? <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> : null }
         {
-          (hasCarousel) ?
-          <Carousel className="" rootClassName="w-full" dotPosition="bottom" afterChange={handleCarouselChange} adaptiveHeight={true}>
-            {
-              (state.attributes.photosets as IPhotosetItem[]).map((photoset) => (
-                <div className="h-full flex justify-center items-center" key={photoset.id}>
-                  <img src={photoset.url} alt={photoset.name} className="w-full" />
-                </div>
-              ))
-            }
-          </Carousel> :
+          hasCarousel ?
+          <CarouselImage images={state.attributes.photosets as IPhotosetItem[]} afterChange={handleCarouselChange} /> :
           <div className="w-full h-full flex justify-center items-center">
             <p className="text-gray-500">No images found</p>
           </div>

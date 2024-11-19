@@ -1,8 +1,8 @@
 import { IMusicItem } from "@/src/components/editor/music";
 import MomentControl from "@/src/components/moments/control";
-import { Carousel } from "antd";
 import MusicPlayer from "@/src/components/play/music";
 import { useEffect, useState } from "react";
+import CarouselImage from "../../carousel";
 
 export interface IImageItem {
   music?: IMusicItem
@@ -18,7 +18,6 @@ export default function ImageItem({ item }: IProps) {
   const [bg, setBg] = useState('')
 
   const handleCarouselChange = (current: number) => {
-    console.log('改变')
     const photosets = item.attributes?.photosets as IPhotosetItem[];
     const selectedPhotoset = photosets[current];
     setBg(selectedPhotoset.url)
@@ -29,7 +28,7 @@ export default function ImageItem({ item }: IProps) {
       const photosets = item.attributes.photosets as IPhotosetItem[];
       if (photosets.length) setBg(photosets[0].url)
     }
-  }, [item.attributes])
+  }, [item])
 
   return (
     <div className="flex flex-col shadow-lg rounded-md overflow-hidden w-full h-full border">
@@ -38,23 +37,9 @@ export default function ImageItem({ item }: IProps) {
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden flex items-center justify-center">
           { bg ? <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> : null }
           {
-            (item.attributes && item.attributes.photosets) &&
-              <Carousel
-              rootClassName="w-full"
-              dotPosition="bottom"
-              adaptiveHeight={true}
-              autoplay={true}
-              autoplaySpeed={2000}
-              afterChange={handleCarouselChange}
-            >
-              {
-                (item.attributes.photosets as IPhotosetItem[]).map((photoset) => (
-                  <div className="h-full flex justify-center items-center" key={photoset.id}>
-                    <img src={photoset.url} alt={photoset.name} className="w-full h-full object-contain" />
-                  </div>
-                ))
-              }
-            </Carousel>
+            (item.attributes && item.attributes.photosets) ?
+            <CarouselImage key={item.id} images={item.attributes.photosets as IPhotosetItem[]} afterChange={handleCarouselChange} interval={2000} /> :
+            null
           }
         </div>
         <MomentControl />
