@@ -8,8 +8,8 @@ import { useEffect, useMemo, useState } from 'react';
 import api from '@/src/utils/api';
 import { App, Spin } from 'antd';
 import { TResponseError } from '@/src/utils/axiosInstance';
-import TextItem from '../components/moments/item/text';
-import ImageItem from '../components/moments/item/image';
+import TextItem from '@/src/components/moments/item/text';
+import ImageItem from '@/src/components/moments/item/image';
 
 export default function Page() {
 

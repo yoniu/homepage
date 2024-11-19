@@ -3,6 +3,8 @@ import MomentControl from "@/src/components/moments/control";
 import MusicPlayer from "@/src/components/play/music";
 import { useEffect, useState } from "react";
 import CarouselImage from "@/src/components/carousel";
+import { ShowPlainContent } from "@/src/components/editor/plainContent";
+import dayFormat from "@/src/utils/dayFormat";
 
 export interface IImageItem {
   music?: IMusicItem
@@ -42,6 +44,16 @@ export default function ImageItem({ item }: IProps) {
             null
           }
         </div>
+        {
+          item.content &&
+          <ShowPlainContent className="pb-16" content={item.content}>
+            <div className="space-x-3 flex items-center leading-4 mb-2">
+              <span className="font-bold">{ item.author.name }</span>
+              <i className="w-1 h-1 bg-gray-500 rounded-full"></i>
+              <span className="text-sm py-1 px-2 bg-white/20 rounded">{ dayFormat(item.create_time) }</span>
+            </div>
+          </ShowPlainContent>
+        }
         <MomentControl />
       </div>
     </div>

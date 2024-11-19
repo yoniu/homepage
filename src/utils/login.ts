@@ -1,5 +1,5 @@
 import api from '@/src/utils/api';
-import consts from '../configs/consts';
+import consts from '@/src/configs/consts';
 
 interface ILogin {
   name: string;

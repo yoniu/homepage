@@ -3,6 +3,7 @@
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
 import { useEffect, useMemo, useState } from "react";
 import CarouselImage from "@/src/components/carousel";
+import { ShowPlainContent } from "@/src/components/editor/plainContent";
 
 export default function ImageEditor() {
 
@@ -38,6 +39,7 @@ export default function ImageEditor() {
             <p className="text-gray-500">No images found</p>
           </div>
         }
+        { state.content && <ShowPlainContent content={state.content} /> }
       </div>
     </>
   )
