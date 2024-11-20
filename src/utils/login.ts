@@ -39,3 +39,9 @@ export function logged() {
   }
 }
 
+/**
+ * 退出登录
+ */
+export function logout() {
+  localStorage.removeItem(consts.LS_TOKEN);
+}
