@@ -79,7 +79,7 @@ export default function Page() {
     <>
       <Spin spinning={loading} fullscreen={true} />
       <div id="main">
-        <div className="flex items-center justify-center w-full h-full">
+        <div id="content" className="relative flex items-center justify-center w-full h-full overflow-hidden">
           { !currentMoment ? <MomentLoading /> : displayer[currentMomentType](currentMoment.id) }
         </div>
       </div>
