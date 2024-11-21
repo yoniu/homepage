@@ -68,7 +68,7 @@ export default function Twikoo(
         ></div>
         <div className={
           cn(
-            "absolute w-full flex items-center justify-center z-50 bottom-0 left-0 bg-white rounded rounded-t-lg overflow-hidden transition-all",
+            "absolute w-full flex items-center justify-center z-20 bottom-0 left-0 bg-white rounded rounded-t-lg overflow-hidden transition-all",
             show ? 'h-2/3 border' : 'h-0 border-transparent'
           )
         }>
