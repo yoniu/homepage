@@ -65,7 +65,7 @@ export default function CarouselImage({ images, interval, beforeChange, afterCha
             <div
               className={
                 cn(
-                  `w-2 h-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 transition-all`,
+                  `w-2 h-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 transition-all shadow-sm`,
                   currentIndex === index ? 'h-6 bg-opacity-100' : ''
                 )
               }
