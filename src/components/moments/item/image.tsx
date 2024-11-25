@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import CarouselImage from "@/src/components/carousel";
 import { ShowPlainContent } from "@/src/components/editor/plainContent";
 import dayFormat from "@/src/utils/dayFormat";
+import { IFixedTextItem, ShowFixedText } from "@/src/components/editor/fixedText";
 
 export interface IImageItem {
   music?: IMusicItem
   photosets?: IPhotosetItem[]
+  fixedText?: IFixedTextItem[]
 }
 
 interface IProps {
@@ -42,6 +44,9 @@ export default function ImageItem({ item }: IProps) {
             (item.attributes && item.attributes.photosets) ?
             <CarouselImage key={item.id} images={item.attributes.photosets as IPhotosetItem[]} afterChange={handleCarouselChange} interval={2000} /> :
             null
+          }
+          {
+            (item.attributes && item.attributes.fixedText) && <ShowFixedText fixedText={item.attributes.fixedText as IFixedTextItem[]} />
           }
         </div>
         {

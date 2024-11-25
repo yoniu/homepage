@@ -141,3 +141,44 @@ const ItemInput = ({ id, content: _content, top: _top, left: _left, type: _type 
   </div>
   )
 }
+
+export const ShowFixedText = ({ fixedText }: {fixedText: IFixedTextItem[]}) => {
+  return (
+    <>
+      {
+        fixedText.map(item => {
+          if (item.type === EFixedTextType.ORANGE) {
+            return orangeText(item)
+          } else {
+            return plainText(item)
+          }
+        })
+      }
+    </>
+  )
+}
+
+const plainText = (item: IFixedTextItem) => (
+  <span
+    className="text-white absolute text-2xl fixed-text_plain"
+    style={{
+      top: `${item.top}%`,
+      left: `${item.left}%`,
+    }}
+  >
+    {item.content}
+  </span>
+)
+
+const orangeText = (item: IFixedTextItem) => (
+  <span
+    className="absolute text-2xl bg-orange-400 py-1 px-2 text-white"
+    style={{
+      top: `${item.top}%`,
+      left: `${item.left}%`,
+    }}
+  >
+    {item.content}
+  </span>
+)
+
