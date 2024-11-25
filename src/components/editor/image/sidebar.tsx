@@ -2,6 +2,7 @@ import Upload, { IFileItem } from "@/src/components/editor/Upload";
 import EditorMusic from "@/src/components/editor/music";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import EditorPlainContent from "@/src/components/editor/plainContent";
+import EditorFixedText from "@/src/components/editor/fixedText";
 
 export default function ImageEditorSidebar() {
 
@@ -36,6 +37,7 @@ export default function ImageEditorSidebar() {
       <EditorPlainContent />
       <Upload title="上传图片" onClickItem={handleClickUploadFileItem} />
       <EditorMusic />
+      <EditorFixedText />
     </>
   )
 }
