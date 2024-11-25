@@ -160,7 +160,7 @@ export const ShowFixedText = ({ fixedText }: {fixedText: IFixedTextItem[]}) => {
 
 const plainText = (item: IFixedTextItem) => (
   <span
-    className="text-white absolute text-2xl fixed-text_plain"
+    className="absolute text-lg md:text-xl fixed-text_plain"
     style={{
       top: `${item.top}%`,
       left: `${item.left}%`,
@@ -172,7 +172,7 @@ const plainText = (item: IFixedTextItem) => (
 
 const orangeText = (item: IFixedTextItem) => (
   <span
-    className="absolute text-2xl bg-orange-400 py-1 px-2 text-white"
+    className="absolute text-lg md:text-xl bg-orange-400 py-1 px-2 text-white"
     style={{
       top: `${item.top}%`,
       left: `${item.left}%`,
