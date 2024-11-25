@@ -1,7 +1,7 @@
 #root {
     display: flex;
     width: 100%;
-    max-width: 800px;
+    max-width: 840px;
     height: 100svh;
     margin: 0 auto;
     overflow: hidden;
@@ -18,4 +18,9 @@
     @media (min-width: 768px) {
         width: 30%;
     }
+}
+
+.fixed-text_plain {
+    color: #e6e6e6;
+    text-shadow: -1px 1px #999, -3px 3px 5px #80808080;
 }

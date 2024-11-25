@@ -4,6 +4,7 @@ import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
 import { useEffect, useMemo, useState } from "react";
 import CarouselImage from "@/src/components/carousel";
 import { ShowPlainContent } from "@/src/components/editor/plainContent";
+import { IFixedTextItem, ShowFixedText } from "@/src/components/editor/fixedText";
 
 export default function ImageEditor() {
 
@@ -28,6 +29,10 @@ export default function ImageEditor() {
     return state.attributes && state.attributes.photosets && state.attributes.photosets.length
   }, [state.attributes])
 
+  const hasFixedText = useMemo(() => {
+    return state.attributes && state.attributes.fixedText && state.attributes.fixedText.length
+  }, [state.attributes])
+
   return (
     <>
       <div className="absolute left-0 top-0 w-full h-full rounded-md border overflow-hidden flex items-center justify-center">
@@ -38,6 +43,9 @@ export default function ImageEditor() {
           <div className="w-full h-full flex justify-center items-center">
             <p className="text-gray-500">No images found</p>
           </div>
+        }
+        {
+          hasFixedText && <ShowFixedText fixedText={state.attributes.fixedText as IFixedTextItem[]} />
         }
         { state.content && <ShowPlainContent content={state.content} /> }
       </div>
