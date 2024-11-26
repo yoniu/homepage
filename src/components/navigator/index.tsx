@@ -27,9 +27,9 @@ export default function Navigator() {
   const className = (item: TNav) => {
     const url = item.url.includes("/") ? item.url : `/${item.url}`
     if (pathname === url)
-      return "flex flex-col items-center bg-gray-100 hover:bg-gray-200 text-lg rounded px-3 py-2 space-y-1 mb-2 border transition-all"
+      return "flex flex-col items-center bg-gray-100 hover:bg-gray-200 text-lg rounded px-3 py-2 space-y-1 mb-2 border transition-all min-w-16"
     else 
-      return "flex flex-col items-center hover:bg-gray-100 text-lg rounded px-3 py-2 space-y-1 mb-2 transition-all min-w-14"
+      return "flex flex-col items-center hover:bg-gray-100 text-lg rounded px-3 py-2 space-y-1 mb-2 transition-all min-w-16"
   }
 
   const linkItem = (item: TNav) => (

@@ -1,0 +1,26 @@
+.fixed-text_plain {
+  color: #fff;
+  text-shadow: -1px 1px #999, -3px 3px 5px #80808080;
+}
+
+.fixed-text_santaclaus {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px 5px 30px;
+  color: #fff;
+  background-color: #1D8655;
+  background-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+  box-shadow: inset -2px 2px rgba(255, 255, 255, 0.1);
+  border-radius: 0 10px 10px;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -20px;
+    width: 40px;
+    height: calc(40px * 0.94);
+    background-image: url(/images/fixedText/SantaClaus/santaclaus.png);
+    background-size: cover;
+  }
+}

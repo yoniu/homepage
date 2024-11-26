@@ -6,9 +6,12 @@ import SidebarCollapse from "@/src/components/editor/collapse";
 import { nanoid } from "@udecode/plate-common";
 import { useState } from "react";
 
+import "@/src/styles/fixedText.scss";
+
 export enum EFixedTextType {
   PLAIN,
   ORANGE,
+  SANTACLAUS,
 }
 
 export interface IFixedTextItem {
@@ -133,6 +136,7 @@ const ItemInput = ({ id, content: _content, top: _top, left: _left, type: _type 
     <Select className="flex-grow" value={type} onChange={handleTypeChange}>
       <Select.Option value={EFixedTextType.PLAIN}>白色浮动文字</Select.Option>
       <Select.Option value={EFixedTextType.ORANGE}>橙色底色文字</Select.Option>
+      <Select.Option value={EFixedTextType.SANTACLAUS}>圣诞老人样式</Select.Option>
     </Select>
     <div className="flex items-center justify-end space-x-1">
       <Button size="small" onClick={handleUpdate}>更新</Button>
@@ -147,10 +151,13 @@ export const ShowFixedText = ({ fixedText }: {fixedText: IFixedTextItem[]}) => {
     <>
       {
         fixedText.map(item => {
-          if (item.type === EFixedTextType.ORANGE) {
-            return orangeText(item)
-          } else {
-            return plainText(item)
+          switch(item.type) {
+            case EFixedTextType.ORANGE:
+              return orangeText(item)
+            case EFixedTextType.SANTACLAUS:
+              return santaclausText(item)
+            default:
+              return plainText(item)
           }
         })
       }
@@ -173,6 +180,18 @@ const plainText = (item: IFixedTextItem) => (
 const orangeText = (item: IFixedTextItem) => (
   <span
     className="absolute text-lg md:text-xl bg-orange-400 py-1 px-2 text-white"
+    style={{
+      top: `${item.top}%`,
+      left: `${item.left}%`,
+    }}
+  >
+    {item.content}
+  </span>
+)
+
+const santaclausText = (item: IFixedTextItem) => (
+  <span
+    className="absolute text-lg md:text-xl fixed-text_santaclaus"
     style={{
       top: `${item.top}%`,
       left: `${item.left}%`,
