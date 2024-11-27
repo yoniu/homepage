@@ -29,6 +29,16 @@ export default function Page() {
     handleGetPublicAll()
   }, [])
 
+  // 加载下一页
+  useEffect(() => {
+    if (state.hasNextPage) {
+      // 提前加载
+      if (state.currentIndex + 2 === state.momentList.length) {
+        handleGetPublicAll()
+      }
+    }
+  }, [state.currentIndex])
+
   const handleGetPublicAll = () => {
     setLoading(true)
     getPublicAll(state.page, state.pageSize).then(res => {
