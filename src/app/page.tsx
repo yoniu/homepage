@@ -26,6 +26,7 @@ export default function Page() {
   }
 
   useEffect(() => {
+    setLoading(true)
     handleGetPublicAll()
   }, [])
 
@@ -40,7 +41,7 @@ export default function Page() {
   }, [state.currentIndex])
 
   const handleGetPublicAll = () => {
-    setLoading(true)
+    dispatch({ type: 'SETLOADING', state: true })
     getPublicAll(state.page, state.pageSize).then(res => {
       const { hasNextPage, moments } = res.data
       // 如果当前分页大于 1 则推入栈，否则直接赋值
@@ -68,6 +69,7 @@ export default function Page() {
       }
     }).finally(() => {
       setLoading(false)
+      dispatch({ type: 'SETLOADING', state: false })
     })
   }
 
