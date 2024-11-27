@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import "./twikoo.scss";
 
@@ -54,6 +54,15 @@ export default function Twikoo(
       }
     }
   }, [id])
+
+  // 解决客户端未渲染报错
+  const [client, setClient] = useState(false)
+  // 解决客户端未渲染报错
+  useEffect(()  => {
+    setClient(true);
+  }, [])
+  // 解决客户端未渲染报错
+  if (!client) return null
 
   return createPortal(
     (

@@ -168,6 +168,7 @@ export const ShowFixedText = ({ fixedText }: {fixedText: IFixedTextItem[]}) => {
 const plainText = (item: IFixedTextItem) => (
   <span
     className="absolute text-lg md:text-xl fixed-text_plain"
+    key={item.id}
     style={{
       top: `${item.top}%`,
       left: `${item.left}%`,
@@ -180,6 +181,7 @@ const plainText = (item: IFixedTextItem) => (
 const orangeText = (item: IFixedTextItem) => (
   <span
     className="absolute text-lg md:text-xl bg-orange-400 py-1 px-2 text-white"
+    key={item.id}
     style={{
       top: `${item.top}%`,
       left: `${item.left}%`,
@@ -192,6 +194,7 @@ const orangeText = (item: IFixedTextItem) => (
 const santaclausText = (item: IFixedTextItem) => (
   <span
     className="absolute text-lg md:text-xl fixed-text_santaclaus"
+    key={item.id}
     style={{
       top: `${item.top}%`,
       left: `${item.left}%`,
