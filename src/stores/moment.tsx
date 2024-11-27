@@ -6,6 +6,7 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 
 interface IState {
+  loading: boolean;
   currentIndex: number;
   page: number;
   pageSize: number;
@@ -15,6 +16,7 @@ interface IState {
 
 // 定义初始状态
 const initialState: IState = {
+  loading: false,
   currentIndex: 0,
   page: 1,
   pageSize: 5,
@@ -26,6 +28,7 @@ type TAction =
   | { type: 'UPDATELIST', momentList: IMomentItem<any>[], page: number, hasNextPage: boolean } // 更新 list
   | { type: 'PREVINDEX' } // 上一条
   | { type: 'NEXTINDEX' } // 下一条
+  | { type: 'SETLOADING', state: boolean } // Loading
 
 // 定义 reducer 函数
 const reducer = (state: IState, action: TAction): IState => {
@@ -42,6 +45,8 @@ const reducer = (state: IState, action: TAction): IState => {
         return { ...state, currentIndex: state.currentIndex + 1 };
       else
         return state;
+    case 'SETLOADING':
+      return { ...state, loading: action.state };
     default:
       return state;
   }
