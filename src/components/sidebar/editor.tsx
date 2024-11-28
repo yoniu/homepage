@@ -36,7 +36,7 @@ export default function EditorSidebar() {
   }
 
   return (
-    <div className={cn("fixed flex flex-col md:static bg-white w-72 h-screen md:h-full md:w-full z-10 md:z-0 top-0 right-0 md:right-auto md:top-auto p-4 md:p-0 shadow-lg md:shadow-none transition-all", isShow(), 'md:translate-x-0')}>
+    <div className={cn("fixed flex flex-col md:static w-72 h-screen md:h-full md:w-full z-10 md:z-0 top-0 right-0 md:right-auto md:top-auto p-4 md:p-0 shadow-lg md:shadow-none transition-all", isShow(), 'md:translate-x-0')}>
       <SidebarSpread show={show} toggleShow={toggleShow} />
       <div className="flex items-center justify-between mb-2 space-x-2">
         <Link href="/" className="group/back flex items-center py-2">
