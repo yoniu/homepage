@@ -27,6 +27,7 @@ body {
             background-image: url(/images/decorate/chrismas/meltingsnow1.png);
             background-repeat: no-repeat;
             background-size: cover;
+            pointer-events: none;
             z-index: 20;
         }
     }
