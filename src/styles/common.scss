@@ -1,3 +1,7 @@
+body {
+    background-color: #f2f6fa!important;
+}
+
 #root {
     display: flex;
     width: 100%;
@@ -9,6 +13,28 @@
 
 #main {
     flex: 1 0 auto;
+
+    &.chrismas {
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -21px;
+            right: 10px;
+            width: 200px;
+            height: calc(200px * 0.33);
+            background-image: url(/images/decorate/chrismas/meltingsnow1.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            z-index: 20;
+        }
+    }
+}
+
+#content {
+    background-color: #fff;
+    border-radius: 5px;
 }
 
 #sidebar {

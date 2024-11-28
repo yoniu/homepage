@@ -52,7 +52,7 @@ export default function TextItem({ item }: IProps) {
   }
 
   return (
-    <div className="flex flex-col shadow-lg rounded-md overflow-hidden w-full h-full border">
+    <div className="flex flex-col rounded-md overflow-hidden w-full h-full">
       <Music />
       <div className="relative w-full h-full flex-1 bg-white">
         <div className="absolute top-0 left-0 w-full h-full p-3 overflow-y-auto overflow-x-hidden">
