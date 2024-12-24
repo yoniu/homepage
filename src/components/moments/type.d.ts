@@ -39,3 +39,8 @@ declare interface IPhotosetItem {
   type: string;
   name: string;
 }
+
+declare interface IVideoItem {
+  url: string;
+  cover: string;
+}

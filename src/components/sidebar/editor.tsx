@@ -14,6 +14,7 @@ import Link from "next/link";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import TextEditorSidebar from "@/src/components/editor/text/sidebar";
 import ImageEditorSidebar from "@/src/components/editor/image/sidebar";
+import VideoEditorSidebar from "../editor/video/sidebar";
 
 export default function EditorSidebar() {
 
@@ -23,7 +24,7 @@ export default function EditorSidebar() {
   const editorSidebar: Record<EMomentType, JSX.Element> = {
     text: <TextEditorSidebar />,
     image: <ImageEditorSidebar />,
-    video: <TextEditorSidebar />,
+    video: <VideoEditorSidebar />,
     live: <TextEditorSidebar />,
   }
 
