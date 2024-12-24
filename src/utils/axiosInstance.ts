@@ -6,7 +6,7 @@ export type TResponseError = ApiResult<null>
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_HOMEPAGE_API,
-  timeout: 5000,
+  timeout: 60000,
 });
 
 // 添加请求拦截器
