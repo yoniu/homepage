@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import api from "@/src/utils/api";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
@@ -117,13 +117,13 @@ export default function Upload(
     }
   }, [state.id])
 
-  const uploadProps: UploadProps = {
+  const uploadProps: UploadProps = useMemo(() => ({
     name: 'file',
     type: 'select',
     accept: type,
     customRequest: handleUpload,
     showUploadList: false,
-  }
+  }), [type, handleUpload]);
 
   const Container = () => (
     <Spin spinning={loading}>
@@ -134,7 +134,7 @@ export default function Upload(
     </Spin>
   )
 
-  const FileList = (
+  const ImageList = memo((
     {
       list = fileList
     }:
@@ -179,7 +179,57 @@ export default function Upload(
         }
       </Row>
     )
-  }
+  })
+  ImageList.displayName = 'FileList'
+
+  const FileList = memo((
+    {
+      list = fileList
+    }:
+    {
+      list?: IFileItem<any>[]
+    }
+  ) => {
+    if (!list) return <></>;
+
+    const handleClickItem = (item: IFileItem<any>) => {
+      if (onClickItem) onClickItem(item);
+    }
+
+    return (
+      <div className="space-y-1">
+        {
+          list.map(item => (
+            <div
+              className="flex items-center justify-between space-x-2"
+              key={item.id}
+            >
+              <div
+                className="flex-1 truncate"
+                title={item.filename}
+                onClick={() => handleClickItem(item)}
+              >
+                { item.filename }
+              </div>
+              <Popconfirm
+                title="删除图片"
+                description="是否删除该图片？"
+                placement="bottom"
+                onConfirm={ () => handleDeleteFile(item.id)}
+                okText="确认"
+                cancelText="取消"
+              >
+                <button className="text-red-600">
+                  <DeleteOutlined />
+                </button>
+              </Popconfirm>
+            </div>
+          ))
+        }
+      </div>
+    )
+  })
+  FileList.displayName = 'FileList'
 
   return (
     <SidebarCollapse
