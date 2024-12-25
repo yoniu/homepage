@@ -12,6 +12,7 @@ export enum EFixedTextType {
   PLAIN,
   ORANGE,
   SANTACLAUS,
+  SANTAPLANE,
 }
 
 export interface IFixedTextItem {
@@ -137,6 +138,7 @@ const ItemInput = ({ id, content: _content, top: _top, left: _left, type: _type 
       <Select.Option value={EFixedTextType.PLAIN}>白色浮动文字</Select.Option>
       <Select.Option value={EFixedTextType.ORANGE}>橙色底色文字</Select.Option>
       <Select.Option value={EFixedTextType.SANTACLAUS}>圣诞老人样式</Select.Option>
+      <Select.Option value={EFixedTextType.SANTAPLANE}>圣诞老人坐飞机</Select.Option>
     </Select>
     <div className="flex items-center justify-end space-x-1">
       <Button size="small" onClick={handleUpdate}>更新</Button>
@@ -156,6 +158,8 @@ export const ShowFixedText = ({ fixedText }: {fixedText: IFixedTextItem[]}) => {
               return orangeText(item)
             case EFixedTextType.SANTACLAUS:
               return santaclausText(item)
+            case EFixedTextType.SANTAPLANE:
+              return santaplaneText(item)
             default:
               return plainText(item)
           }
@@ -194,6 +198,20 @@ const orangeText = (item: IFixedTextItem) => (
 const santaclausText = (item: IFixedTextItem) => (
   <span
     className="absolute text-lg md:text-xl fixed-text_santaclaus"
+    key={item.id}
+    style={{
+      top: `${item.top}%`,
+      left: `${item.left}%`,
+    }}
+  >
+    {item.content}
+  </span>
+)
+
+
+const santaplaneText = (item: IFixedTextItem) => (
+  <span
+    className="absolute text-lg md:text-xl fixed-text_santaplane"
     key={item.id}
     style={{
       top: `${item.top}%`,
