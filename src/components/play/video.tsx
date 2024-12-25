@@ -1,45 +1,59 @@
-import { MutedFilled, MutedOutlined } from '@ant-design/icons';
+import { MutedOutlined, SoundOutlined } from '@ant-design/icons';
 import { PauseIcon, PlayIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ReactPlayer from 'react-player';
-
 export default function VideoPlayer({ url, autoPlay = false }: { url: string, autoPlay?: boolean }) {
 
   const [playing, setPlaying] = useState(autoPlay)
   const [muted, setMuted] = useState(true)
 
+  const handlePlay = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setPlaying(!playing)
+  }
+
   return (
     <div className="absolute top-0 left-0 bottom-0 right-0 group/video">
       <ReactPlayer
+        loop
         url={url}
-        playing={playing}
         muted={muted}
+        playing={playing}
+        config={{
+          file: {
+            attributes: {
+              playsInline: true,        // iOS 内联播放
+              webkitPlaysInline: true,  // 兼容 Safari
+              x5VideoPlayerType: "h5-page", // 用于腾讯浏览器
+            },
+          },
+        }}
         className="absolute top-0 left-0 bottom-0 right-0"
         width="100%"
         height="100%"
-        loop
       />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center space-x-2">
-        <button
-          className="text-white/80 group-hover/video:opacity-100 opacity-0 transition-opacity"
-          onClick={() => setPlaying(!playing)}
+      <div className="absolute top-0 left-0 right-0 bottom-0 text-white p-3 flex items-start justify-between cursor-pointer" onClick={() => setMuted(!muted)}>
+        <div
+          className="w-[24px] h-[24px] flex items-center justify-center bg-black/20 rounded-full"
+          onClick={handlePlay}
         >
           {
-            playing ?
-            <PauseIcon width="36" height="36" /> :
-            <PlayIcon width="36" height="36" />
+            playing ? <PauseIcon width="16" height="16" /> : <PlayIcon width="16" height="16" />
           }
-        </button>
-        <button
-          className="text-white/80 group-hover/video:opacity-100 opacity-0 transition-opacity"
-          onClick={() => setMuted(!muted)}
-        >
-          {
-            muted ?
-            <MutedFilled className="text-[36px]" width="36" height="36" /> :
-            <MutedOutlined className="text-[36px]" width="36" height="36" />
-          }
-        </button>
+        </div>
+        {
+          !muted ?
+          <div className="w-[24px] h-[24px] flex items-center justify-center bg-black/20 rounded-full">
+            <SoundOutlined />
+          </div> :
+          <div className="flex items-center space-x-2">
+            <span className="opacity-80 drop-shadow-md">轻触视频播放声音</span>
+            <div className="w-[24px] h-[24px] flex items-center justify-center bg-black/20 rounded-full">
+              <MutedOutlined className="-m-3" />
+            </div>
+          </div>
+        }
       </div>
     </div>
   );
