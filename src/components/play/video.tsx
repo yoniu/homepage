@@ -1,8 +1,11 @@
-import { MutedOutlined, SoundOutlined } from '@ant-design/icons';
+import { LoadingOutlined, MutedOutlined, SoundOutlined } from '@ant-design/icons';
 import { PauseIcon, PlayIcon } from '@radix-ui/react-icons';
 import React, { useState } from 'react';
 import ReactPlayer from 'react-player';
+
 export default function VideoPlayer({ url, autoPlay = false }: { url: string, autoPlay?: boolean }) {
+
+  const [loading, setLoading] = useState(true)
 
   const [playing, setPlaying] = useState(autoPlay)
   const [muted, setMuted] = useState(true)
@@ -14,7 +17,8 @@ export default function VideoPlayer({ url, autoPlay = false }: { url: string, au
   }
 
   return (
-    <div className="absolute top-0 left-0 bottom-0 right-0 group/video">
+    <div className="absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center text-white group/video">
+      {/* 播放器 */}
       <ReactPlayer
         loop
         url={url}
@@ -29,10 +33,12 @@ export default function VideoPlayer({ url, autoPlay = false }: { url: string, au
             },
           },
         }}
+        onStart={() => setLoading(false)}
         className="absolute top-0 left-0 bottom-0 right-0"
         width="100%"
         height="100%"
       />
+      {/* 播放控制 */}
       <div className="absolute top-0 left-0 right-0 bottom-0 text-white p-3 flex items-start justify-between cursor-pointer" onClick={() => setMuted(!muted)}>
         <div
           className="w-[24px] h-[24px] flex items-center justify-center bg-black/20 rounded-full"
@@ -55,6 +61,8 @@ export default function VideoPlayer({ url, autoPlay = false }: { url: string, au
           </div>
         }
       </div>
+      {/* 加载效果 */}
+      { loading && <LoadingOutlined className="drop-shadow-md text-2xl" /> }
     </div>
   );
 }
