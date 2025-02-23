@@ -23,7 +23,6 @@ export default function MomentsMasonry() {
 
   const loadNext = useCallback(() => {
     if (state.hasNextPage) {
-      console.log(state.currentIndex)
       dispatch({
         type: 'SETINDEX',
         index: state.momentList.length - 1,
@@ -55,7 +54,7 @@ export default function MomentsMasonry() {
           >
             {
               state.momentList.map((item) => {
-                const type: EMomentType = item.attributes?.type ?? EMomentType.Text;
+                const type: EMomentType = item.attributes?.type ?? "text";
                 return displayer[type](item.id, item)
               })
             }
