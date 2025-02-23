@@ -55,7 +55,7 @@ export default function MomentsMasonry() {
           >
             {
               state.momentList.map((item) => {
-                const type: EMomentType = item.attributes?.type ?? EMomentType.Text;
+                const type: EMomentType = item.attributes?.type ?? "text";
                 return displayer[type](item.id, item)
               })
             }
