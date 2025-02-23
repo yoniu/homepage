@@ -4,6 +4,9 @@
  * 2024.11.17 / 油油
  */
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import consts from '@/src/configs/consts'; 
+
+type TDisplayType = "tiktok" | "masonry";
 
 interface IState {
   loading: boolean;
@@ -12,6 +15,7 @@ interface IState {
   pageSize: number;
   hasNextPage: boolean;
   momentList: IMomentItem<any>[];
+  displayType: TDisplayType;
 }
 
 // 定义初始状态
@@ -19,16 +23,19 @@ const initialState: IState = {
   loading: false,
   currentIndex: 0,
   page: 1,
-  pageSize: 5,
+  pageSize: 6,
   hasNextPage: false,
   momentList: [],
+  displayType: (typeof window !== 'undefined' ? localStorage.getItem(consts.LS_DISPLAYTYPE) as TDisplayType : null) ?? 'tiktok',
 };
 
 type TAction = 
   | { type: 'UPDATELIST', momentList: IMomentItem<any>[], page: number, hasNextPage: boolean } // 更新 list
   | { type: 'PREVINDEX' } // 上一条
   | { type: 'NEXTINDEX' } // 下一条
+  | { type: 'SETINDEX', index: number } // 切换 index
   | { type: 'SETLOADING', state: boolean } // Loading
+  | { type: 'SETDISPLAYTYPE', displayType: TDisplayType } // 切换显示类型
 
 // 定义 reducer 函数
 const reducer = (state: IState, action: TAction): IState => {
@@ -45,8 +52,13 @@ const reducer = (state: IState, action: TAction): IState => {
         return { ...state, currentIndex: state.currentIndex + 1 };
       else
         return state;
+    case 'SETINDEX':
+      return {...state, currentIndex: action.index };
     case 'SETLOADING':
       return { ...state, loading: action.state };
+    case 'SETDISPLAYTYPE':
+      localStorage.setItem(consts.LS_DISPLAYTYPE, action.displayType);
+      return {...state, displayType: action.displayType, currentIndex: 0 };
     default:
       return state;
   }

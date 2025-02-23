@@ -8,7 +8,8 @@ import navigator from "@/src/configs/navigator.json"
 import { Fragment } from "react";
 import useIcon from "@/src/hooks/icon";
 import { useStateContext as useUserstateContext } from "@/src/stores/user";
-import { GlobalOutlined } from "@ant-design/icons";
+import { useStateContext as useMomentstateContext } from "@/src/stores/moment";
+import { GlobalOutlined, TikTokOutlined } from "@ant-design/icons";
 
 // 动态导入，禁止服务端渲染
 const MomentLogin = dynamic(() => import("@/src/components/moments/login"), {
@@ -23,6 +24,7 @@ export default function Navigator() {
   const IconFont = useIcon()
 
   const { state } = useUserstateContext()
+  const { state: momentState, dispatch } = useMomentstateContext()
 
   const className = (item: TNav) => {
     const url = item.url.includes("/") ? item.url : `/${item.url}`
@@ -55,9 +57,29 @@ export default function Navigator() {
       <span className="text-xs">Admin</span>
     </Link>
   )
+
+  const handleSwitch = () => {
+    if (momentState.displayType === 'tiktok') {
+      return dispatch({
+        type: 'SETDISPLAYTYPE',
+        displayType: 'masonry',
+      })
+    }
+    dispatch({
+      type: 'SETDISPLAYTYPE',
+      displayType: 'tiktok',
+    })
+  }
+
+  const Switch = () => (
+    <button className="flex flex-col items-center hover:bg-gray-100 text-lg rounded px-3 py-2 space-y-1 mb-2 transition-all" onClick={handleSwitch}>
+      <TikTokOutlined />
+      <span className="text-xs">切换布局</span>
+    </button>
+  )
   
   return (
-    <div className="flex items-center justify-between flex-wrap text-sm mb-4">
+    <div className="grid grid-cols-3 gap-2 text-sm mb-4">
       {
         navigator.map((item) => (
           item.type === "link" ?
@@ -67,6 +89,7 @@ export default function Navigator() {
       }
       { !state.isLogin && <MomentLogin /> }
       { state.isLogin && <Admin /> }
+      <Switch />
     </div>
   )
 }

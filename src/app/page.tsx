@@ -1,16 +1,13 @@
 "use client";
 
-import MomentLoading from '@/src/components/moments/item/loading';
-
 import Sidebar from "@/src/components/sidebar"
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '@/src/utils/api';
 import { App, Spin } from 'antd';
 import { TResponseError } from '@/src/utils/axiosInstance';
-import TextItem from '@/src/components/moments/item/text';
-import ImageItem from '@/src/components/moments/item/image';
-import VideoItem from '@/src/components/moments/item/video';
+import MomentsTiktok from '@/src/components/moments/list/tiktok';
+import MomentsMasonry from "@/src/components/moments/list/masonry";
 
 export default function Page() {
 
@@ -18,13 +15,6 @@ export default function Page() {
   const { message: messageApi } = App.useApp()
 
   const [loading, setLoading] = useState(true);
-
-  const displayer: Record<EMomentType, (key: number) => JSX.Element> = {
-    text: (key) => <TextItem key={key} item={state.momentList[state.currentIndex]} />,
-    image: (key) => <ImageItem key={key} item={state.momentList[state.currentIndex]} />,
-    video: (key) => <VideoItem key={key} item={state.momentList[state.currentIndex]} />,
-    live: (key) => <div key={key}>live</div>,
-  }
 
   useEffect(() => {
     setLoading(true)
@@ -35,7 +25,7 @@ export default function Page() {
   useEffect(() => {
     if (state.hasNextPage) {
       // 提前加载
-      if (state.currentIndex + 2 === state.momentList.length) {
+      if (state.currentIndex + 2 >= state.momentList.length) {
         handleGetPublicAll()
       }
     }
@@ -74,27 +64,15 @@ export default function Page() {
     })
   }
 
-  const currentMomentType = useMemo<EMomentType>(() => {
-    if (state.momentList[state.currentIndex] && state.momentList[state.currentIndex].attributes && state.momentList[state.currentIndex].attributes.type) {
-      return state.momentList[state.currentIndex].attributes.type
-    }
-    return 'text'
-  }, [state.momentList[state.currentIndex]])
-
-  const currentMoment = useMemo(() => {
-    if (state.momentList && state.momentList[state.currentIndex]) {
-      return state.momentList[state.currentIndex]
-    }
-    return null
-  }, [state.momentList[state.currentIndex]])
-
   return (
     <>
       <Spin spinning={loading} fullscreen={true} />
-      <div id="main" className="chrismas">
-        <div id="content" className="relative flex items-center justify-center w-full h-full shadow-lg border rounded overflow-hidden">
-          { !currentMoment ? <MomentLoading /> : displayer[currentMomentType](currentMoment.id) }
-        </div>
+      <div id="main">
+        {
+          state.displayType === 'masonry' ? 
+          <MomentsMasonry /> :
+          <MomentsTiktok />
+        }
       </div>
       <div id="sidebar">
         <Sidebar />
