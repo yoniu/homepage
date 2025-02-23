@@ -7,6 +7,7 @@ import api from '@/src/utils/api';
 import { App, Spin } from 'antd';
 import { TResponseError } from '@/src/utils/axiosInstance';
 import MomentsTiktok from '@/src/components/moments/list/tiktok';
+import MomentsMasonry from "@/src/components/moments/list/masonry";
 
 export default function Page() {
 
@@ -24,7 +25,7 @@ export default function Page() {
   useEffect(() => {
     if (state.hasNextPage) {
       // 提前加载
-      if (state.currentIndex + 2 === state.momentList.length) {
+      if (state.currentIndex + 2 >= state.momentList.length) {
         handleGetPublicAll()
       }
     }
@@ -67,7 +68,11 @@ export default function Page() {
     <>
       <Spin spinning={loading} fullscreen={true} />
       <div id="main">
-        <MomentsTiktok />
+        {
+          state.displayType === 'masonry' ? 
+          <MomentsMasonry /> :
+          <MomentsTiktok />
+        }
       </div>
       <div id="sidebar">
         <Sidebar />
