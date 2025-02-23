@@ -35,7 +35,7 @@ export default function MomentsTiktok() {
 
   return (
     <>
-      <div id="content" className="relative flex items-center justify-center w-full h-full shadow-lg border rounded overflow-hidden">
+      <div id="content" className="relative flex items-center justify-center w-full h-full shadow-lg border rounded bg-white overflow-hidden">
         { !currentMoment ? <MomentLoading /> : displayer[currentMomentType](currentMoment.id) }
       </div>
     </>
