@@ -3,7 +3,7 @@ import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useState } from "react";
 import Twikoo from "@/src/components/moments/comment/twikoo";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function MomentControl () {
 
@@ -13,6 +13,7 @@ export default function MomentControl () {
 
   const router = useRouter()
   const pathname = usePathname();
+  const query = useSearchParams();
 
   const isHome = useMemo(() => {
     return pathname === '/'
@@ -35,6 +36,14 @@ export default function MomentControl () {
   const currentMoment = useMemo(() => {
     return state.momentList[state.currentIndex];
   }, [state.currentIndex, state.momentList])
+
+  const currentMomentId = useMemo(() => {
+    if (pathname === '/') {
+      return currentMoment?.id
+    } else {
+      return query.get('id')
+    }
+  }, [pathname, query, currentMoment])
 
   // moment 列表分页 加载
   const momentLoading = useMemo(() => {
@@ -86,7 +95,7 @@ export default function MomentControl () {
           >
           <CommentOutlined />
         </button>
-        { currentMoment && <Twikoo id={currentMoment.id} show={showComment} setShow={setShowComment} /> }
+        { currentMomentId && <Twikoo id={+currentMomentId} show={showComment} setShow={setShowComment} /> }
       </>
     </div>
   )
