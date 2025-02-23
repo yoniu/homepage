@@ -1,9 +1,11 @@
+"use client";
+
 import { ArrowDownOutlined, ArrowLeftOutlined, ArrowUpOutlined, CommentOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useState } from "react";
 import Twikoo from "@/src/components/moments/comment/twikoo";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function MomentControl () {
 
@@ -13,7 +15,6 @@ export default function MomentControl () {
 
   const router = useRouter()
   const pathname = usePathname();
-  const query = useSearchParams();
 
   const isHome = useMemo(() => {
     return pathname === '/'
@@ -41,9 +42,11 @@ export default function MomentControl () {
     if (pathname === '/') {
       return currentMoment?.id
     } else {
+      // 获取 pathname 中的 query id
+      const query = new URLSearchParams(window.location.search);
       return query.get('id')
     }
-  }, [pathname, query, currentMoment])
+  }, [pathname, currentMoment])
 
   // moment 列表分页 加载
   const momentLoading = useMemo(() => {
