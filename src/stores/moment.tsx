@@ -53,7 +53,6 @@ const reducer = (state: IState, action: TAction): IState => {
       else
         return state;
     case 'SETINDEX':
-      console.log(action.index)
       return {...state, currentIndex: action.index };
     case 'SETLOADING':
       return { ...state, loading: action.state };

@@ -8,7 +8,7 @@ import MasonryVideoItem from '@/src/components/moments/item/masonry/video';
 import Masonry from 'react-masonry-css';
 import MasonryTextItem from '@/src/components/moments/item/masonry/text';
 import MasonryImageItem from '@/src/components/moments/item/masonry/image';
-import MasonryLoadingItem from '../item/masonry/loading';
+import MasonryLoadingItem from '@/src/components/moments/item/masonry/loading';
 
 export default function MomentsMasonry() {
 
