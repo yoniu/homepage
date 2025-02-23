@@ -1,4 +1,5 @@
 import { VideoCameraOutlined } from "@ant-design/icons"
+import Link from "next/link"
 import { useMemo } from "react"
 
 export interface IVideoState {
@@ -20,8 +21,12 @@ export default function MasonryVideoItem({ item }: IProps) {
     return ''
   }, [item.content])
 
+  const href = useMemo(() => {
+    return `/moment/?id=${item.id}`
+  }, [item.id])
+
   return (
-    <div className="flex flex-col rounded-md overflow-hidden bg-white border mb-4 group/item">
+    <Link className="flex flex-col rounded-md overflow-hidden bg-white border mb-4 group/item" href={href}>
       <div className="relative w-full pb-[75%]">
         <img className="absolute inset-0 w-full h-full object-cover" src={item.attributes?.video?.cover} />
         <div className="absolute top-0 left-0 w-full h-full bg-black/25 text-white group-hover/item:bg-black/10 transition-all">
@@ -41,6 +46,6 @@ export default function MasonryVideoItem({ item }: IProps) {
           </div>
         )
       }
-    </div>
+    </Link>
   )
 }

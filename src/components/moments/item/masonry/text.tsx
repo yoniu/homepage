@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { useMemo } from "react"
+
 export interface ITextItem {
   photosets?: IPhotosetItem[]
 }
@@ -8,8 +11,12 @@ interface IProps {
 
 export default function MasonryTextItem({ item }: IProps) {
 
+  const href = useMemo(() => {
+    return `/moment/?id=${item.id}`
+  }, [item.id])
+
   return (
-    <div className="flex flex-col rounded-md overflow-hidden border mb-4">
+    <Link className="flex flex-col rounded-md overflow-hidden border mb-4" href={href}>
       <div className="relative w-full pb-[100%] sm:pb-[133.33%] overflow-hidden">
         <div className="absolute flex items-center justify-center inset-0 p-4 overflow-hidden">
           <div className="relative line-clamp-[10] break-words text-2xl sm:text-lg overflow-hidden text-ellipsis z-10">
@@ -21,6 +28,6 @@ export default function MasonryTextItem({ item }: IProps) {
       <div className="py-2 px-4 text-md text-gray-500">
         {item.title}
       </div>
-    </div>
+    </Link>
   )
 }
