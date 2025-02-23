@@ -23,7 +23,6 @@ export default function MomentsMasonry() {
 
   const loadNext = useCallback(() => {
     if (state.hasNextPage) {
-      console.log(state.currentIndex)
       dispatch({
         type: 'SETINDEX',
         index: state.momentList.length - 1,

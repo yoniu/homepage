@@ -23,8 +23,7 @@ export default function MasonryTextItem({ item }: IProps) {
             { 
               item.content && item.content.split('\n').map((line, index) => (
                 <Fragment key={index}>
-                  <span>{line}</span>
-                  <br />
+                  <p>{line}</p>
                 </Fragment>
               ))
             }
