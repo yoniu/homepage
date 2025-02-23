@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowDownOutlined, ArrowLeftOutlined, ArrowUpOutlined, CommentOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 import { cn } from "@/lib/utils";
