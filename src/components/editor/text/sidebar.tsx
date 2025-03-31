@@ -3,6 +3,7 @@
 import Upload, { IFileItem } from "@/src/components/editor/Upload";
 import EditorMusic from "@/src/components/editor/music";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
+import EditorLocation from "@/src/components/editor/location";
 
 export default function TextEditorSidebar() {
 
@@ -32,6 +33,7 @@ export default function TextEditorSidebar() {
     <>
       <Upload onClickItem={handleClickUploadFileItem} />
       <EditorMusic />
+      <EditorLocation />
     </>
   )
 }
