@@ -6,11 +6,20 @@ import { ColorPicker, Input, Select } from "antd";
 import { useMemo } from "react";
 import { AggregationColor } from "antd/es/color-picker/color";
 
+export type TBackgroundColor = "solid" | "gradient" | "image";
+
+export type TTextBackgroundColor = {
+  type: TBackgroundColor;
+  color?: string;
+  colors?: string[];
+  image?: string;
+}
+
 export default function EditorBackgroundColor() {
 
   const { state, dispatch } = useEditorStateContext();
 
-  const handleChange = (value: string) => {
+  const handleChange = (value: TBackgroundColor) => {
     const prevAttributes = state.attributes ?? null;
     dispatch({ type: 'UPDATE', states: {
       attributes: {
@@ -65,7 +74,7 @@ export default function EditorBackgroundColor() {
     }})
   }
   
-  const options = [
+  const options: Array<{ label: string, value: TBackgroundColor }> = [
     {
       label: '纯色',
       value: 'solid'
@@ -80,7 +89,7 @@ export default function EditorBackgroundColor() {
     }
   ]
 
-  const backgroundColor = useMemo(() => {
+  const backgroundColor = useMemo<TTextBackgroundColor>(() => {
     if (state.attributes?.backgroundColor) {
       return state.attributes.backgroundColor
     } else {
