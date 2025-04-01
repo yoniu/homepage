@@ -26,7 +26,7 @@ export default function MasonryVideoItem({ item }: IProps) {
   }, [item.id])
 
   return (
-    <Link className="flex flex-col rounded-md overflow-hidden bg-white border mb-4 group/item" href={href}>
+    <Link className="flex flex-col rounded-md overflow-hidden bg-white border mb-1 sm:mb-4 group/item" href={href}>
       <div className="relative w-full pb-[75%]">
         <img className="absolute inset-0 w-full h-full object-cover" src={item.attributes?.video?.cover} />
         <div className="absolute top-0 left-0 w-full h-full bg-black/25 text-white group-hover/item:bg-black/10 transition-all">

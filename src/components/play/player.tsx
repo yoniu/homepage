@@ -41,7 +41,6 @@ export default function Player(props: IProps) {
 
   const togglePlay = () => {
     if (state.howler) {
-      console.log(state.howler.playing())
       state.howler[state.howler.playing() ? 'pause' : 'play']()
     }
   }
