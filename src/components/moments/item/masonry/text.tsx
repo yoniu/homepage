@@ -43,10 +43,10 @@ export default function MasonryTextItem({ item }: IProps) {
   }
 
   return (
-    <Link className="flex flex-col rounded-md overflow-hidden border mb-4" href={href}>
-      <div className="relative w-full pb-[100%] sm:pb-[133.33%] overflow-hidden">
+    <Link className="flex flex-col rounded-md overflow-hidden border mb-1 sm:mb-4" href={href}>
+      <div className="relative w-full pb-[133.33%] overflow-hidden">
         <div className="absolute flex items-center justify-center inset-0 p-4 overflow-hidden">
-          <div className="relative line-clamp-[9] break-words text-2xl sm:text-lg overflow-hidden text-ellipsis z-10" style={{ color: textColor }}>
+          <div className="relative line-clamp-[10] sm:line-clamp-[9] break-words text-sm sm:text-lg overflow-hidden text-ellipsis z-10" style={{ color: textColor }}>
             { 
               item.content && item.content.split('\n').map((line, index) => (
                 <Fragment key={index}>

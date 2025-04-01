@@ -33,7 +33,7 @@ export default function MasonryImageItem({ item }: IProps) {
   }, [item.id])
 
   return (
-    <Link className="flex flex-col rounded-md overflow-hidden bg-white border mb-4 group/item" href={href}>
+    <Link className="flex flex-col rounded-md overflow-hidden bg-white border mb-1 sm:mb-4 group/item" href={href}>
       <div className="relative w-full pb-[133.33%]">
         <img className="absolute inset-0 w-full h-full object-cover" src={photosets[0].url} />
         <div className="absolute top-0 left-0 w-full h-full bg-black/25 text-white group-hover/item:bg-black/10 transition-all">

@@ -32,7 +32,6 @@ export default function MomentsMasonry() {
 
   const breakpointColumnsObj = {
     default: 2,
-    500: 1,
   };
 
   return (
@@ -50,7 +49,7 @@ export default function MomentsMasonry() {
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="flex w-auto"
-            columnClassName="pr-4 bg-clip-padding"
+            columnClassName="sm:pr-4 pr-1 bg-clip-padding"
           >
             {
               state.momentList.map((item) => {

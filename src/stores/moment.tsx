@@ -23,7 +23,7 @@ const initialState: IState = {
   loading: false,
   currentIndex: 0,
   page: 1,
-  pageSize: 6,
+  pageSize: 8,
   hasNextPage: false,
   momentList: [],
   displayType: (typeof window !== 'undefined' ? localStorage.getItem(consts.LS_DISPLAYTYPE) as TDisplayType : null) ?? 'tiktok',
