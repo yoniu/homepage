@@ -6,7 +6,7 @@ import { ColorPicker, Input, Select } from "antd";
 import { useMemo } from "react";
 import { AggregationColor } from "antd/es/color-picker/color";
 
-export type TBackgroundColor = "solid" | "gradient" | "image";
+export type TBackgroundColor = "solid" | "gradient" | "image" | "none";
 
 export type TTextBackgroundColor = {
   type: TBackgroundColor;
@@ -100,6 +100,10 @@ export default function EditorBackgroundColor() {
     {
       label: '图片',
       value: 'image'
+    },
+    {
+      label: '无',
+      value: 'none'
     }
   ]
 
@@ -108,8 +112,7 @@ export default function EditorBackgroundColor() {
       return state.attributes.backgroundColor
     } else {
       return {
-        type: 'solid',
-        color: '#eee',
+        type: 'none',
       }
     }
   }, [state.attributes])
