@@ -57,7 +57,7 @@ export default function MomentControl () {
     <div className="absolute bottom-3 left-0 w-full flex items-center justify-center space-x-5">
       {
         isHome ?
-        <div className="group/control flex items-center p-3  backdrop-blur bg-white opacity-70 hover:opacity-100 rounded-full border shadow-md transition-all z-50">
+        <div className="group/control flex items-center p-3 backdrop-blur bg-white/50 hover:bg-white rounded-full border shadow-md transition-all z-50">
           <button className={cn("border-r border-gray-400 border-opacity-50", publicClassName)} onClick={handlePrev}>
             <ArrowUpOutlined />
           </button>
@@ -76,7 +76,7 @@ export default function MomentControl () {
             className={
               cn(
                 publicClassName,
-                'w-auto p-3 backdrop-blur bg-white opacity-70 hover:opacity-100 rounded-full border shadow-md transition-all z-50'
+                'w-auto p-3 backdrop-blur bg-white/50 hover:bg-white rounded-full border shadow-md transition-all z-50'
               )
             }
             onClick={handleBackHome}
@@ -91,7 +91,7 @@ export default function MomentControl () {
           className={
             cn(
               publicClassName,
-              'w-auto p-3 backdrop-blur bg-white opacity-70 hover:opacity-100 rounded-full border shadow-md transition-all z-50'
+              'w-auto p-3 backdrop-blur bg-white/50 hover:bg-white rounded-full border shadow-md transition-all z-50'
               )
             }
             onClick={() => setShowComment(!showComment)}

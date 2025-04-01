@@ -36,7 +36,7 @@ export default function MomentsMasonry() {
 
   return (
     <>
-      <div id="content" className="relative w-full h-full overflow-y-auto">
+      <div id="content" className="relative w-[auto] h-[calc(100%_+_1rem)] sm:w-full sm:h-full overflow-y-auto -m-2 sm:m-0">
         <InfiniteScroll
           dataLength={state.momentList.length}
           next={loadNext}
