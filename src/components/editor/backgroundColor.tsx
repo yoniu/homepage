@@ -10,6 +10,7 @@ export type TBackgroundColor = "solid" | "gradient" | "image";
 
 export type TTextBackgroundColor = {
   type: TBackgroundColor;
+  textColor?: string;
   color?: string;
   colors?: string[];
   image?: string;
@@ -19,6 +20,19 @@ export default function EditorBackgroundColor() {
 
   const { state, dispatch } = useEditorStateContext();
 
+  const handleChangeTextColor = (color: AggregationColor) => {
+    const prevAttributes = state.attributes ?? null;
+    dispatch({ type: 'UPDATE', states: {
+      attributes: {
+        ...prevAttributes,
+        backgroundColor: {
+          ...prevAttributes?.backgroundColor,
+          textColor: color.toRgbString()
+        }
+      }
+    }})
+  }
+  
   const handleChange = (value: TBackgroundColor) => {
     const prevAttributes = state.attributes ?? null;
     dispatch({ type: 'UPDATE', states: {
@@ -113,6 +127,8 @@ export default function EditorBackgroundColor() {
   
   return (
     <SidebarCollapse title="背景颜色" className="flex flex-col items-start space-y-1" defaultOpen={false}>
+      <span className="text-sm text-gray-500">文字颜色</span>
+      <ColorPicker key="text" value={backgroundColor.textColor ?? '#000'} onChange={handleChangeTextColor} showText />
       <Select options={options} value={backgroundColor.type} onChange={handleChange} />
       {
         backgroundColor.type === 'solid' ? 
