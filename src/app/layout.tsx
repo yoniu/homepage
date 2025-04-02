@@ -9,6 +9,7 @@ import { StateProvider as PlayerStateProvider } from '@/src/stores/audio';
 import { StateProvider as UserStateProvider } from '@/src/stores/user';
 import { StateProvider as EditorStateProvider } from '@/src/stores/editor';
 import { StateProvider as EditorMomentProvider } from '@/src/stores/moment';
+import V6Analyze from '@/src/components/analyze/V6'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -49,6 +50,7 @@ export default function RootLayout({
             </App>
           </ConfigProvider>
         </AntdRegistry>
+        <V6Analyze />
       </body>
     </html>
   )
