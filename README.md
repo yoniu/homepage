@@ -44,6 +44,8 @@
 ```
 NEXT_PUBLIC_HOMEPAGE_API=<后端连接>
 NEXT_PUBLIC_TWIKOO_ENVID=<Twikoo连接>
+NEXT_PUBLIC_V6_ID=<51LA V6 ID>
+NEXT_PUBLIC_V6_CK=<51LA V6 CK>
 ```
 
 安装项目（没 pnpm 也可以使用 npm，最好是 pnpm）:
