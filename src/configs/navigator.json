@@ -2,7 +2,7 @@
   {
     "type": "link",
     "name": "Home",
-    "url": "/",
+    "url": "/v2",
     "description": "主页",
     "icon": "shouye"
   },
