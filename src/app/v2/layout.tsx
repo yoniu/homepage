@@ -21,7 +21,7 @@ export const metadata = {
   }
 }
 
-export default function RootLayout({
+export default function V2Layout({
   children,
 }: {
   children: React.ReactNode

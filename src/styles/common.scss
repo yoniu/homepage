@@ -45,3 +45,16 @@ body {
         width: 30%;
     }
 }
+
+.header-filter {
+    mask-image: linear-gradient(to bottom, #000, transparent);
+    pointer-events: none;
+
+    & > * {
+        pointer-events: auto;
+    }
+}
+
+.scrollbar-hide {
+    scrollbar-width: none;
+}
