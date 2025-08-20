@@ -69,7 +69,7 @@ export default function MomentLogin() {
     <>
       <button className="flex items-center hover:bg-gray-300 text-lg rounded px-3 py-2 -mx-3 space-x-2 transition-all" onClick={() => setVisible(true)}>
         <IconFont className="text-lg" type="icon-yonghu" />
-        <span className="text-xs">Login</span>
+        <span className="text-xs lg:text-base">Login</span>
       </button>
       {
         ReactDOM.createPortal(

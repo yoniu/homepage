@@ -36,10 +36,10 @@ export default function MomentsTiktok() {
 
   return (
     <>
-      <div className="absolute top-0 left-0 w-full py-4 z-10">
-        <div className="header-filter absolute w-full h-full top-0 left-0 bg-white/10 backdrop-blur-xl z-0"></div>
+      <div className="absolute top-0 left-0 w-full py-4 z-20">
         <MomentControl />
       </div>
+      <div className="header-filter absolute w-full h-40 top-0 left-0 bg-white/10 backdrop-blur-xl z-10"></div>
       <div id="content" className="relative w-full h-full">
         { !currentMoment ? <MomentLoading /> : displayer[currentMomentType](currentMoment.id) }
       </div>
