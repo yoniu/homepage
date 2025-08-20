@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useState } from "react";
 import Twikoo from "@/src/components/moments/comment/twikoo";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import MusicControl from "./MusicControl";
 
 export default function MomentControl () {
 
@@ -100,6 +101,10 @@ export default function MomentControl () {
           <CommentOutlined />
         </button>
         { currentMomentId && <Twikoo id={+currentMomentId} show={showComment} setShow={setShowComment} /> }
+      </>
+      {/* 音乐播放器 */}
+      <>
+        <MusicControl />
       </>
     </div>
   )
