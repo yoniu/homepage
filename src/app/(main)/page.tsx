@@ -2,15 +2,15 @@
 
 import Sidebar from "@/src/components/sidebar"
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import api from '@/src/utils/api';
 import { App, Spin } from 'antd';
 import { TResponseError } from '@/src/utils/axiosInstance';
 import MomentsTiktok from '@/src/components/moments/list/tiktok';
 import MomentsMasonry from "@/src/components/moments/list/masonry";
 
-export default function Page() {
-
+// 创建一个包装组件来处理 Suspense
+function MomentsWrapper() {
   const { state, dispatch }  = useMomentStateContext();
   const { message: messageApi } = App.useApp()
 
@@ -78,6 +78,14 @@ export default function Page() {
         <Sidebar />
       </div>
     </>
+  )
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>加载中...</div>}>
+      <MomentsWrapper />
+    </Suspense>
   )
 }
 
