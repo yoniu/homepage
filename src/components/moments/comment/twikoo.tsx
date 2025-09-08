@@ -69,7 +69,7 @@ export default function Twikoo(
       <>
         <div className={
             cn(
-              "absolute z-10 top-0 left-0 w-full h-full rounded bg-black/60 transition-all",
+              "absolute z-10 top-0 left-0 w-full h-full bg-black/60 transition-all",
               show ? 'opacity-100' : 'opacity-0 pointer-events-none'
             )
           }
@@ -77,8 +77,8 @@ export default function Twikoo(
         ></div>
         <div className={
           cn(
-            "absolute w-full max-w-[500px] flex items-center justify-center z-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl overflow-hidden transition-all",
-            show ? 'h-3/5 max-h-[400px] border bottom-4' : 'h-0 border-transparent bottom-0'
+            "absolute w-full max-w-[500px] bottom-0 sm:bottom-4 z-20 left-1/2 -translate-x-1/2 bg-white rounded-t-2xl rounded-b-none sm:rounded-b-2xl overflow-hidden transition-all",
+            show ? 'h-3/5 max-h-[400px] border' : 'h-0 border-transparent'
           )
         }>
           <div id="tcomment"></div>

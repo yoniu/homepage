@@ -55,7 +55,7 @@ export default function MomentControl () {
   }, [state.currentIndex, state.hasNextPage])
 
   return (
-    <div className="relative w-full flex items-center px-3 space-x-5 z-10">
+    <div className="relative w-full flex items-center px-3 space-x-3 z-10 sm:space-x-5">
       {
         isHome ?
         <div className="group/control flex items-center bg-white/90 rounded-full border-2 border-white space-x-1 p-1 shadow-lg transition-all">
