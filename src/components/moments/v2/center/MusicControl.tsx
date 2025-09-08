@@ -1,5 +1,4 @@
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
-import { useStateContext as useAudioStateContext } from "@/src/stores/audio.tsx";
 import { useStateContext } from "@/src/stores/audio.tsx";
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Howl } from 'howler';
@@ -21,9 +20,21 @@ function MusicPlayer(props: IMusicItem) {
 
   // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
-    if (!props.url) return;
+    // 无音乐
+    if (!props.url) return () => {
+      dispatch({type: 'CLEAN'})
+    };
+    // 清理
     dispatch({type: 'CLEAN'})
-    if (playerRef.current) return dispatch({type: 'SET', howler: playerRef.current})
+    // 有音乐
+    if (playerRef.current) {
+      // 设置音乐
+      dispatch({type: 'SET', howler: playerRef.current})
+      return () => {
+        dispatch({type: 'CLEAN'})
+      }
+    }
+    // 设置 loading
     setLoading(true)
     const howler = new Howl({
       src: [props.url],
@@ -36,6 +47,7 @@ function MusicPlayer(props: IMusicItem) {
         setPlaying(false)
       }
     });
+    // 设置音乐
     dispatch({type: 'SET', howler: howler})
     playerRef.current = howler
     howler.once('load', () => {
@@ -84,7 +96,6 @@ function MusicPlayer(props: IMusicItem) {
 export default function MusicControl() {
 
   const { state: momentState }  = useMomentStateContext();
-  const { dispatch: audioDispatch } = useAudioStateContext()
   
   /**
    * 当前 moment
@@ -95,10 +106,6 @@ export default function MusicControl() {
     }
     return null
   }, [momentState.momentList[momentState.currentIndex]])
-
-  useEffect(() => {
-    audioDispatch({type: 'CLEAN'})
-  }, [currentMoment, audioDispatch])
 
   /**
    * 当前 moment 是否有音乐
