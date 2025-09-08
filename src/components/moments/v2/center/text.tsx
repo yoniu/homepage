@@ -70,10 +70,10 @@ export default function TextItem({ item }: IProps) {
   }
 
   return (
-    <div className="flex flex-col overflow-hidden w-full h-full">
+    <div id="text-item" className="flex flex-col overflow-hidden w-full h-full">
       <div className="relative w-full h-full flex-1 bg-white overflow-hidden">
         <Background />
-        <div className="absolute top-14 left-0 w-full bottom-0 p-3 sm:p-5 overflow-y-auto overflow-x-hidden scrollbar-hide" style={{ color: textColor }}>
+        <div className="absolute top-14 left-0 w-full bottom-0 p-3 sm:p-5 overflow-y-auto overflow-x-hidden scrollbar-hide z-10" style={{ color: textColor }}>
           <div className="max-w-2xl mx-auto">
             { item.title && <h3 className="sm:text-3xl text-2xl font-bold mb-2">{item.title}</h3> }
             <AuthorAvatar {...item.author} other={dayFormat(item.create_time)} />

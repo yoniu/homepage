@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import "./twikoo.scss";
 
@@ -16,6 +16,11 @@ export default function Twikoo(
   }
 ) {
   
+
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+  }, [])
+
   useEffect(() => {
     if (!id) return
     // 通过 CDN 引入 twikoo js 文件
@@ -53,7 +58,7 @@ export default function Twikoo(
         document.body.removeChild(secondScript)
       }
     }
-  }, [id])
+  }, [id, handleWheel])
 
   // 解决客户端未渲染报错
   const [client, setClient] = useState(false)
@@ -75,12 +80,15 @@ export default function Twikoo(
           }
           onClick={() => setShow(false)}
         ></div>
-        <div className={
-          cn(
-            "absolute w-full max-w-[500px] bottom-0 sm:bottom-4 z-20 left-1/2 -translate-x-1/2 bg-white rounded-t-2xl rounded-b-none sm:rounded-b-2xl overflow-hidden transition-all",
-            show ? 'h-3/5 max-h-[400px] border' : 'h-0 border-transparent'
-          )
-        }>
+        <div
+          className={
+            cn(
+              "absolute w-full max-w-[500px] bottom-0 sm:bottom-4 z-20 left-1/2 -translate-x-1/2 bg-white rounded-t-2xl rounded-b-none sm:rounded-b-2xl overflow-hidden transition-all",
+              show ? 'h-3/5 max-h-[400px] border' : 'h-0 border-transparent'
+            )
+          }
+          onWheel={handleWheel}
+        >
           <div id="tcomment"></div>
           <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-b from-transparent via-white/80 to-white"></div>
         </div>

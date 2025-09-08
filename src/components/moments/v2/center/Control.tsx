@@ -3,11 +3,12 @@
 import { ArrowDownOutlined, ArrowLeftOutlined, ArrowUpOutlined, CommentOutlined, LoadingOutlined, MenuOutlined } from "@ant-design/icons";
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 import { cn } from "@/lib/utils";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Twikoo from "@/src/components/moments/comment/twikoo";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import MusicControl from "./MusicControl";
 import { useStateContext as useUserstateContext } from "@/src/stores/user";
+import { useDebounceFn } from "ahooks";
 
 export default function MomentControl () {
 
@@ -28,13 +29,37 @@ export default function MomentControl () {
     router.push('/')
   }, [router])
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     dispatch({ type: "PREVINDEX" });
-  }
+  }, [dispatch])
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     dispatch({ type: "NEXTINDEX" });
-  }
+  }, [dispatch])
+
+  /**
+   * 防抖
+   */
+  const { run: handleWheel } = useDebounceFn((e: WheelEvent) => {
+    if (document.getElementById('text-item')?.contains(e.target as Node)) {
+      return
+    }
+    if (e.deltaY > 0) {
+      handleNext()
+    } else if (e.deltaY < 0) {
+      handlePrev()
+    }
+  }, { wait: 500 })
+
+  /**
+   * 监听鼠标滚轮切换 moment
+   */
+  useEffect(() => {
+    document.addEventListener('wheel', handleWheel)
+    return () => {
+      document.removeEventListener('wheel', handleWheel)
+    }
+  }, [handleWheel])
 
   const publicClassName = "text-black flex items-center justify-center w-8 p-2 hover:bg-gray-300 rounded-full transition-all"
 
