@@ -72,7 +72,7 @@ export default function Center() {
 
   return (
     <>
-      <div className="relative w-[80%] h-full">
+      <div className="relative w-full sm:w-[80%] h-full">
         <Spin spinning={loading} fullscreen={true} />
         {
           state.displayType === 'masonry' ? 

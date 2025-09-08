@@ -8,21 +8,26 @@ import { logged } from '@/src/utils/login';
 
 interface IState {
   isLogin: boolean;
+  menuShow: boolean;
 }
 
 // 定义初始状态
 const initialState: IState = {
   isLogin: false,
+  menuShow: false,
 };
 
 type TAction = 
   | { type: 'UPDATELOGIN' } // 更新登录状态
+  | { type: 'SETMENUSHOW', show: boolean } // 设置菜单显示状态
 
 // 定义 reducer 函数
 const reducer = (state: IState, action: TAction): IState => {
   switch (action.type) {
     case 'UPDATELOGIN':
       return { ...state, isLogin: logged() };
+    case 'SETMENUSHOW':
+      return { ...state, menuShow: action.show };
     default:
       return state;
   }

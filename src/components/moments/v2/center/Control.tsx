@@ -1,16 +1,18 @@
 "use client";
 
-import { ArrowDownOutlined, ArrowLeftOutlined, ArrowUpOutlined, CommentOutlined, LoadingOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, ArrowLeftOutlined, ArrowUpOutlined, CommentOutlined, LoadingOutlined, MenuOutlined } from "@ant-design/icons";
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useState } from "react";
 import Twikoo from "@/src/components/moments/comment/twikoo";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import MusicControl from "./MusicControl";
+import { useStateContext as useUserstateContext } from "@/src/stores/user";
 
 export default function MomentControl () {
 
   const { state, dispatch }  = useMomentStateContext();
+  const { state: userState, dispatch: userDispatch } = useUserstateContext()
 
   const [showComment, setShowComment] = useState(false)
 
@@ -55,57 +57,62 @@ export default function MomentControl () {
   }, [state.currentIndex, state.hasNextPage])
 
   return (
-    <div className="relative w-full flex items-center px-3 space-x-3 z-10 sm:space-x-5">
-      {
-        isHome ?
-        <div className="group/control flex items-center bg-white/90 rounded-full border-2 border-white space-x-1 p-1 shadow-lg transition-all">
-          <button className={cn(publicClassName)} onClick={handlePrev}>
-            <ArrowUpOutlined />
-          </button>
-          <div className="w-[1px] h-4 bg-gray-300"></div>
-          {
-            momentLoading ?
-            <button className={cn(publicClassName)}>
-              <LoadingOutlined /> {/* 分页加载中 */}
-            </button>:
-            <button className={cn(publicClassName)} onClick={handleNext}>
-              <ArrowDownOutlined />
+    <div className="relative w-full flex items-center justify-between px-3 z-10">
+      <button className="flex-shrink-0 w-auto p-3 flex sm:hidden items-center justify-center bg-white/90 border-2 border-white rounded-full shadow-lg transition-all" onClick={() => userDispatch({ type: 'SETMENUSHOW', show: !userState.menuShow })}>
+        <MenuOutlined />
+      </button>
+      <div className="relative flex items-center flex-row-reverse sm:flex-row space-x-3 space-x-reverse sm:space-x-5">
+        {
+          isHome ?
+          <div className="group/control flex items-center bg-white/90 rounded-full border-2 border-white space-x-1 p-1 shadow-lg transition-all">
+            <button className={cn(publicClassName)} onClick={handlePrev}>
+              <ArrowUpOutlined />
             </button>
-          }
-        </div> :
+            <div className="w-[1px] h-4 bg-gray-300"></div>
+            {
+              momentLoading ?
+              <button className={cn(publicClassName)}>
+                <LoadingOutlined /> {/* 分页加载中 */}
+              </button>:
+              <button className={cn(publicClassName)} onClick={handleNext}>
+                <ArrowDownOutlined />
+              </button>
+            }
+          </div> :
+          <>
+            <button
+              className={
+                cn(
+                  publicClassName,
+                  'w-auto p-3 bg-white/90 border-2 border-white rounded-full shadow-lg transition-all'
+                )
+              }
+              onClick={handleBackHome}
+            >
+              <ArrowLeftOutlined />
+            </button>
+          </>
+        }
+        {/* 评论功能 */}
         <>
           <button
             className={
               cn(
                 publicClassName,
                 'w-auto p-3 bg-white/90 border-2 border-white rounded-full shadow-lg transition-all'
-              )
-            }
-            onClick={handleBackHome}
-          >
-            <ArrowLeftOutlined />
+                )
+              }
+              onClick={() => setShowComment(!showComment)}
+            >
+            <CommentOutlined />
           </button>
+          { currentMomentId && <Twikoo id={+currentMomentId} show={showComment} setShow={setShowComment} /> }
         </>
-      }
-      {/* 评论功能 */}
-      <>
-        <button
-          className={
-            cn(
-              publicClassName,
-              'w-auto p-3 bg-white/90 border-2 border-white rounded-full shadow-lg transition-all'
-              )
-            }
-            onClick={() => setShowComment(!showComment)}
-          >
-          <CommentOutlined />
-        </button>
-        { currentMomentId && <Twikoo id={+currentMomentId} show={showComment} setShow={setShowComment} /> }
-      </>
-      {/* 音乐播放器 */}
-      <>
-        <MusicControl />
-      </>
+        {/* 音乐播放器 */}
+        <>
+          <MusicControl />
+        </>
+      </div>
     </div>
   )
 }
