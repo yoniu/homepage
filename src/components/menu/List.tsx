@@ -31,7 +31,7 @@ export default function List() {
     if (pathname === url)
       return "flex items-center bg-[#005DD9]/20 rounded-lg px-2 py-2 -mx-2 space-x-2 transition-all"
     else 
-      return "flex items-center hover:bg-gray-300 rounded-lg px-2 py-2 -mx-2 space-x-2 transition-all"
+      return "flex items-center hover:bg-gray-200 rounded-lg px-2 py-2 -mx-2 space-x-2 transition-all"
   }
 
   const textClassName = "text-xs lg:text-base"
@@ -54,7 +54,7 @@ export default function List() {
   )
 
   const Admin = () => (
-    <Link className="flex items-center hover:bg-gray-300 rounded px-3 py-2 -mx-3 space-x-2 transition-all" href="/admin">
+    <Link className="flex items-center hover:bg-gray-200 rounded px-3 py-2 -mx-3 space-x-2 transition-all" href="/admin">
       <GlobalOutlined />
       <span className={textClassName}>Admin</span>
     </Link>
@@ -74,7 +74,7 @@ export default function List() {
   }
 
   const Switch = () => (
-    <button className="hidden items-center hover:bg-gray-300 rounded px-3 py-2 -mx-3 space-x-2 transition-all" onClick={handleSwitch}>
+    <button className="hidden items-center hover:bg-gray-200 rounded px-3 py-2 -mx-3 space-x-2 transition-all" onClick={handleSwitch}>
       <TikTokOutlined />
       <span className={textClassName}>切换布局</span>
     </button>
