@@ -1,4 +1,5 @@
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
+import { useStateContext as useAudioStateContext } from "@/src/stores/audio.tsx";
 import { useStateContext } from "@/src/stores/audio.tsx";
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Howl } from 'howler';
@@ -83,6 +84,7 @@ function MusicPlayer(props: IMusicItem) {
 export default function MusicControl() {
 
   const { state: momentState }  = useMomentStateContext();
+  const { dispatch: audioDispatch } = useAudioStateContext()
   
   /**
    * 当前 moment
@@ -93,6 +95,10 @@ export default function MusicControl() {
     }
     return null
   }, [momentState.momentList[momentState.currentIndex]])
+
+  useEffect(() => {
+    audioDispatch({type: 'CLEAN'})
+  }, [currentMoment, audioDispatch])
 
   /**
    * 当前 moment 是否有音乐
