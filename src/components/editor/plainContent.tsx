@@ -41,7 +41,7 @@ export function ShowPlainContent(
   }
 ) {
   return (
-    <div className={cn("absolute left-0 bottom-0 w-full py-4 px-6 bg-gradient-to-t from-black/100 via-black/80 to-transparent text-white text-xl z-index-10", className)}>
+    <div className={cn("absolute left-0 bottom-4 w-full py-4 px-6 bg-gradient-to-t from-transparent via-black/100 to-transparent text-white text-xl z-index-10", className)}>
       { children }
       { 
         content.split('\n').map((line, index) => (

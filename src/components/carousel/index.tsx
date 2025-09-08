@@ -54,22 +54,27 @@ export default function CarouselImage({ images, interval, beforeChange, afterCha
         ))}
       </div>
       {/* 控制按钮 */}
-      <div className="absolute top-1/2 right-4 transform -translate-y-1/2 flex flex-col items-center">
-        {images.map((_, index) => (
+      <div className="absolute bottom-1 left-1 right-1 space-x-1 flex items-center">
+        {images.map((_, index: number) => (
           <button
             key={index}
-            className="p-2"
+            className={
+              cn(
+                "flex-1 h-2 rounded-sm bg-white bg-opacity-50 hover:bg-opacity-100 transition-all shadow-md",
+                currentIndex === index ? 'bg-opacity-100' : ''
+              )
+            }
             onClick={() => handleSetCurrentIndex(index)}
           >
             {/* 用于扩大点击范围 */}
-            <div
+            {/* <div
               className={
                 cn(
                   `w-2 h-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 transition-all shadow-md`,
                   currentIndex === index ? 'h-6 bg-opacity-100' : ''
                 )
               }
-            ></div>
+            ></div> */}
           </button>
         ))}
       </div>
