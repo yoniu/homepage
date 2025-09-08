@@ -74,7 +74,7 @@ export default function List() {
   }
 
   const Switch = () => (
-    <button className="flex items-center hover:bg-gray-300 rounded px-3 py-2 -mx-3 space-x-2 transition-all" onClick={handleSwitch}>
+    <button className="hidden items-center hover:bg-gray-300 rounded px-3 py-2 -mx-3 space-x-2 transition-all" onClick={handleSwitch}>
       <TikTokOutlined />
       <span className={textClassName}>切换布局</span>
     </button>
