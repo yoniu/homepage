@@ -70,7 +70,7 @@ function MusicPlayer(props: IMusicItem) {
   return (
     <div className="group/control flex items-center bg-white/90 rounded-full border-2 border-white space-x-1 p-1 shadow-lg transition-all">
       <Tooltip title={ playing ? '暂停' : '播放' } placement="bottom">
-        <div className="relative">
+        <div className="flex-shrink-0 relative">
           <img
             className={cn("w-8 h-8 rounded-full", loading ? "animate-pulse" : "")}
             src={props.cover ?? CONST.LUTHER}
@@ -84,7 +84,7 @@ function MusicPlayer(props: IMusicItem) {
           </button>
         </div>
       </Tooltip>
-      <div className="text-gray-500 max-w-48 w-[1/3]">
+      <div className="text-gray-500 max-w-32 w-[1/3] sm:max-w-48">
         <Marquee play={playing}>
           { `${props.name} - ${props.singer}` }
         </Marquee>
