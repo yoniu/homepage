@@ -26,7 +26,7 @@ const initialState: IState = {
   pageSize: 8,
   hasNextPage: false,
   momentList: [],
-  displayType: (typeof window !== 'undefined' ? localStorage.getItem(consts.LS_DISPLAYTYPE) as TDisplayType : null) ?? 'tiktok',
+  displayType: 'tiktok' //(typeof window !== 'undefined' ? localStorage.getItem(consts.LS_DISPLAYTYPE) as TDisplayType : null) ?? 'tiktok',
 };
 
 type TAction = 
