@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function NotFound() {
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full min-h-screen flex justify-center items-center">
       <Empty
         description={
           <span>
