@@ -20,7 +20,7 @@ export default function Twikoo(
     if (!id) return
     // 通过 CDN 引入 twikoo js 文件
     const cdnScript = document.createElement('script')
-    cdnScript.src = 'https://cdn.smartcis.cn/npm/twikoo@1.6.40/dist/twikoo.all.min.js'
+    cdnScript.src = '/js/twikoo.all.min.js'
     cdnScript.async = true
 
     const loadSecondScript = () => {
@@ -77,8 +77,8 @@ export default function Twikoo(
         ></div>
         <div className={
           cn(
-            "absolute w-full flex items-center justify-center z-20 bottom-0 left-0 bg-white rounded rounded-t-lg overflow-hidden transition-all",
-            show ? 'h-2/3 border' : 'h-0 border-transparent'
+            "absolute w-full max-w-[500px] flex items-center justify-center z-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl overflow-hidden transition-all",
+            show ? 'h-3/5 max-h-[400px] border bottom-4' : 'h-0 border-transparent bottom-0'
           )
         }>
           <div id="tcomment"></div>
