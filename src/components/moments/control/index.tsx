@@ -5,7 +5,7 @@ import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useState } from "react";
 import Twikoo from "@/src/components/moments/comment/twikoo";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function MomentControl () {
 
@@ -15,9 +15,10 @@ export default function MomentControl () {
 
   const router = useRouter()
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const isHome = useMemo(() => {
-    return pathname === '/'
+    return pathname === '/' || pathname === '/v2'
   }, [pathname])
 
   const handleBackHome = useCallback(() => {
@@ -39,14 +40,13 @@ export default function MomentControl () {
   }, [state.currentIndex, state.momentList])
 
   const currentMomentId = useMemo(() => {
-    if (pathname === '/') {
+    if (pathname === '/' || pathname === '/v2') {
       return currentMoment?.id
     } else {
-      // 获取 pathname 中的 query id
-      const query = new URLSearchParams(window.location.search);
-      return query.get('id')
+      // 使用 useSearchParams 替代 window.location.search
+      return searchParams.get('id')
     }
-  }, [pathname, currentMoment])
+  }, [pathname, currentMoment, searchParams])
 
   // moment 列表分页 加载
   const momentLoading = useMemo(() => {

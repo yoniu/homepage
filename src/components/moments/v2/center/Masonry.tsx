@@ -1,7 +1,7 @@
 "use client";
 
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Divider } from 'antd';
 import MasonryVideoItem from '@/src/components/moments/item/masonry/video';
@@ -13,11 +13,6 @@ import MasonryLoadingItem from '@/src/components/moments/item/masonry/loading';
 export default function MomentsMasonry() {
 
   const { state, dispatch }  = useMomentStateContext();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const displayer: Record<EMomentType, (key: number, item: IMomentItem<any>) => JSX.Element> = {
     text: (key, item) => <MasonryTextItem key={key} item={item} />,
@@ -36,23 +31,16 @@ export default function MomentsMasonry() {
   }, [state.hasNextPage])
 
   const breakpointColumnsObj = {
-    default: 2,
+    default: 4,
+    1280: 3,
+    1024: 2,
+    768: 1,
+    480: 1,
   };
-
-  // 在客户端渲染之前显示加载状态
-  if (!isClient) {
-    return (
-      <div id="content" className="relative w-[auto] h-[calc(100%_+_1rem)] sm:w-full sm:h-full overflow-y-auto -m-2 sm:m-0">
-        <div className="flex items-center justify-center h-full">
-          <MasonryLoadingItem />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
-      <div id="content" className="relative w-[auto] h-[calc(100%_+_1rem)] sm:w-full sm:h-full overflow-y-auto -m-2 sm:m-0">
+      <div id="content" className="relative h-full overflow-y-auto py-4 pl-4">
         <InfiniteScroll
           dataLength={state.momentList.length}
           next={loadNext}

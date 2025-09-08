@@ -39,24 +39,23 @@ export default function VideoPlayer({ url, autoPlay = false }: { url: string, au
         height="100%"
       />
       {/* 播放控制 */}
-      <div className="absolute top-0 left-0 right-0 bottom-0 text-white p-3 flex items-start justify-between cursor-pointer" onClick={() => setMuted(!muted)}>
+      <div className="absolute top-0 left-0 right-0 bottom-0 text-white p-3 flex items-center justify-center space-x-3 cursor-pointer opacity-0 hover:opacity-100 transition-all" onClick={() => setMuted(!muted)}>
         <div
-          className="w-[24px] h-[24px] flex items-center justify-center bg-black/20 rounded-full"
+          className="w-[48px] h-[48px] flex items-center justify-center bg-black/50 rounded-full"
           onClick={handlePlay}
         >
           {
-            playing ? <PauseIcon width="16" height="16" /> : <PlayIcon width="16" height="16" />
+            playing ? <PauseIcon width="24" height="24" /> : <PlayIcon width="24" height="24" />
           }
         </div>
         {
           !muted ?
-          <div className="w-[24px] h-[24px] flex items-center justify-center bg-black/20 rounded-full">
-            <SoundOutlined />
+          <div className="w-[48px] h-[48px] flex items-center justify-center bg-black/50 rounded-full">
+            <SoundOutlined width="24" height="24" />
           </div> :
           <div className="flex items-center space-x-2">
-            <span className="opacity-80 drop-shadow-md">轻触视频播放声音</span>
-            <div className="w-[24px] h-[24px] flex items-center justify-center bg-black/20 rounded-full">
-              <MutedOutlined className="-m-3" />
+            <div className="w-[48px] h-[48px] flex items-center justify-center bg-black/50 rounded-full">
+              <MutedOutlined className="-m-3" width="24" height="24" />
             </div>
           </div>
         }

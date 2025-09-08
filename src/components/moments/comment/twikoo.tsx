@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import "./twikoo.scss";
 
@@ -16,11 +16,16 @@ export default function Twikoo(
   }
 ) {
   
+
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+  }, [])
+
   useEffect(() => {
     if (!id) return
     // 通过 CDN 引入 twikoo js 文件
     const cdnScript = document.createElement('script')
-    cdnScript.src = 'https://cdn.smartcis.cn/npm/twikoo@1.6.40/dist/twikoo.all.min.js'
+    cdnScript.src = '/js/twikoo.all.min.js'
     cdnScript.async = true
 
     const loadSecondScript = () => {
@@ -53,7 +58,7 @@ export default function Twikoo(
         document.body.removeChild(secondScript)
       }
     }
-  }, [id])
+  }, [id, handleWheel])
 
   // 解决客户端未渲染报错
   const [client, setClient] = useState(false)
@@ -69,18 +74,21 @@ export default function Twikoo(
       <>
         <div className={
             cn(
-              "absolute z-10 top-0 left-0 w-full h-full rounded bg-black/60 transition-all",
+              "absolute z-10 top-0 left-0 w-full h-full bg-black/60 transition-all",
               show ? 'opacity-100' : 'opacity-0 pointer-events-none'
             )
           }
           onClick={() => setShow(false)}
         ></div>
-        <div className={
-          cn(
-            "absolute w-full flex items-center justify-center z-20 bottom-0 left-0 bg-white rounded rounded-t-lg overflow-hidden transition-all",
-            show ? 'h-2/3 border' : 'h-0 border-transparent'
-          )
-        }>
+        <div
+          className={
+            cn(
+              "absolute w-full max-w-[500px] bottom-0 sm:bottom-4 z-20 left-1/2 -translate-x-1/2 bg-white rounded-t-2xl rounded-b-none sm:rounded-b-2xl overflow-hidden transition-all",
+              show ? 'h-3/5 max-h-[400px] border' : 'h-0 border-transparent'
+            )
+          }
+          onWheel={handleWheel}
+        >
           <div id="tcomment"></div>
           <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-b from-transparent via-white/80 to-white"></div>
         </div>
