@@ -27,9 +27,9 @@ export default function VideoPlayer({ url, autoPlay = false }: { url: string, au
         config={{
           file: {
             attributes: {
-              playsInline: true,        // iOS 内联播放
-              webkitPlaysInline: true,  // 兼容 Safari
-              x5VideoPlayerType: "h5-page", // 用于腾讯浏览器
+              playsInline: true,        // iOS 内联播放 (标准属性用布尔值)
+              webkitplaysinline: "true",  // 兼容 Safari (非标准属性用小写字符串)
+              x5videoplayertype: "h5-page", // 用于腾讯浏览器 (非标准属性用小写字符串)
             },
           },
         }}

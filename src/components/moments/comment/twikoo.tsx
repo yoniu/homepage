@@ -51,11 +51,11 @@ export default function Twikoo(
         cdnScript.removeEventListener('load', loadSecondScript)
       }
       if (cdnScript) {
-        document.body.removeChild(cdnScript)
+        document.body?.removeChild(cdnScript)
       }
       const secondScript = document.querySelector('#twikoo-init-id')
       if (secondScript) {
-        document.body.removeChild(secondScript)
+        document.body?.removeChild(secondScript)
       }
     }
   }, [id, handleWheel])
