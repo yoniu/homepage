@@ -35,6 +35,7 @@ function Moment() {
     image: () => item ? <ImageItem key={item.id} item={item} /> : <></>,
     video: () => item ? <VideoItem key={item.id} item={item} /> : <></>,
     live: () => item ? <div key={item.id}>live</div> : <></>,
+    music: () => item ? <div key={item.id}>music</div> : <></>,
   }
   
   const currentMomentType = useMemo<EMomentType>(() => {

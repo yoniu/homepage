@@ -24,6 +24,7 @@ export default function MomentsMasonry() {
     image: (key, item) => <MasonryImageItem key={key} item={item} />,
     video: (key, item) => <MasonryVideoItem key={key} item={item} />,
     live: (key) => <div key={key}>live</div>,
+    music: (key) => <div key={key}>music</div>,
   }
 
   const loadNext = useCallback(() => {
