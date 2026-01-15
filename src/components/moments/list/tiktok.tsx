@@ -17,6 +17,7 @@ export default function MomentsTiktok() {
     image: (key) => <ImageItem key={key} item={state.momentList[state.currentIndex]} />,
     video: (key) => <VideoItem key={key} item={state.momentList[state.currentIndex]} />,
     live: (key) => <div key={key}>live</div>,
+    music: (key) => <div key={key}>music</div>,
   }
 
   const currentMomentType = useMemo<EMomentType>(() => {

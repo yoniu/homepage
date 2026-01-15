@@ -62,10 +62,11 @@ export default function TextItem({ item }: IProps) {
               item.attributes.photosets?.map((photo) => (
                 <Col key={photo.id} span={8}>
                   <Image
-                    wrapperClassName="relative aspect-square w-full overflow-hidden rounded"
-                    className="absolute w-full !h-full object-cover"
+                    style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }}
+                    wrapperStyle={{ position: 'relative', aspectRatio: '1/1', width: '100%', overflow: 'hidden', borderRadius: '0.25rem' }}
                     src={photo.url}
                     alt={photo.name}
+                    preview={false}
                   />
                 </Col>
               ))
