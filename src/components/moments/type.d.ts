@@ -9,6 +9,7 @@ declare enum EMomentType {
   Image = 'image',
   Video = 'video',
   Live = 'live',
+  Music = 'music',
 }
 
 declare interface IUser {

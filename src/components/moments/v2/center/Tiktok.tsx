@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import TextItem from '@/src/components/moments/v2/center/text';
 import ImageItem from '@/src/components/moments/v2/center/image';
 import VideoItem from '@/src/components/moments/v2/center/video';
+import MusicItem from '@/src/components/moments/v2/center/music';
 
 export default function MomentsTiktok() {
 
@@ -18,6 +19,7 @@ export default function MomentsTiktok() {
     image: (key) => <ImageItem key={key} item={state.momentList[state.currentIndex]} />,
     video: (key) => <VideoItem key={key} item={state.momentList[state.currentIndex]} />,
     live: (key) => <div key={key}>live</div>,
+    music: (key) => <MusicItem key={key} item={state.momentList[state.currentIndex]} />,
   }
 
   const currentMomentType = useMemo<EMomentType>(() => {

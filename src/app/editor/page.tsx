@@ -11,6 +11,7 @@ import EditorSidebar from '@/src/components/sidebar/editor';
 import { TResponseError } from '@/src/utils/axiosInstance';
 import ImageEditor from '@/src/components/editor/image';
 import VideoEditor from '@/src/components/editor/video';
+import MusicEditor from '@/src/components/editor/music/index';
 
 export default function Page() {
   return (
@@ -37,6 +38,7 @@ function Editor() {
     image: <ImageEditor />,
     video: <VideoEditor />,
     live: <TextEditor />,
+    music: <MusicEditor />,
   }
 
   const handleCreateMoment = () => {
