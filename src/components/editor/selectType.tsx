@@ -6,10 +6,11 @@ export default function SelectType() {
   const { state, dispatch } = useEditorStateContext();
 
   const options = [
-    { label: 'text', value: 'text' },
-    { label: 'image', value: 'image' },
-    { label: 'video', value: 'video' },
-    { label: 'live photo', value: 'live' },
+    { label: '文章', value: 'text' },
+    { label: '图片', value: 'image' },
+    { label: '视频', value: 'video' },
+    { label: 'livephoto (未完成)', value: 'live' },
+    { label: '音乐', value: 'music' },
   ];
 
   const handleChange = (type: string) => {

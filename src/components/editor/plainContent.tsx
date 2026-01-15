@@ -1,10 +1,15 @@
 "use client";
+import { Fragment, useMemo } from "react";
+
+import CryptoJS from 'crypto-js';
+
+import { Input } from 'antd';
+
+import { cn } from "@/lib/utils";
 
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
+
 import SidebarCollapse from "@/src/components/editor/collapse";
-import { Input } from 'antd';
-import { Fragment } from "react";
-import { cn } from "@/lib/utils";
 
 const { TextArea } = Input;
 
@@ -51,6 +56,53 @@ export function ShowPlainContent(
           </Fragment>
         ))
       }
+    </div>
+  )
+}
+
+export function ShowMusicPlainContent(
+  {
+    content,
+    children,
+    mail,
+    author,
+    className,
+  }:
+  {
+    content: string,
+    children?: React.ReactNode,
+    author?: string,
+    mail?: string,
+    className?: string,
+  }
+) {
+
+  const avatar = useMemo(() => CryptoJS.MD5(mail || '').toString(), [mail])
+
+  return (
+    <div className={cn(
+      "shrink-0 flex items-start px-4 py-2 rounded-xl m-4 w-[calc(100%-2rem)] space-x-2",
+      "bg-white/10 border-2 border-solid border-white/20",
+      "hover:shadow-lg hover:shadow-white/20 hover:translate-y-[-2px] transition-all duration-300",
+      className
+    )}>
+      <div className="shrink-0">
+        <img src={`https://weavatar.com/avatar/${avatar}?s=100`} alt="author" className="w-8 h-8 rounded-full border-2 border-solid border-white/30 box-content" />
+      </div>
+      <div className="flex-1">
+        <div className="font-bold">{author}</div>
+        <div className="opacity-60 text-sm sm:text-base">
+          { children }
+          { 
+            content.split('\n').map((line, index) => (
+              <Fragment key={index}>
+                <span>{line}</span>
+                <br />
+              </Fragment>
+            ))
+          }
+        </div>
+      </div>
     </div>
   )
 }
