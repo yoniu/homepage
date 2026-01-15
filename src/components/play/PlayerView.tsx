@@ -22,6 +22,7 @@ export default function MusicPlayerView(props: IProps) {
 
   const [duration, setDuration] = useState(0)
 
+  // 使用响应式方向：小屏默认 col，大屏默认 row（如果未指定）
   const direction = props.direction ?? "row"
 
   const playerRef = useRef<Howl | null>(null)
@@ -94,25 +95,43 @@ export default function MusicPlayerView(props: IProps) {
     }
   }
 
-  // 容器样式
+  // 容器样式 - 响应式：小屏默认 col，大屏默认 row
   const containerCss = useMemo(() => {
-    if (direction === "row") {
-      return "flex items-center space-x-4 justify-center"
-    } else {
-      return "flex flex-col items-center space-y-4 text-center justify-center"
-    }
+    const baseFlex = "flex justify-center items-center"
+    // 添加响应式类：小屏始终 col，大屏根据 direction
+    const smallScreen = "flex-col space-y-4"
+    const largeScreen = direction === "col" 
+      ? "lg:flex-col lg:space-y-4" 
+      : "lg:flex-row lg:space-x-12"
+    
+    return `${baseFlex} ${smallScreen} ${largeScreen} text-center`
   }, [direction])
 
-  // 左侧样式
+  // 左侧样式 - 响应式
   const leftCss = useMemo(() => {
-    let css = ""
+    // 小屏样式
+    let css = "w-full max-w-[200px] "
+    // 大屏样式
     if (direction === "row") {
-      css += " w-1/2"
+      css += "lg:w-1/2 lg:max-w-[300px]"
     } else {
-      css += " w-full max-w-[200px]"
+      css += "lg:w-full lg:max-w-[200px]"
     }
     css += " bg-[url('/images/decorate/player/record-border.png')] bg-cover bg-center bg-no-repeat"
     css += " rounded-full border-4 border-solid border-white/5"
+    return css
+  }, [direction])
+
+  // 右侧样式 - 响应式
+  const rightCss = useMemo(() => {
+    // 小屏样式
+    let css = "w-full max-w-[200px] space-y-4 items-center "
+    // 大屏样式
+    if (direction === "row") {
+      css += "lg:w-1/2 lg:max-w-[300px]"
+    } else {
+      css += "lg:w-full lg:max-w-[200px]"
+    }
     return css
   }, [direction])
 
@@ -161,7 +180,7 @@ export default function MusicPlayerView(props: IProps) {
       {/* 右侧 */}
       <div className={cn(
         "flex flex-col w-1/2",
-        containerCss,
+        rightCss,
       )}>
         {/* 歌曲信息 */}
         <div className="flex flex-col space-y-2">

@@ -67,6 +67,13 @@ export default function MomentControl () {
     return state.momentList[state.currentIndex];
   }, [state.currentIndex, state.momentList])
 
+  const isMusic = useMemo(() => {
+    if (currentMoment && currentMoment.attributes && currentMoment.attributes.type) {
+      return currentMoment.attributes.type === 'music'
+    }
+    return false
+  }, [currentMoment])
+
   const currentMomentId = useMemo(() => {
     if (pathname === '/' || pathname === '/v2') {
       return currentMoment?.id
@@ -135,7 +142,7 @@ export default function MomentControl () {
         </>
         {/* 音乐播放器 */}
         <>
-          <MusicControl />
+          { !isMusic && <MusicControl /> }
         </>
       </div>
     </div>
