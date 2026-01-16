@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 
 import SidebarCollapse from "@/src/components/editor/collapse";
+import dayFormat from "@/src/utils/dayFormat";
 
 const { TextArea } = Input;
 
@@ -66,6 +67,7 @@ export function ShowMusicPlainContent(
     children,
     mail,
     author,
+    date,
     className,
   }:
   {
@@ -74,10 +76,12 @@ export function ShowMusicPlainContent(
     author?: string,
     mail?: string,
     className?: string,
+    date?: Date,
   }
 ) {
 
   const avatar = useMemo(() => CryptoJS.MD5(mail || '').toString(), [mail])
+  const dateStr = useMemo(() => date && dayFormat(date), [date])
 
   return (
     <div className={cn(
@@ -90,7 +94,9 @@ export function ShowMusicPlainContent(
         <img src={`https://weavatar.com/avatar/${avatar}?s=100`} alt="author" className="w-8 h-8 rounded-full border-2 border-solid border-white/30 box-content" />
       </div>
       <div className="flex-1">
-        <div className="font-bold">{author}</div>
+        <div className="font-bold">
+          { author + (dateStr ? ' · ' + dateStr : '') }
+        </div>
         <div className="opacity-60 text-sm sm:text-base">
           { children }
           { 
