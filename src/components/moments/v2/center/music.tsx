@@ -48,6 +48,10 @@ export default function MusicItem({ item }: IProps) {
     return musicAttributes?.music?.singer
   }, [musicAttributes.music?.singer])
 
+  const lrc = useMemo(() => {
+    return musicAttributes?.music?.lrc
+  }, [musicAttributes.music?.lrc])
+
   return (
     <div
       className="text-[var(--text-color)] absolute left-0 top-0 w-full h-full"
@@ -68,8 +72,9 @@ export default function MusicItem({ item }: IProps) {
           cover={cover ?? ""}
           url={url ?? ""}
           singer={singer ?? ""}
+          lrc={lrc}
         />
-        { item.content && <ShowMusicPlainContent content={item.content} author={item.author.name} mail={item.author?.email} /> }
+        { item.content && <ShowMusicPlainContent content={item.content} author={item.author.name} mail={item.author?.email} date={item.create_time} /> }
       </div>
     </div>
   )

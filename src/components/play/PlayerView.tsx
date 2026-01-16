@@ -6,6 +6,7 @@ import CONST from "@/src/configs/consts";
 import { CaretRightFilled, LoadingOutlined, PauseOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
+import { parseLrc, getCurrentLyric } from "@/src/utils/lrcParser";
 
 type IProps = IMusicItem & {
   direction?: "col" | "row",
@@ -22,12 +23,16 @@ export default function MusicPlayerView(props: IProps) {
 
   const [duration, setDuration] = useState(0)
 
+  const [currentLyric, setCurrentLyric] = useState('')
+
   // 使用响应式方向：小屏默认 col，大屏默认 row（如果未指定）
   const direction = props.direction ?? "row"
 
   const playerRef = useRef<Howl | null>(null)
 
   const progressRef = useRef<NodeJS.Timeout | null>(null)
+
+  const lyricsRef = useRef<Array<{ time: number; text: string }>>([])
 
   // 更新进度
   const updateProgress = () => {
@@ -37,9 +42,36 @@ export default function MusicPlayerView(props: IProps) {
       if (typeof seek === 'number' && typeof duration === 'number') {
         setProgress(seek);
         setDuration(duration);
+        
+        // 使用 ref 获取最新的 lyrics
+        const currentLyrics = lyricsRef.current;
+        if (currentLyrics.length > 0) {
+          const lyric = getCurrentLyric(currentLyrics, seek);
+          setCurrentLyric(lyric);
+        }
       }
     }
   }
+
+  // 加载歌词文件
+  useEffect(() => {
+    if (!props.lrc) {
+      setCurrentLyric('');
+      lyricsRef.current = [];
+      return;
+    }
+
+    fetch(props.lrc)
+      .then(res => res.text())
+      .then(lrcContent => {
+        const parsedLyrics = parseLrc(lrcContent);
+        lyricsRef.current = parsedLyrics;
+      })
+      .catch(err => {
+        console.error('Failed to load lyrics:', err);
+        lyricsRef.current = [];
+      });
+  }, [props.lrc]);
 
   // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
@@ -69,6 +101,8 @@ export default function MusicPlayerView(props: IProps) {
       onend() {
         // 循环播放时重置进度
         setProgress(0);
+        // 重置歌词
+        setCurrentLyric('');
       }
     });
     dispatch({type: 'SET', howler: howler})
@@ -191,6 +225,13 @@ export default function MusicPlayerView(props: IProps) {
             { props.singer }
           </div>
         </div>
+        
+        {/* 歌词显示 */}
+        {currentLyric && (
+          <div className="w-full text-center text-sm opacity-90">
+            {currentLyric}
+          </div>
+        )}
         
         {/* 进度条 - 在播放按钮上方 */}
         {!loading && (
