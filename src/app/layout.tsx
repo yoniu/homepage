@@ -1,5 +1,3 @@
-import { Inter } from 'next/font/google'
-
 import '@/src/styles/common.scss'
 import '@/styles/globals.css'
 import { App, ConfigProvider } from 'antd'
@@ -10,8 +8,6 @@ import { StateProvider as UserStateProvider } from '@/src/stores/user';
 import { StateProvider as EditorStateProvider } from '@/src/stores/editor';
 import { StateProvider as EditorMomentProvider } from '@/src/stores/moment';
 import V6Analyze from '@/src/components/analyze/V6'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: '油油',
@@ -28,7 +24,7 @@ export default function V2Layout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <AntdRegistry>
           <ConfigProvider theme={{
             token: {
