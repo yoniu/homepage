@@ -1,4 +1,10 @@
-import { CaretRightFilled, LoadingOutlined, PauseOutlined } from "@ant-design/icons";
+import {
+  CaretRightFilled,
+  LoadingOutlined,
+  MutedOutlined,
+  PauseOutlined,
+  SoundOutlined,
+} from "@ant-design/icons";
 import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
 import { Howl } from "howler";
@@ -14,7 +20,7 @@ type IProps = Partial<IMusicItem> & {
 };
 
 export default function MusicPlayerView(props: IProps) {
-  const { dispatch } = useStateContext();
+  const { state: audioState, dispatch } = useStateContext();
 
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -161,6 +167,13 @@ export default function MusicPlayerView(props: IProps) {
     }
   };
 
+  const toggleMuted = () => {
+    dispatch({
+      type: "SET_MUTED",
+      muted: !audioState.muted,
+    });
+  };
+
   const containerCss = useMemo(() => {
     const baseFlex = "flex justify-center items-center";
     const smallScreen = "flex-col space-y-4";
@@ -268,18 +281,34 @@ export default function MusicPlayerView(props: IProps) {
           </div>
         )}
 
-        <Tooltip title={playing ? "暂停" : "播放"} placement="bottom">
-          <button
-            className="
-              border-2 border-solid border-white
-              bg-white/90 backdrop-blur-md rounded-full
-              text-black flex items-center justify-center w-12 p-2
-            "
-            onClick={togglePlay}
-          >
-            {loading ? <LoadingOutlined /> : playing ? <PauseOutlined /> : <CaretRightFilled />}
-          </button>
-        </Tooltip>
+        <div className="flex items-center justify-center gap-3">
+          <Tooltip title={audioState.muted ? "Unmute" : "Mute"} placement="bottom">
+            <button
+              className="
+                border-2 border-solid border-white
+                bg-white/90 backdrop-blur-md rounded-full
+                text-black flex items-center justify-center w-12 p-2
+              "
+              onClick={toggleMuted}
+              type="button"
+            >
+              {audioState.muted ? <MutedOutlined /> : <SoundOutlined />}
+            </button>
+          </Tooltip>
+          <Tooltip title={playing ? "Pause" : "Play"} placement="bottom">
+            <button
+              className="
+                border-2 border-solid border-white
+                bg-white/90 backdrop-blur-md rounded-full
+                text-black flex items-center justify-center w-12 p-2
+              "
+              onClick={togglePlay}
+              type="button"
+            >
+              {loading ? <LoadingOutlined /> : playing ? <PauseOutlined /> : <CaretRightFilled />}
+            </button>
+          </Tooltip>
+        </div>
       </div>
     </div>
   );

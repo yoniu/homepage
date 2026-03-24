@@ -1,4 +1,10 @@
-import { CaretRightFilled, LoadingOutlined, PauseOutlined } from '@ant-design/icons';
+import {
+  CaretRightFilled,
+  LoadingOutlined,
+  MutedOutlined,
+  PauseOutlined,
+  SoundOutlined,
+} from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { cn } from '@udecode/cn';
 import { Howl } from 'howler';
@@ -11,7 +17,7 @@ import { disposeHowler, useStateContext as useAudioStateContext } from '@/src/st
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 
 function MomentAudioPlayer(props: Partial<IMusicItem>) {
-  const { dispatch } = useAudioStateContext();
+  const { state: audioState, dispatch } = useAudioStateContext();
 
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -80,17 +86,25 @@ function MomentAudioPlayer(props: Partial<IMusicItem>) {
     }
   };
 
+  const toggleMuted = () => {
+    dispatch({
+      type: 'SET_MUTED',
+      muted: !audioState.muted,
+    });
+  };
+
   return (
     <div className="group/control flex items-center bg-white/90 rounded-full border-2 border-white space-x-1 p-1 shadow-lg transition-all">
-      <Tooltip title={playing ? '暂停' : '播放'} placement="bottom">
+      <Tooltip title={playing ? 'Pause' : 'Play'} placement="bottom">
         <div className="flex-shrink-0 relative">
           <img
             className={cn('w-8 h-8 rounded-full', loading ? 'animate-pulse' : '')}
             src={props.cover ?? CONST.LUTHER}
           />
           <button
-            className="absolute top-0 left-0 size-full flex items-center justify-center text-white hover:backdrop-blur-lg rounded-full"
+            className="absolute top-0 left-0 size-full flex items-center justify-center rounded-full text-white hover:backdrop-blur-lg"
             onClick={togglePlay}
+            type="button"
           >
             {loading ? <LoadingOutlined /> : playing ? <PauseOutlined /> : <CaretRightFilled />}
           </button>
@@ -99,6 +113,15 @@ function MomentAudioPlayer(props: Partial<IMusicItem>) {
       <div className="text-gray-500 max-w-32 w-[1/3] sm:max-w-48">
         <Marquee play={playing}>{`${props.name} - ${props.singer}`}</Marquee>
       </div>
+      <Tooltip title={audioState.muted ? 'Unmute' : 'Mute'} placement="bottom">
+        <button
+          className="flex size-8 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-black/5 hover:text-black"
+          onClick={toggleMuted}
+          type="button"
+        >
+          {audioState.muted ? <MutedOutlined /> : <SoundOutlined />}
+        </button>
+      </Tooltip>
     </div>
   );
 }
