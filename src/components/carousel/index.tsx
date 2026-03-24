@@ -4,12 +4,19 @@ import { useCallback, useEffect, useRef, useState } from "react"
 interface IProps {
   images: IPhotosetItem[]
   interval?: number
+  currentIndex?: number
   beforeChange?: (currentIndex: number, nextIndex: number) => void
   afterChange?: (currentIndex: number) => void
 }
 
-export default function CarouselImage({ images, interval, beforeChange, afterChange }: IProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+export default function CarouselImage({
+  images,
+  interval,
+  currentIndex: controlledCurrentIndex,
+  beforeChange,
+  afterChange,
+}: IProps) {
+  const [currentIndex, setCurrentIndex] = useState(controlledCurrentIndex ?? 0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleSetCurrentIndex = useCallback((index: number) => {
@@ -19,7 +26,15 @@ export default function CarouselImage({ images, interval, beforeChange, afterCha
   }, [beforeChange, currentIndex, afterChange])
 
   useEffect(() => {
-    if (interval) {
+    if (controlledCurrentIndex === undefined) {
+      return;
+    }
+
+    setCurrentIndex(controlledCurrentIndex);
+  }, [controlledCurrentIndex]);
+
+  useEffect(() => {
+    if (interval && images.length > 1) {
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         const nextIndex = (currentIndex + 1) % images.length;
@@ -33,6 +48,19 @@ export default function CarouselImage({ images, interval, beforeChange, afterCha
       timerRef.current = null;
     };
   }, [interval, images.length, currentIndex, beforeChange, afterChange]);
+
+  useEffect(() => {
+    if (!images.length) {
+      if (currentIndex !== 0) {
+        setCurrentIndex(0);
+      }
+      return;
+    }
+
+    if (currentIndex > images.length - 1) {
+      handleSetCurrentIndex(images.length - 1);
+    }
+  }, [currentIndex, handleSetCurrentIndex, images.length]);
 
   return (
     <div className="relative flex items-center justify-center w-full h-full overflow-hidden">

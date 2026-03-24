@@ -54,8 +54,7 @@ export default function EditorFixedText({
     () => (state.attributes?.fixedText ?? []) as IFixedTextItem[],
     [state.attributes?.fixedText]
   );
-
-  const [selectedPhotosetId, setSelectedPhotosetId] = useState<number>();
+  const selectedPhotosetId = state.selectedPhotosetId;
 
   useEffect(() => {
     if (scope !== "photoset") {
@@ -63,7 +62,14 @@ export default function EditorFixedText({
     }
 
     if (!photosets.length) {
-      setSelectedPhotosetId(undefined);
+      if (selectedPhotosetId !== undefined) {
+        dispatch({
+          type: "UPDATE",
+          states: {
+            selectedPhotosetId: undefined,
+          },
+        });
+      }
       return;
     }
 
@@ -72,9 +78,14 @@ export default function EditorFixedText({
     );
 
     if (!hasSelectedPhotoset) {
-      setSelectedPhotosetId(photosets[0].id);
+      dispatch({
+        type: "UPDATE",
+        states: {
+          selectedPhotosetId: photosets[0].id,
+        },
+      });
     }
-  }, [photosets, scope, selectedPhotosetId]);
+  }, [dispatch, photosets, scope, selectedPhotosetId]);
 
   const selectedPhotoset = useMemo(() => {
     if (scope !== "photoset") {
@@ -168,8 +179,16 @@ export default function EditorFixedText({
       {scope === "photoset" ? (
         photosets.length ? (
           <Select
+            className="w-full"
             value={selectedPhotoset?.id}
-            onChange={(value) => setSelectedPhotosetId(value)}
+            onChange={(value) =>
+              dispatch({
+                type: "UPDATE",
+                states: {
+                  selectedPhotosetId: value,
+                },
+              })
+            }
             options={photosets.map((item, index) => ({
               label: item.name || `Image ${index + 1}`,
               value: item.id,

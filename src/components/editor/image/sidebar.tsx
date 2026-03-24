@@ -18,11 +18,16 @@ export default function ImageEditorSidebar() {
     };
     const photosets: IPhotosetItem[] = [...prevPhotosets];
     const index = photosets.findIndex((photoItem) => photoItem.id === item.id);
+    let selectedPhotosetId = state.selectedPhotosetId;
 
     if (index > -1) {
       photosets.splice(index, 1);
+      if (selectedPhotosetId === item.id) {
+        selectedPhotosetId = photosets[Math.min(index, photosets.length - 1)]?.id;
+      }
     } else {
       photosets.push(photo);
+      selectedPhotosetId = item.id;
     }
 
     dispatch({
@@ -32,6 +37,7 @@ export default function ImageEditorSidebar() {
           ...prevAttributes,
           photosets,
         },
+        selectedPhotosetId,
       },
     });
   };
