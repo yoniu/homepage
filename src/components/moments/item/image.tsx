@@ -67,7 +67,7 @@ export default function ImageItem({ item }: IProps) {
               key={item.id}
               images={photosets}
               afterChange={handleCarouselChange}
-              interval={2000}
+              interval={5000}
             />
           ) : null}
           {
