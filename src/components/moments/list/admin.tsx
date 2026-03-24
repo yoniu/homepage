@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { App, Button, Popconfirm } from "antd"
 import Link from "next/link";
 
@@ -22,22 +22,36 @@ export default function AdminMomentList() {
   const [hasNextPage, setHasNextPage] = useState(false)
   const [items, setItems] = useState<IMomentItem<any>[]>([])
 
+  const getMomentList = useCallback(async (targetPage: number, reset = false) => {
+    setLoading(true)
+
+    try {
+      const response = await getAllMoments(targetPage, pageSize)
+      setHasNextPage(response.data.hasNextPage)
+      setItems((prevItems) => reset ? response.data.moments : [...prevItems, ...response.data.moments])
+    } catch (error) {
+      normalizeApiError(messageApi, error)
+    } finally {
+      setLoading(false)
+    }
+  }, [messageApi, pageSize])
+
   // 进入页面获取列表
   useEffect(() => {
     void getMomentList(1, true)
-  }, [])
+  }, [getMomentList])
 
   // 点击加载更多
-  const handlePageChange = () => {
+  const handlePageChange = useCallback(() => {
     if (!hasNextPage || loading) return
 
     const nextPage = page + 1
     setPage(nextPage)
     void getMomentList(nextPage)
-  }
+  }, [getMomentList, hasNextPage, loading, page])
 
   // 点击删除确认
-  const handleDelete = (id: number) => {
+  const handleDelete = useCallback((id: number) => {
     if (loading) return
 
     setLoading(true)
@@ -50,22 +64,7 @@ export default function AdminMomentList() {
     }).finally(() => {
       setLoading(false)
     })
-  }
-
-  // 获取动态列表
-  const getMomentList = async (targetPage: number, reset = false) => {
-    setLoading(true)
-
-    try {
-      const response = await getAllMoments(targetPage, pageSize)
-      setHasNextPage(response.data.hasNextPage)
-      setItems((prevItems) => reset ? response.data.moments : [...prevItems, ...response.data.moments])
-    } catch (error) {
-      normalizeApiError(messageApi, error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [getMomentList, loading, messageApi])
 
   /**
    * Moment Item

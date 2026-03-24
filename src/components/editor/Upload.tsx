@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import { App, Button, Col, Popconfirm, Row, Spin, Upload as UploadAntd, UploadProps } from "antd";
@@ -37,8 +37,24 @@ export default function Upload(
   const [ fileList, setFileList ] = useState<IFileItem<any>[]>([]);
 
   const [ loading, setLoading ] = useState(false);
+  type CustomUploadRequest = NonNullable<UploadProps['customRequest']>;
 
-  const handleUpload: UploadProps['customRequest'] = (options) =>  {
+  const handleGetFileList = useCallback(async (id: number) => {
+    setLoading(true);
+
+    try {
+      const response = await getMomentFiles(id);
+      if (response.data) {
+        setFileList(response.data);
+      }
+    } catch (error) {
+      normalizeApiError(message, error);
+    } finally {
+      setLoading(false);
+    }
+  }, [message])
+
+  const handleUpload: CustomUploadRequest = useCallback((options) =>  {
     const moment = query.get('id');
     if (!moment) return;
 
@@ -68,24 +84,9 @@ export default function Upload(
         void handleGetFileList(state.id);
       }
     });
-  }
+  }, [handleGetFileList, message, query, state.id])
 
-  const handleGetFileList = async (id: number) => {
-    setLoading(true);
-
-    try {
-      const response = await getMomentFiles(id);
-      if (response.data) {
-        setFileList(response.data);
-      }
-    } catch (error) {
-      normalizeApiError(message, error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleDeleteFile = (id: number) => {
+  const handleDeleteFile = useCallback((id: number) => {
     setLoading(true);
     deleteFile(id).then(() => {
       message.success('删除成功');
@@ -97,13 +98,13 @@ export default function Upload(
     }).finally(() => {
       setLoading(false);
     });
-  }
+  }, [handleGetFileList, message, state.id])
 
   useEffect(() => {
     if (state.id) {
       void handleGetFileList(state.id);
     }
-  }, [state.id])
+  }, [handleGetFileList, state.id])
 
   const uploadProps: UploadProps = useMemo(() => ({
     name: 'file',

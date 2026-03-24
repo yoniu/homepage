@@ -2,23 +2,10 @@
 
 import AdminMomentList from '@/src/components/moments/list/admin';
 import AdminSidebar from '@/src/components/sidebar/admin';
-import { logged } from '@/src/features/auth/api';
-import { App } from 'antd';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRequireLogin } from '@/src/features/auth/hooks/useAuth';
 
 export default function Page() {
-
-  const router = useRouter()
-
-  const { message } = App.useApp()
-
-  useEffect(() => {
-    if (!logged()) {
-      message.error('请先登录')
-      router.replace('/')
-    }
-  }, [message, router])
+  useRequireLogin('/');
 
   return (
     <>

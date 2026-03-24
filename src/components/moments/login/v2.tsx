@@ -10,20 +10,18 @@ import useIcon from '@/src/hooks/icon'
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { login } from "@/src/features/auth/api";
+import { useAuth } from "@/src/features/auth/hooks/useAuth";
 import { normalizeApiError } from "@/src/shared/api/error";
-import { useStateContext as useUserStateContext } from "@/src/stores/user";
 import ReactDOM from "react-dom";
 
 export default function MomentLogin() {
   
   const { message: messageApi } = App.useApp()
-
-  const { dispatch } = useUserStateContext()
+  const { login, syncLoginState } = useAuth()
 
   useEffect(() => {
-    dispatch({ type: 'UPDATELOGIN' })
-  }, [dispatch])
+    syncLoginState()
+  }, [syncLoginState])
 
   const IconFont = useIcon()
 
@@ -50,7 +48,6 @@ export default function MomentLogin() {
       // 登录成功
       messageApi.success("欢迎回来，" + user.name)
       setVisible(false)
-      dispatch({ type: 'UPDATELOGIN' })
     })
     .catch((error) => {
       normalizeApiError(messageApi, error)

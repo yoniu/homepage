@@ -4,12 +4,13 @@ import { ArrowLeftOutlined, LogoutOutlined, PlusOutlined } from "@ant-design/ico
 import { App } from "antd"
 import { useRouter } from "next/navigation"
 
-import { logout } from "@/src/features/auth/api"
+import { useAuth } from "@/src/features/auth/hooks/useAuth"
 
 export default function AdminNavigator() {
 
   const { modal } = App.useApp()
   const router = useRouter()
+  const { logout } = useAuth()
 
   const handleClickLogout = () => {
     const alert = modal.warning({

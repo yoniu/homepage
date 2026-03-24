@@ -22,9 +22,8 @@
 - 支持 Meting 获取音乐详情（获取的音乐 url 暂时不支持播放）
 - 支持文件上传（backblaze: 基于 AWS S3，意思是只要是 AWS S3 类的对象存储都可以）
 - 支持友链设置（静态渲染，每次修改友链请**重新构建部署**，对友链双方 SEO 友好）
-- 适配 HashNode 获取最新文章
 - 适配 Twikoo 评论系统
-- 适配 51la v6 网站统计
+- 可选接入 51LA v6 网站统计
 - 适配百度地图定位
 
 ## Todo
@@ -46,9 +45,12 @@
 ```
 NEXT_PUBLIC_HOMEPAGE_API=<后端连接>
 NEXT_PUBLIC_TWIKOO_ENVID=<Twikoo连接>
+NEXT_PUBLIC_ENABLE_V6_ANALYZE=<true/false，默认建议 false>
 NEXT_PUBLIC_V6_ID=<51LA V6 ID>
 NEXT_PUBLIC_V6_CK=<51LA V6 CK>
 ```
+
+其中 `NEXT_PUBLIC_ENABLE_V6_ANALYZE=true` 时才会注入 51LA 脚本；如果不需要统计，可以不填 `NEXT_PUBLIC_V6_ID` / `NEXT_PUBLIC_V6_CK`。
 
 安装项目（没 pnpm 也可以使用 npm，最好是 pnpm）:
 

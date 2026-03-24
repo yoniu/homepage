@@ -2,7 +2,7 @@
 
 import { App } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { logged } from '@/src/features/auth/api';
 import { createMoment, getOwnerMoment } from '@/src/features/moment/api';
@@ -21,7 +21,7 @@ export function useEditorInit() {
   const confirmRef = useRef<{ destroy: () => void } | null>(null);
   const momentId = query.get('id');
 
-  const handleCreateMoment = async () => {
+  const handleCreateMoment = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -31,7 +31,7 @@ export function useEditorInit() {
       normalizeApiError(messageApi, error);
       setLoading(false);
     }
-  };
+  }, [messageApi, router]);
 
   useEffect(() => {
     if (!logged()) {
@@ -94,7 +94,7 @@ export function useEditorInit() {
       .finally(() => {
         setLoading(false);
       });
-  }, [dispatch, messageApi, modal, momentId, router]);
+  }, [dispatch, handleCreateMoment, messageApi, modal, momentId, router]);
 
   return {
     loading,

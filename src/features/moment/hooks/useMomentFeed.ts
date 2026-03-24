@@ -1,7 +1,7 @@
 "use client";
 
 import { App } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { normalizeApiError } from '@/src/shared/api/error';
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
@@ -17,7 +17,7 @@ export function useMomentFeed() {
   const initializedRef = useRef(false);
   const fetchingRef = useRef(false);
 
-  const handleGetPublicAll = async () => {
+  const handleGetPublicAll = useCallback(async () => {
     if (fetchingRef.current) {
       return;
     }
@@ -46,7 +46,7 @@ export function useMomentFeed() {
       dispatch({ type: 'SETLOADING', state: false });
       fetchingRef.current = false;
     }
-  };
+  }, [dispatch, messageApi, state.momentList, state.page, state.pageSize]);
 
   useEffect(() => {
     if (initializedRef.current) {
@@ -55,7 +55,7 @@ export function useMomentFeed() {
 
     initializedRef.current = true;
     void handleGetPublicAll();
-  }, []);
+  }, [handleGetPublicAll]);
 
   useEffect(() => {
     if (!state.hasNextPage || fetchingRef.current) {
@@ -67,7 +67,7 @@ export function useMomentFeed() {
     }
 
     void handleGetPublicAll();
-  }, [state.currentIndex, state.hasNextPage, state.momentList.length]);
+  }, [handleGetPublicAll, state.currentIndex, state.hasNextPage, state.momentList.length]);
 
   return {
     displayType: state.displayType,

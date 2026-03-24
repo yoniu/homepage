@@ -3,7 +3,7 @@
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import SidebarCollapse from "@/src/components/editor/collapse";
 import { App, Button, Dropdown, GetProps, Input } from 'antd';
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { getClientIp, getLocationByIp, searchLocation, type BMapSuggestionResponse } from "@/src/features/editor/api";
 import { normalizeApiError } from "@/src/shared/api/error";
@@ -28,6 +28,11 @@ export default function EditorLocation() {
   const [province, setProvince] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
+  const attributesRef = useRef(state.attributes);
+
+  useEffect(() => {
+    attributesRef.current = state.attributes;
+  }, [state.attributes]);
 
   const handleChange = (key: string, e: React.ChangeEvent<HTMLInputElement>) => {
     switch (key) {
@@ -49,8 +54,8 @@ export default function EditorLocation() {
     }
   }
 
-  const updateGlobalState = () => {
-    const prevAttributes = state.attributes ?? null;
+  const updateGlobalState = useCallback(() => {
+    const prevAttributes = attributesRef.current ?? null;
     dispatch({
       type: "UPDATE",
       states: {
@@ -66,7 +71,7 @@ export default function EditorLocation() {
         }
       }
     })
-  }
+  }, [address, city, dispatch, latitude, longitude, province])
 
   const handleGetLocation = () => {
     setLoading(true)
@@ -136,7 +141,7 @@ export default function EditorLocation() {
 
   useEffect(() => {
     updateGlobalState();
-  }, [latitude, longitude, province, city, address])
+  }, [updateGlobalState])
   
   return (
     <SidebarCollapse title="定位服务" className="space-y-1" defaultOpen={false}>
