@@ -19,12 +19,14 @@ export default function Upload(
   {
     title = '上传文件',
     type = 'image/*',
+    multiple = false,
     fileItemDecorate,
     onClickItem,
   }:
   {
     title?: string,
     type?: string, // "image/jpeg"
+    multiple?: boolean,
     fileItemDecorate?: (item: IFileItem) => React.JSX.Element
     onClickItem?: (item: IFileItem) => void,
   }
@@ -110,9 +112,10 @@ export default function Upload(
     name: 'file',
     type: 'select',
     accept: type,
+    multiple,
     customRequest: handleUpload,
     showUploadList: false,
-  }), [type, handleUpload]);
+  }), [handleUpload, multiple, type]);
 
   const Container = () => (
     <Spin spinning={loading}>

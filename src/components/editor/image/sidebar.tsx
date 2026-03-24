@@ -5,7 +5,6 @@ import EditorPlainContent from "@/src/components/editor/plainContent";
 import EditorFixedText from "@/src/components/editor/fixedText";
 
 export default function ImageEditorSidebar() {
-
   const { state, dispatch } = useEditorStateContext();
 
   const handleClickUploadFileItem = (item: IFileItem) => {
@@ -16,28 +15,33 @@ export default function ImageEditorSidebar() {
       url: item.url,
       type: item.type,
       name: item.filename,
-    }
+    };
     const photosets: IPhotosetItem[] = [...prevPhotosets];
-    const index = photosets.findIndex(photo => photo.id === item.id)
+    const index = photosets.findIndex((photoItem) => photoItem.id === item.id);
+
     if (index > -1) {
       photosets.splice(index, 1);
     } else {
       photosets.push(photo);
     }
-    dispatch({ type: 'UPDATE', states: {
-      attributes: {
-        ...prevAttributes,
-        photosets
-      }
-    }});
-  }
+
+    dispatch({
+      type: "UPDATE",
+      states: {
+        attributes: {
+          ...prevAttributes,
+          photosets,
+        },
+      },
+    });
+  };
 
   return (
     <>
       <EditorPlainContent />
-      <Upload title="上传图片" onClickItem={handleClickUploadFileItem} />
+      <Upload multiple title="上传图片" onClickItem={handleClickUploadFileItem} />
       <EditorMusic />
       <EditorFixedText scope="photoset" />
     </>
-  )
+  );
 }
