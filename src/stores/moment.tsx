@@ -46,7 +46,7 @@ const initialState: IState = {
   loading: false,
   currentIndex: 0,
   page: 1,
-  pageSize: 8,
+  pageSize: 12,
   hasNextPage: false,
   momentList: [],
   displayType: DEFAULT_DISPLAYTYPE,

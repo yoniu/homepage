@@ -7,7 +7,7 @@ import { normalizeApiError } from '@/src/shared/api/error';
 
 import { deleteMoment, getAllMoments, type MomentEntity } from '../api';
 
-export function useAdminMomentList(pageSize = 5) {
+export function useAdminMomentList(pageSize = 12) {
   const { message: messageApi } = App.useApp();
 
   const [loading, setLoading] = useState(true);
