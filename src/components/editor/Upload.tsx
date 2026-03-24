@@ -2,7 +2,17 @@
 
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  CustomerServiceOutlined,
+  DeleteOutlined,
+  FileImageOutlined,
+  FileOutlined,
+  FilePdfOutlined,
+  FileTextOutlined,
+  FileZipOutlined,
+  UploadOutlined,
+  VideoCameraOutlined,
+} from "@ant-design/icons";
 import { App, Button, Col, Popconfirm, Row, Spin, Upload as UploadAntd, UploadProps } from "antd";
 import { useSearchParams } from "next/navigation";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
@@ -14,6 +24,53 @@ import { normalizeApiError } from "@/src/shared/api/error";
 import SidebarCollapse from "./collapse"; 
 
 export type IFileItem<T = Record<string, never>> = EditorFileItem<T>;
+
+const getFileMime = (item: IFileItem) => item.format || item.type || "";
+
+const isImageFile = (item: IFileItem) => getFileMime(item).includes("image");
+
+const isVideoFile = (item: IFileItem) => getFileMime(item).includes("video");
+
+const isAudioFile = (item: IFileItem) => getFileMime(item).includes("audio");
+
+const isPdfFile = (item: IFileItem) => getFileMime(item).includes("pdf");
+
+const isTextFile = (item: IFileItem) => {
+  const mime = getFileMime(item);
+  return ["text", "json", "xml", "markdown"].some((keyword) => mime.includes(keyword));
+};
+
+const isArchiveFile = (item: IFileItem) => {
+  const mime = getFileMime(item);
+  return ["zip", "rar", "7z", "tar", "gzip"].some((keyword) => mime.includes(keyword));
+};
+
+const formatFileSize = (size: number) => {
+  if (!size) return "0 B";
+
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let nextSize = size;
+  let unitIndex = 0;
+
+  while (nextSize >= 1024 && unitIndex < units.length - 1) {
+    nextSize /= 1024;
+    unitIndex += 1;
+  }
+
+  const fixed = nextSize >= 10 || unitIndex === 0 ? 0 : 1;
+  return `${nextSize.toFixed(fixed)} ${units[unitIndex]}`;
+};
+
+const getFileTypeIcon = (item: IFileItem) => {
+  if (isVideoFile(item)) return <VideoCameraOutlined className="text-xl text-blue-500" />;
+  if (isAudioFile(item)) return <CustomerServiceOutlined className="text-xl text-emerald-500" />;
+  if (isPdfFile(item)) return <FilePdfOutlined className="text-xl text-rose-500" />;
+  if (isTextFile(item)) return <FileTextOutlined className="text-xl text-amber-500" />;
+  if (isArchiveFile(item)) return <FileZipOutlined className="text-xl text-violet-500" />;
+  if (isImageFile(item)) return <FileImageOutlined className="text-xl text-sky-500" />;
+
+  return <FileOutlined className="text-xl text-gray-500" />;
+};
 
 export default function Upload(
   {
@@ -141,19 +198,35 @@ export default function Upload(
     }
 
     return (
-      <div className="space-y-1">
+      <div className="space-y-2">
         {
           list.map(item => (
             <div
-              className="flex items-center justify-between space-x-2"
+              className="flex items-center space-x-3 rounded-md border border-gray-200 p-2"
               key={item.id}
             >
               <div
-                className="flex-1 truncate"
+                className="flex min-w-0 flex-1 cursor-pointer items-center space-x-3"
                 title={item.filename}
                 onClick={() => handleClickItem(item)}
               >
-                { item.filename }
+                <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                  {
+                    isImageFile(item) ? (
+                      <img src={item.url} alt={item.filename} className="absolute h-full w-full object-cover" />
+                    ) : (
+                      getFileTypeIcon(item)
+                    )
+                  }
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-medium text-gray-900">
+                    { item.filename }
+                  </div>
+                  <div className="truncate text-xs text-gray-500">
+                    { getFileMime(item) || "unknown" } · { formatFileSize(item.size) }
+                  </div>
+                </div>
               </div>
               <Popconfirm
                 title="删除图片"
@@ -185,7 +258,7 @@ export default function Upload(
           type.includes('image') ? (
             <Row gutter={[6, 6]}>
               {
-                fileList.filter(item => item.format.includes('image')).map(item => (
+                fileList.filter(item => isImageFile(item)).map(item => (
                   <Col className="space-y-1" span={8} key={item.id}>
                     <div
                       className="relative aspect-square border border-gray-200 rounded overflow-hidden cursor-pointer"
