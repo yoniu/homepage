@@ -126,18 +126,22 @@ function MomentAudioPlayer(props: Partial<IMusicItem>) {
   );
 }
 
-export default function MomentAudioControl() {
+interface IProps {
+  music?: Partial<IMusicItem> | null;
+}
+
+export default function MomentAudioControl({ music }: IProps = {}) {
   const { state: momentState } = useMomentStateContext();
 
   const currentMoment = useMemo(() => {
     return momentState.momentList[momentState.currentIndex] ?? null;
   }, [momentState.currentIndex, momentState.momentList]);
 
-  const currentMusic = currentMoment?.attributes?.music;
+  const currentMusic = music ?? currentMoment?.attributes?.music;
 
-  if (!currentMoment || !currentMusic) {
+  if (!currentMusic) {
     return null;
   }
 
-  return <MomentAudioPlayer key={currentMoment.id} {...currentMusic} />;
+  return <MomentAudioPlayer key={currentMoment?.id ?? currentMusic.url ?? 'detail-audio'} {...currentMusic} />;
 }

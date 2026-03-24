@@ -3,11 +3,13 @@
 import { Spin } from "antd";
 import { Suspense } from "react";
 
-import Sidebar from "@/src/components/sidebar"
-import ImageItem from '@/src/components/moments/item/image';
-import TextItem from '@/src/components/moments/item/text';
-import VideoItem from '@/src/components/moments/item/video';
+import Menu from "@/src/components/menu/Index";
+import MomentDetailControls from "@/src/features/moment/components/detail/MomentDetailControls";
+import MomentFeedLoading from "@/src/features/moment/components/feed/MomentFeedLoading";
+import ImageMomentPanel from "@/src/features/moment/components/feed/renderers/ImageMomentPanel";
 import MusicMomentPanel from "@/src/features/moment/components/feed/renderers/MusicMomentPanel";
+import TextMomentPanel from "@/src/features/moment/components/feed/renderers/TextMomentPanel";
+import VideoMomentPanel from "@/src/features/moment/components/feed/renderers/VideoMomentPanel";
 import { useMomentDetail } from "@/src/features/moment/hooks/useMomentDetail";
 import type { EMomentType } from '@/src/types/moment';
 
@@ -23,25 +25,31 @@ function Moment() {
   const { currentMomentType, item, loading } = useMomentDetail()
 
   const displayer: Record<EMomentType, () => JSX.Element> = {
-    text: () => item ? <TextItem key={item.id} item={item} /> : <></>,
-    image: () => item ? <ImageItem key={item.id} item={item} /> : <></>,
-    video: () => item ? <VideoItem key={item.id} item={item} /> : <></>,
+    text: () => item ? <TextMomentPanel key={item.id} item={item} /> : <></>,
+    image: () => item ? <ImageMomentPanel key={item.id} item={item} /> : <></>,
+    video: () => item ? <VideoMomentPanel key={item.id} item={item} /> : <></>,
     live: () => item ? <div key={item.id}>live</div> : <></>,
     music: () => item ? <MusicMomentPanel key={item.id} item={item} /> : <></>,
   }
 
   return (
     <>
-      <Spin spinning={loading} fullscreen={true} />
-      <div id="main">
-        <div id="content" className="relative flex items-center justify-center w-full h-full shadow-lg border rounded bg-white overflow-hidden">
-          {
-            item ? displayer[currentMomentType]() : <></>
-          }
+      <div className="absolute h-full w-full flex items-stretch overflow-hidden">
+        <Menu />
+        <div className="relative w-full sm:w-[80%] h-full">
+          <Spin spinning={loading} fullscreen={true} />
+          <div className="relative w-full h-full overflow-hidden">
+            {item && (
+              <div className="absolute top-0 left-0 w-full py-4 z-20">
+                <MomentDetailControls item={item} />
+              </div>
+            )}
+            <div className="header-filter absolute w-full h-24 top-0 left-0 bg-white/10 backdrop-blur-xl z-10"></div>
+            <div id="content" className="relative w-full h-full">
+              {!item ? <MomentFeedLoading /> : displayer[currentMomentType]()}
+            </div>
+          </div>
         </div>
-      </div>
-      <div id="sidebar">
-        <Sidebar />
       </div>
     </>
   )
