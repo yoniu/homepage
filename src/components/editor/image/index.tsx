@@ -4,17 +4,27 @@ import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
 import { useEffect, useMemo, useState } from "react";
 import CarouselImage from "@/src/components/carousel";
 import { ShowPlainContent } from "@/src/components/editor/plainContent";
-import { IFixedTextItem, ShowFixedText } from "@/src/components/editor/fixedText";
+import {
+  IFixedTextItem,
+  ShowFixedText,
+  resolveImageFixedText,
+} from "@/src/components/editor/fixedText";
 
 export default function ImageEditor() {
 
   const { state } = useEditorStateContext() 
   const attributes = state.attributes;
 
+  const photosets = useMemo(
+    () => (attributes?.photosets ?? []) as IPhotosetItem[],
+    [attributes?.photosets]
+  );
+
   const [bg, setBg] = useState('')
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   const handleCarouselChange = (current: number) => {
-    const photosets = (attributes?.photosets ?? []) as IPhotosetItem[];
+    setCurrentIndex(current);
     const selectedPhotoset = photosets[current];
     if (selectedPhotoset) {
       setBg(selectedPhotoset.url)
@@ -22,19 +32,30 @@ export default function ImageEditor() {
   }
 
   useEffect(() => {
-    if (attributes?.photosets) {
-      const photosets = attributes.photosets as IPhotosetItem[];
-      if (photosets.length) setBg(photosets[0].url)
+    if (photosets.length) {
+      setCurrentIndex(0);
+      setBg(photosets[0].url)
+      return;
     }
-  }, [attributes])
+
+    setCurrentIndex(0);
+    setBg('');
+  }, [photosets])
 
   const hasCarousel = useMemo(() => {
-    return Boolean(attributes?.photosets?.length)
-  }, [attributes?.photosets])
+    return Boolean(photosets.length)
+  }, [photosets])
+
+  const currentFixedText = useMemo(() => {
+    return resolveImageFixedText(
+      photosets[currentIndex],
+      (attributes?.fixedText ?? []) as IFixedTextItem[]
+    );
+  }, [attributes?.fixedText, currentIndex, photosets])
 
   const hasFixedText = useMemo(() => {
-    return Boolean(attributes?.fixedText?.length)
-  }, [attributes?.fixedText])
+    return Boolean(currentFixedText.length)
+  }, [currentFixedText])
 
   return (
     <>
@@ -42,13 +63,13 @@ export default function ImageEditor() {
         { bg && hasCarousel ? <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> : null }
         {
           hasCarousel ?
-          <CarouselImage images={(attributes?.photosets ?? []) as IPhotosetItem[]} afterChange={handleCarouselChange} /> :
+          <CarouselImage images={photosets} afterChange={handleCarouselChange} /> :
           <div className="w-full h-full flex justify-center items-center">
             <p className="text-gray-500">No images found</p>
           </div>
         }
         {
-          hasFixedText && <ShowFixedText fixedText={(attributes?.fixedText ?? []) as IFixedTextItem[]} />
+          hasFixedText && <ShowFixedText fixedText={currentFixedText} />
         }
         { state.content && <ShowPlainContent content={state.content} /> }
       </div>

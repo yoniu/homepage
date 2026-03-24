@@ -37,7 +37,7 @@ export default function ImageEditorSidebar() {
       <EditorPlainContent />
       <Upload title="上传图片" onClickItem={handleClickUploadFileItem} />
       <EditorMusic />
-      <EditorFixedText />
+      <EditorFixedText scope="photoset" />
     </>
   )
 }

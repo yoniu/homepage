@@ -75,6 +75,7 @@ declare interface IPhotosetItem {
   url: string;
   type: string;
   name: string;
+  fixedText?: IFixedTextItem[];
 }
 
 declare interface IVideoItem {

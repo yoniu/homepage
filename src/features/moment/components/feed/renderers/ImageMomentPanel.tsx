@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import CarouselImage from '@/src/components/carousel';
-import { IFixedTextItem, ShowFixedText } from '@/src/components/editor/fixedText';
+import {
+  IFixedTextItem,
+  ShowFixedText,
+  resolveImageFixedText,
+} from '@/src/components/editor/fixedText';
 import { ShowPlainContent } from '@/src/components/editor/plainContent';
 import { IMusicItem } from '@/src/components/editor/music';
 import dayFormat from '@/src/utils/dayFormat';
@@ -17,36 +21,55 @@ interface IProps {
 }
 
 export default function ImageMomentPanel({ item }: IProps) {
+  const photosets = useMemo(
+    () => (item.attributes?.photosets ?? []) as IPhotosetItem[],
+    [item.attributes?.photosets]
+  );
   const [bg, setBg] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleCarouselChange = (current: number) => {
-    const photosets = item.attributes?.photosets as IPhotosetItem[];
+    setCurrentIndex(current);
     const selectedPhotoset = photosets[current];
-    setBg(selectedPhotoset.url);
+    if (selectedPhotoset) {
+      setBg(selectedPhotoset.url);
+    }
   };
 
   useEffect(() => {
-    if (item.attributes?.photosets?.length) {
-      setBg(item.attributes.photosets[0].url);
+    if (photosets.length) {
+      setCurrentIndex(0);
+      setBg(photosets[0].url);
+      return;
     }
-  }, [item]);
+
+    setCurrentIndex(0);
+    setBg('');
+  }, [photosets]);
+
+  const currentFixedText = useMemo(() => {
+    return resolveImageFixedText(
+      photosets[currentIndex],
+      (item.attributes?.fixedText ?? []) as IFixedTextItem[]
+    );
+  }, [currentIndex, item.attributes?.fixedText, photosets]);
 
   return (
     <div className="flex flex-col overflow-hidden w-full h-full">
       <div className="relative w-full h-full flex-1 bg-white">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden flex items-center justify-center">
           {bg ? <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> : null}
-          {item.attributes?.photosets ? (
+          {photosets.length ? (
             <CarouselImage
               key={item.id}
-              images={item.attributes.photosets as IPhotosetItem[]}
+              images={photosets}
               afterChange={handleCarouselChange}
               interval={2000}
             />
           ) : null}
-          {item.attributes?.fixedText && (
-            <ShowFixedText fixedText={item.attributes.fixedText as IFixedTextItem[]} />
-          )}
+          {currentFixedText.length ? (
+            <ShowFixedText fixedText={currentFixedText} />
+          ) : null}
         </div>
         {item.content && (
           <ShowPlainContent className="pb-4" content={item.content}>
