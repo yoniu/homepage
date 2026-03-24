@@ -2,7 +2,7 @@
 
 import AdminMomentList from '@/src/components/moments/list/admin';
 import AdminSidebar from '@/src/components/sidebar/admin';
-import { logged } from '@/src/utils/login';
+import { logged } from '@/src/features/auth/api';
 import { App } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -16,9 +16,9 @@ export default function Page() {
   useEffect(() => {
     if (!logged()) {
       message.error('请先登录')
-      return router.replace('/')
+      router.replace('/')
     }
-  })
+  }, [message, router])
 
   return (
     <>

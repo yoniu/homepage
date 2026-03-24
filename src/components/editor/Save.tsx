@@ -1,6 +1,6 @@
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
-import api from "@/src/utils/api";
-import { TResponseError } from "@/src/utils/axiosInstance";
+import { updateMoment } from "@/src/features/moment/api";
+import { normalizeApiError } from "@/src/shared/api/error";
 import { SaveOutlined } from "@ant-design/icons";
 import { App, Button } from "antd";
 import { useState } from "react"; 
@@ -14,20 +14,21 @@ export default function Save() {
 
   const handleSave = () => {
     if (loading) return
+
     const { id, title, content, status, attributes } = state
+    if (!id) {
+      message.error('未找到可保存的 Moment')
+      return
+    }
+
     setLoading(true)
-    update({
+    updateMoment(id, {
       id, title, content, status, attributes
     }).then(() => {
       message.success('保存成功')
     })
     .catch((error) => {
-      const err = error as TResponseError
-      if (Array.isArray(err.message)) {
-        err.message.map((msg) => message.error(msg))
-      } else {
-        message.error(err.message)
-      }
+      normalizeApiError(message, error)
     })
     .finally(() => {
       setLoading(false)
@@ -45,8 +46,4 @@ export default function Save() {
       >保存</Button>
     </div>
   )
-}
-
-function update(moment: Partial<IMomentItem<any>>) {
-  return api.patch(`/moment/${moment.id}`, moment)
 }

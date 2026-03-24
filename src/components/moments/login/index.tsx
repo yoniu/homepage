@@ -10,8 +10,8 @@ import useIcon from '@/src/hooks/icon'
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { login } from "@/src/utils/login";
-import { TResponseError } from "@/src/utils/axiosInstance";
+import { login } from "@/src/features/auth/api";
+import { normalizeApiError } from "@/src/shared/api/error";
 import { useStateContext as useUserStateContext } from "@/src/stores/user";
 import ReactDOM from "react-dom";
 
@@ -53,12 +53,7 @@ export default function MomentLogin() {
       dispatch({ type: 'UPDATELOGIN' })
     })
     .catch((error) => {
-      const err = error as TResponseError
-      if (Array.isArray(err.message)) {
-        err.message.map((msg) => messageApi.error(msg))
-      } else {
-        messageApi.error(err.message)
-      }
+      normalizeApiError(messageApi, error)
     })
     .finally(() => {
       setLoading(false)

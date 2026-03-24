@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { App, Button, Popconfirm } from "antd"
+import Link from "next/link";
 
-import api from "@/src/utils/api";
-
-import { TResponseError } from "@/src/utils/axiosInstance"
+import { deleteMoment, getAllMoments } from "@/src/features/moment/api";
+import { normalizeApiError } from "@/src/shared/api/error";
 
 import dayFormat from "@/src/utils/dayFormat"
-import Link from "next/link";
 
 export default function AdminMomentList() {
   
@@ -25,57 +24,47 @@ export default function AdminMomentList() {
 
   // 进入页面获取列表
   useEffect(() => {
-    getMomentList()
+    void getMomentList(1, true)
   }, [])
 
   // 点击加载更多
   const handlePageChange = () => {
-    if (!hasNextPage) return
-    setPage(page + 1)
-    getMomentList()
+    if (!hasNextPage || loading) return
+
+    const nextPage = page + 1
+    setPage(nextPage)
+    void getMomentList(nextPage)
   }
 
   // 点击删除确认
   const handleDelete = (id: number) => {
     if (loading) return
+
     setLoading(true)
     deleteMoment(id).then(() => {
       messageApi.success('删除成功')
       setPage(1)
-      getMomentList()
-    }).catch(err => {
-      const { message } = err as TResponseError
-      if (Array.isArray(message)) {
-        message.map((msg) => messageApi.error(msg))
-      } else {
-        messageApi.error(message)
-      }
+      return getMomentList(1, true)
+    }).catch((error) => {
+      normalizeApiError(messageApi, error)
     }).finally(() => {
       setLoading(false)
     })
   }
 
   // 获取动态列表
-  const getMomentList = () => {
+  const getMomentList = async (targetPage: number, reset = false) => {
     setLoading(true)
-    getList(page, pageSize).then(res => {
-      setHasNextPage(res.data.hasNextPage)
-      // 如果当前分页大于 1 则推入栈，否则直接赋值
-      if (page > 1) {
-        setItems([...items, ...res.data.moments])
-      } else {
-        setItems(res.data.moments)
-      }
-    }).catch(err => {
-      const { message } = err as TResponseError
-      if (Array.isArray(message)) {
-        message.map((msg) => messageApi.error(msg))
-      } else {
-        messageApi.error(message)
-      }
-    }).finally(() => {
+
+    try {
+      const response = await getAllMoments(targetPage, pageSize)
+      setHasNextPage(response.data.hasNextPage)
+      setItems((prevItems) => reset ? response.data.moments : [...prevItems, ...response.data.moments])
+    } catch (error) {
+      normalizeApiError(messageApi, error)
+    } finally {
       setLoading(false)
-    })
+    }
   }
 
   /**
@@ -145,12 +134,4 @@ export default function AdminMomentList() {
       </div>
     </div>
   )
-}
-
-function getList(page: number, pageSize: number) {
-  return api.get<IGetMomentListResponse>('/moment/all', { page, pageSize })
-}
-
-function deleteMoment(id: number) {
-  return api.del('/moment/' + id)
 }

@@ -1,11 +1,9 @@
-import axiosInstance from '@/src/utils/axiosInstance';
-import { AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 
-export interface ApiResult<T> {
-  statusCode: number;
-  message: string | string[];
-  data: T;
-}
+import axiosInstance from '@/src/shared/api/client';
+import type { ApiResult } from '@/src/shared/api/result';
+
+export type { ApiResult };
 
 async function get<T>(url: string, params?: any): Promise<ApiResult<T>> {
   const response = await axiosInstance.get<ApiResult<T>>(url, { params });

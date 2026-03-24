@@ -1,18 +1,19 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation"
-import TextItem from '@/src/components/moments/item/text';
-import ImageItem from '@/src/components/moments/item/image';
-import VideoItem from '@/src/components/moments/item/video';
-import api from "@/src/utils/api";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { App, Spin } from "antd";
-import { TResponseError } from "@/src/utils/axiosInstance";
+import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+
 import Sidebar from "@/src/components/sidebar"
+import ImageItem from '@/src/components/moments/item/image';
+import TextItem from '@/src/components/moments/item/text';
+import VideoItem from '@/src/components/moments/item/video';
+import { getPublicMomentById } from "@/src/features/moment/api";
+import { normalizeApiError } from "@/src/shared/api/error";
 
 export default function Page() {
   return (
-    <Suspense>
+    <Suspense fallback={<div>加载中...</div>}>
       <Moment />
     </Suspense>
   )
@@ -25,7 +26,8 @@ function Moment() {
 
   const { modal, message: messageApi } = App.useApp()
 
-  const confirm = useRef<any>(null)
+  const confirm = useRef<{ destroy: () => void } | null>(null)
+  const momentId = query.get('id')
 
   const [loading, setLoading] = useState(true)
   const [item, setItem] = useState<IMomentItem<any>>()
@@ -46,43 +48,49 @@ function Moment() {
   }, [item])
 
   useEffect(() => {
-    if (query.has('id')) {
-      const id = query.get('id')
-      if (id) {
-        setLoading(true)
-        getMomentDetail(+id).then(res => {
-          if (res.data) {
-            setItem(res.data)
-          } else {
-            messageApi.error('请使用正确的食用姿势')
-            router.replace('/')
-          }
-        }).catch(err => {
-          const { message } = err as TResponseError
-          if (Array.isArray(message)) {
-            message.map((msg) => messageApi.error(msg))
-          } else {
-            messageApi.error(message)
-          }
-        }).finally(() => {
-          setLoading(false)
-        })
-      } else {
-        if (confirm.current) return
-        confirm.current = modal.confirm({
-          title: '提示',
-          content: "请使用正确的食用姿势",
-          closable: true,
-          onOk: () => {
-            router.replace('/')
-          },
-          onCancel: () => {
-            router.replace('/')
-          }
-        })
-      }
+    if (!momentId) {
+      setLoading(false)
+
+      if (confirm.current) return
+      confirm.current = modal.confirm({
+        title: '提示',
+        content: "请使用正确的食用姿势",
+        closable: true,
+        onOk: () => {
+          confirm.current = null
+          router.replace('/')
+        },
+        onCancel: () => {
+          confirm.current = null
+          router.replace('/')
+        }
+      })
+
+      return
     }
-  }, [query])
+
+    const parsedId = Number(momentId)
+    if (Number.isNaN(parsedId)) {
+      messageApi.error('请使用正确的食用姿势')
+      setLoading(false)
+      router.replace('/')
+      return
+    }
+
+    setLoading(true)
+    getPublicMomentById(parsedId).then(res => {
+      if (res.data) {
+        setItem(res.data)
+      } else {
+        messageApi.error('请使用正确的食用姿势')
+        router.replace('/')
+      }
+    }).catch((error) => {
+      normalizeApiError(messageApi, error)
+    }).finally(() => {
+      setLoading(false)
+    })
+  }, [messageApi, modal, momentId, router])
 
   return (
     <>
@@ -99,8 +107,4 @@ function Moment() {
       </div>
     </>
   )
-}
-
-function getMomentDetail(id: number) {
-  return api.get<IMomentItem<any>>(`/moment/public/${id}`)
 }

@@ -4,7 +4,7 @@
  * 2024.11.13 / 油油
  */
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { logged } from '@/src/utils/login';
+import { logged } from '@/src/features/auth/api';
 
 interface IState {
   isLogin: boolean;

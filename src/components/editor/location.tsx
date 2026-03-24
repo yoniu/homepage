@@ -3,47 +3,12 @@
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import SidebarCollapse from "@/src/components/editor/collapse";
 import { App, Button, Dropdown, GetProps, Input } from 'antd';
-import api from "@/src/utils/api";
-import axios from "axios";
-import { MessageInstance } from "antd/es/message/interface";
 import { useEffect, useMemo, useState } from "react";
 
+import { getClientIp, getLocationByIp, searchLocation, type BMapSuggestionResponse } from "@/src/features/editor/api";
+import { normalizeApiError } from "@/src/shared/api/error";
+
 type SearchProps = GetProps<typeof Input.Search>;
-
-export interface IBMapLocationResponse {  
-  address: string,
-  content: {  
-    address: string,
-    address_detail: {  
-      city: string,
-      city_code: number,
-      province: string,    
-    },  
-    point: {  
-      x: string,
-      y: string
-    }  
-  },  
-  status: number
-}
-
-export interface IBMapSuggestionResponse {
-  name: string,
-  location: {
-    lat: number,
-    lng: number,
-  },
-  uid: string,
-  province: string,
-  city: string,
-  district: string,
-  business: string,
-  cityid: string,
-  tag: string,
-  address: string,
-  children: [],
-  adcode: string
-}
 
 const { Search } = Input;
 
@@ -55,7 +20,7 @@ export default function EditorLocation() {
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  const [suggestions, setSuggestions] = useState<IBMapSuggestionResponse[]>([]);
+  const [suggestions, setSuggestions] = useState<BMapSuggestionResponse[]>([]);
   const [suggestionVisible, setSuggestionVisible] = useState(false);
 
   const [latitude, setLatitude] = useState('');
@@ -105,15 +70,21 @@ export default function EditorLocation() {
 
   const handleGetLocation = () => {
     setLoading(true)
-    getLocation(message).then(res => {
-      if (!res) return;
-      setLatitude(res.content.point.y)
-      setLongitude(res.content.point.x)
-      setProvince(res.content.address_detail.province)
-      setCity(res.content.address_detail.city)
-    }).finally(() => {
-      setLoading(false)
-    })
+
+    getClientIp()
+      .then((ip) => getLocationByIp(ip))
+      .then((response) => {
+        setLatitude(response.data.content.point.y)
+        setLongitude(response.data.content.point.x)
+        setProvince(response.data.content.address_detail.province)
+        setCity(response.data.content.address_detail.city)
+      })
+      .catch((error) => {
+        normalizeApiError(message, error)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   const dropdownItems = useMemo(() => {
@@ -139,13 +110,18 @@ export default function EditorLocation() {
 
   const onSearch: SearchProps['onSearch'] = (value) => {
     setSearchLoading(true)
-    getSuggestion(message, value, city).then(res => {
-      if (!res) return;
-      setSuggestions(res)
-      setSuggestionVisible(true)
-    }).finally(() => {
-      setSearchLoading(false)
-    })
+
+    searchLocation(value, city)
+      .then((response) => {
+        setSuggestions(response.data)
+        setSuggestionVisible(true)
+      })
+      .catch((error) => {
+        normalizeApiError(message, error)
+      })
+      .finally(() => {
+        setSearchLoading(false)
+      })
   }
 
   useEffect(() => {
@@ -180,27 +156,4 @@ export default function EditorLocation() {
       </div>
     </SidebarCollapse>
   )
-}
-
-async function getLocation(message: MessageInstance) {
-  try {
-    const ip = await axios.get('https://httpbin.org/ip')
-      .then(res => res.data.origin);
-    const res = await api.get<IBMapLocationResponse>(`/location/ip/${ip}`);
-    return res.data;
-  } catch (error) {
-    message.error(`获取位置失败：${error}`);
-  }
-}
-
-async function getSuggestion(message: MessageInstance, keyword: string, city: string) {
-  try {
-    const res = await api.get<IBMapSuggestionResponse[]>(`/location/suggestion/`, {
-      keyword,
-      city,
-    });
-    return res.data;
-  } catch (error) {
-    message.error(`获取位置失败：${error}`);
-  }
 }

@@ -2,35 +2,18 @@
 
 import { memo, useEffect, useMemo, useState } from "react";
 
-import api from "@/src/utils/api";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import { App, Button, Col, Popconfirm, Row, Spin, Upload as UploadAntd, UploadProps } from "antd";
-import { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "next/navigation";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import React from "react";
+
+import { deleteFile, getMomentFiles, uploadFile, type EditorFileItem } from "@/src/features/editor/api";
+import { normalizeApiError } from "@/src/shared/api/error";
+
 import SidebarCollapse from "./collapse"; 
 
-export enum EFileStatus {
-  deleted,
-  normal,
-  explicit,
-}
-
-export interface IFileItem<T> {
-    id: number,
-    filename: string,
-    url: string,
-    size: number,
-    format: string, // "image/jpeg"
-    type: string, // "image/jpeg"
-    moment: number,
-    author: number,
-    create_time: Date,
-    update_time: Date,
-    status: EFileStatus,
-    meta: T
-}
+export type IFileItem<T> = EditorFileItem<T>;
 
 export default function Upload(
   {
@@ -78,34 +61,39 @@ export default function Upload(
     })
     .catch(error => {
       if (onError) onError(error);
-      message.error('上传失败');
+      normalizeApiError(message, error);
     }).finally(() => {
       setLoading(false);
-      if (state.id) handleGetFileList(state.id);
+      if (state.id) {
+        void handleGetFileList(state.id);
+      }
     });
   }
 
-  const handleGetFileList = (id: number) => {
+  const handleGetFileList = async (id: number) => {
     setLoading(true);
-    getList(id).then(res => {
-      const list = res.data
-      if (list) {
-        setFileList(list)
+
+    try {
+      const response = await getMomentFiles(id);
+      if (response.data) {
+        setFileList(response.data);
       }
-    }).catch(() => {
-      message.error('获取图片列表失败');
-    }).finally(() => {
+    } catch (error) {
+      normalizeApiError(message, error);
+    } finally {
       setLoading(false);
-    });
+    }
   }
 
   const handleDeleteFile = (id: number) => {
     setLoading(true);
     deleteFile(id).then(() => {
       message.success('删除成功');
-      if (state.id) handleGetFileList(state.id);
-    }).catch(() => {
-      message.error('删除失败');
+      if (state.id) {
+        return handleGetFileList(state.id);
+      }
+    }).catch((error) => {
+      normalizeApiError(message, error);
     }).finally(() => {
       setLoading(false);
     });
@@ -113,7 +101,7 @@ export default function Upload(
 
   useEffect(() => {
     if (state.id) {
-      handleGetFileList(state.id);
+      void handleGetFileList(state.id);
     }
   }, [state.id])
 
@@ -239,16 +227,4 @@ export default function Upload(
       <Container />
     </SidebarCollapse>
   )
-}
-
-function uploadFile(data: object, options?: AxiosRequestConfig<any>) {
-  return api.put('/file/upload', data, options)
-}
-
-function deleteFile(id: number) {
-  return api.del(`/file/remove/${id}`)
-}
-
-function getList(id: number) {
-  return api.get<IFileItem<any>[]>(`/file/moment/${id}`)
 }

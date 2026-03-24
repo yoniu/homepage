@@ -2,8 +2,9 @@ import Link from "next/link"
 
 import { ArrowLeftOutlined, LogoutOutlined, PlusOutlined } from "@ant-design/icons"
 import { App } from "antd"
-import { logout } from "@/src/utils/login"
 import { useRouter } from "next/navigation"
+
+import { logout } from "@/src/features/auth/api"
 
 export default function AdminNavigator() {
 
