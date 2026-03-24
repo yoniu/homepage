@@ -9,7 +9,7 @@ import Marquee from "react-fast-marquee";
 import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
 
-function MusicPlayer(props: IMusicItem) {
+function MusicPlayer(props: Partial<IMusicItem>) {
   const {state, dispatch} = useStateContext()
 
   const [playing, setPlaying] = useState(false)
@@ -20,20 +20,13 @@ function MusicPlayer(props: IMusicItem) {
 
   // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
-    // 无音乐
-    if (!props.url) return () => {
+    if (!props.url) {
       dispatch({type: 'CLEAN'})
-    };
-    // 清理
-    dispatch({type: 'CLEAN'})
-    // 有音乐
-    if (playerRef.current) {
-      // 设置音乐
-      dispatch({type: 'SET', howler: playerRef.current})
-      return () => {
-        dispatch({type: 'CLEAN'})
-      }
+      playerRef.current = null
+      return;
     }
+
+    dispatch({type: 'CLEAN'})
     // 设置 loading
     setLoading(true)
     const howler = new Howl({
@@ -57,9 +50,10 @@ function MusicPlayer(props: IMusicItem) {
     })
 
     return () => {
+      playerRef.current = null
       dispatch({type: 'CLEAN'})
     }
-  }, [])
+  }, [dispatch, props.url])
 
   const togglePlay = () => {
     if (state.howler) {
@@ -105,20 +99,21 @@ export default function MusicControl() {
       return momentState.momentList[momentState.currentIndex]
     }
     return null
-  }, [momentState.momentList[momentState.currentIndex]])
+  }, [momentState.currentIndex, momentState.momentList])
 
   /**
    * 当前 moment 是否有音乐
    */
   const hasMusic = useMemo(() => {
-    return currentMoment && currentMoment.attributes && currentMoment.attributes.music
+    return currentMoment?.attributes?.music
   }, [currentMoment])
+  const currentMusic = currentMoment?.attributes?.music;
   
   return (
     <>
       {
         (!currentMoment || !hasMusic) ? null : (
-          <MusicPlayer key={currentMoment.id} {...currentMoment.attributes.music} />
+          <MusicPlayer key={currentMoment.id} {...currentMusic} />
         )
       }
     </>

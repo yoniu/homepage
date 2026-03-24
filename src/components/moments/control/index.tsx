@@ -51,7 +51,7 @@ export default function MomentControl () {
   // moment 列表分页 加载
   const momentLoading = useMemo(() => {
     return (state.currentIndex + 1 === state.momentList.length) && state.hasNextPage && state.loading;
-  }, [state.currentIndex, state.hasNextPage])
+  }, [state.currentIndex, state.hasNextPage, state.loading, state.momentList.length])
 
   return (
     <div className="absolute bottom-3 left-0 w-full flex items-center justify-center space-x-5">

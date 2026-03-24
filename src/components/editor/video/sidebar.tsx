@@ -7,7 +7,7 @@ export default function VideoEditorSidebar() {
 
   const { state, dispatch } = useEditorStateContext();
 
-  const handleClickUploadFileItem = (item: IFileItem<any>) => {
+  const handleClickUploadFileItem = (item: IFileItem) => {
     if (!item.type.includes('video')) return;
     const prevAttributes = state.attributes ?? null;
     const prevVideo = prevAttributes?.video as IVideoItem ?? {};

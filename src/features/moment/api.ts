@@ -1,6 +1,6 @@
 import api from '@/src/utils/api';
 
-export type MomentAttributes = Record<string, unknown>;
+export type MomentAttributes = IMomentAttributes;
 export type MomentEntity = IMomentItem<MomentAttributes>;
 export type MomentListResult = Omit<IGetMomentListResponse, 'moments'> & {
   moments: MomentEntity[];

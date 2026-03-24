@@ -120,7 +120,7 @@ export default function MusicEditorSidebar() {
 
   const { message } = App.useApp();
 
-  const handleClickUploadFileItem = (item: IFileItem<any>) => {
+  const handleClickUploadFileItem = (item: IFileItem) => {
     // 复制图片 url
     navigator.clipboard.writeText(item.url);
     // 提示用户复制成功

@@ -13,7 +13,7 @@ import { normalizeApiError } from "@/src/shared/api/error";
 
 import SidebarCollapse from "./collapse"; 
 
-export type IFileItem<T> = EditorFileItem<T>;
+export type IFileItem<T = Record<string, never>> = EditorFileItem<T>;
 
 export default function Upload(
   {
@@ -25,8 +25,8 @@ export default function Upload(
   {
     title?: string,
     type?: string, // "image/jpeg"
-    fileItemDecorate?: (item: IFileItem<any>) => React.JSX.Element
-    onClickItem?: (item: IFileItem<any>) => void,
+    fileItemDecorate?: (item: IFileItem) => React.JSX.Element
+    onClickItem?: (item: IFileItem) => void,
   }
 ) {
 
@@ -34,7 +34,7 @@ export default function Upload(
   const { message } = App.useApp();
   const { state } = useEditorStateContext();
 
-  const [ fileList, setFileList ] = useState<IFileItem<any>[]>([]);
+  const [ fileList, setFileList ] = useState<IFileItem[]>([]);
 
   const [ loading, setLoading ] = useState(false);
   type CustomUploadRequest = NonNullable<UploadProps['customRequest']>;
@@ -123,65 +123,17 @@ export default function Upload(
     </Spin>
   )
 
-  const ImageList = memo((
-    {
-      list = fileList
-    }:
-    {
-      list?: IFileItem<any>[]
-    }
-  ) => {
-    if (!list) return <></>;
-
-    const handleClickItem = (item: IFileItem<any>) => {
-      if (onClickItem) onClickItem(item);
-    }
-
-    return (
-      <Row gutter={[6, 6]}>
-        {
-          list.filter(item => item.format.includes('image')).map(item => (
-            <Col className="space-y-1" span={8} key={item.id}>
-              <div
-                className="relative aspect-square border border-gray-200 rounded overflow-hidden cursor-pointer"
-                onClick={() => handleClickItem(item)}
-              >
-                <img src={item.url} alt={item.filename} className="absolute w-full h-full object-cover" />
-                { fileItemDecorate && fileItemDecorate(item)  }
-              </div>
-              <div className="text-right">
-                <Popconfirm
-                  title="删除图片"
-                  description="是否删除该图片？"
-                  placement="bottom"
-                  onConfirm={ () => handleDeleteFile(item.id)}
-                  okText="确认"
-                  cancelText="取消"
-                >
-                  <button className="text-red-600">
-                    <DeleteOutlined />
-                  </button>
-                </Popconfirm>
-              </div>
-            </Col>
-          ))
-        }
-      </Row>
-    )
-  })
-  ImageList.displayName = 'FileList'
-
   const FileList = memo((
     {
       list = fileList
     }:
     {
-      list?: IFileItem<any>[]
+      list?: IFileItem[]
     }
   ) => {
     if (!list) return <></>;
 
-    const handleClickItem = (item: IFileItem<any>) => {
+    const handleClickItem = (item: IFileItem) => {
       if (onClickItem) onClickItem(item);
     }
 
@@ -225,7 +177,48 @@ export default function Upload(
       title={title}
       defaultOpen={true}
     >
-      <Container />
+      <Spin spinning={loading}>
+        {
+          type.includes('image') ? (
+            <Row gutter={[6, 6]}>
+              {
+                fileList.filter(item => item.format.includes('image')).map(item => (
+                  <Col className="space-y-1" span={8} key={item.id}>
+                    <div
+                      className="relative aspect-square border border-gray-200 rounded overflow-hidden cursor-pointer"
+                      onClick={() => onClickItem?.(item)}
+                    >
+                      <img src={item.url} alt={item.filename} className="absolute w-full h-full object-cover" />
+                      { fileItemDecorate && fileItemDecorate(item) }
+                    </div>
+                    <div className="text-right">
+                      <Popconfirm
+                        title="删除图片"
+                        description="是否删除该图片？"
+                        placement="bottom"
+                        onConfirm={() => handleDeleteFile(item.id)}
+                        okText="确认"
+                        cancelText="取消"
+                      >
+                        <button className="text-red-600">
+                          <DeleteOutlined />
+                        </button>
+                      </Popconfirm>
+                    </div>
+                  </Col>
+                ))
+              }
+            </Row>
+          ) : (
+            <Container />
+          )
+        }
+        { type.includes('image') && (
+          <UploadAntd {...uploadProps}>
+            <Button className="mt-2" icon={<UploadOutlined />} size="small">Upload</Button>
+          </UploadAntd>
+        )}
+      </Spin>
     </SidebarCollapse>
   )
 }

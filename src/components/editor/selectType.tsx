@@ -6,14 +6,14 @@ export default function SelectType() {
   const { state, dispatch } = useEditorStateContext();
 
   const options = [
-    { label: '文章', value: 'text' },
-    { label: '图片', value: 'image' },
-    { label: '视频', value: 'video' },
-    { label: 'livephoto (未完成)', value: 'live' },
-    { label: '音乐', value: 'music' },
+    { label: '文章', value: EMomentType.Text },
+    { label: '图片', value: EMomentType.Image },
+    { label: '视频', value: EMomentType.Video },
+    { label: 'livephoto (未完成)', value: EMomentType.Live },
+    { label: '音乐', value: EMomentType.Music },
   ];
 
-  const handleChange = (type: string) => {
+  const handleChange = (type: EMomentType) => {
     const prevAttributes = state.attributes ?? null;
     dispatch({ type: 'UPDATE', states: {
       attributes: {
@@ -28,7 +28,7 @@ export default function SelectType() {
       <h4 className="text-gray-500">选择展示类型</h4>
       <Select
         className="w-full"
-        defaultValue="text"
+        defaultValue={EMomentType.Text}
         value={state.attributes?.type}
         options={options}
         onChange={handleChange}

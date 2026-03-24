@@ -5,7 +5,7 @@
  */
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 
-type TState = Partial<IMomentItem<any>>
+type TState = Partial<IMomentItem>
 
 // 定义初始状态
 const initialState: TState = {

@@ -20,12 +20,12 @@ export default function EditorMusic() {
 
   const { state, dispatch } = useEditorStateContext();
 
-  const modalRef = useRef<any>(null);
+  const modalRef = useRef<{ destroy: () => void } | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | string, type: string) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | string, type: keyof IMusicItem) => {
     const prevAttributes = state.attributes ?? null;
-    const prevMusic = prevAttributes?.music ?? null;
-    const music = {
+    const prevMusic = (prevAttributes?.music as Partial<IMusicItem> | null) ?? null;
+    const music: Partial<IMusicItem> = {
       ...prevMusic,
       [type]: (typeof e === 'string') ? e : e.target.value
     }

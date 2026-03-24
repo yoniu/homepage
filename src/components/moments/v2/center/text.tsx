@@ -7,9 +7,9 @@ import { TTextBackgroundColor } from "@/src/components/editor/backgroundColor";
 import { useMemo } from "react";
 
 export interface ITextItem {
-  music?: IMusicItem
+  music?: Partial<IMusicItem>
   photosets?: IPhotosetItem[]
-  backgroundColor?: TTextBackgroundColor
+  backgroundColor?: TTextBackgroundColor | string
 }
 
 interface IProps {
@@ -21,10 +21,13 @@ export default function TextItem({ item }: IProps) {
   const md = markdownit()
   
   const backgroundColor = useMemo<TTextBackgroundColor | undefined>(() => {
-    if (item.attributes?.backgroundColor) {
+    if (
+      item.attributes?.backgroundColor &&
+      typeof item.attributes.backgroundColor === 'object'
+    ) {
       return item.attributes.backgroundColor
     }
-  }, [item.attributes])
+  }, [item.attributes?.backgroundColor])
 
   const textColor = useMemo(() => {
     return backgroundColor?.textColor ?? '#333'

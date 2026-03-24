@@ -8,7 +8,7 @@ export default function ImageEditorSidebar() {
 
   const { state, dispatch } = useEditorStateContext();
 
-  const handleClickUploadFileItem = (item: IFileItem<any>) => {
+  const handleClickUploadFileItem = (item: IFileItem) => {
     const prevAttributes = state.attributes ?? null;
     const prevPhotosets = (prevAttributes?.photosets ?? []) as IPhotosetItem[];
     const photo: IPhotosetItem = {

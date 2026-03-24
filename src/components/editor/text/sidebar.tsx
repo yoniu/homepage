@@ -10,7 +10,7 @@ export default function TextEditorSidebar() {
 
   const { state, dispatch } = useEditorStateContext();
 
-  const handleClickUploadFileItem = (item: IFileItem<any>) => {
+  const handleClickUploadFileItem = (item: IFileItem) => {
     const prevAttributes = state.attributes ?? null;
     const prevPhotosets = (prevAttributes?.photosets ?? []) as IPhotosetItem[];
     const photo: IPhotosetItem = {

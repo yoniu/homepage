@@ -6,7 +6,7 @@ import dayFormat from "@/src/utils/dayFormat";
 import { IFixedTextItem, ShowFixedText } from "@/src/components/editor/fixedText";
 
 export interface IImageItem {
-  music?: IMusicItem
+  music?: Partial<IMusicItem>
   photosets?: IPhotosetItem[]
   fixedText?: IFixedTextItem[]
 }

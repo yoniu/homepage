@@ -1,16 +1,10 @@
 import { useMemo } from "react";
 import { ShowMusicPlainContent } from "@/src/components/editor/plainContent";
-import { IFixedTextItem } from "@/src/components/editor/fixedText";
 import { TMusicMomentAttributes } from "@/src/types/moments";
 import PlayerView from "@/src/components/play/PlayerView";
 
-export interface IVideoState {
-  video?: IVideoItem
-  fixedText?: IFixedTextItem[]
-}
-
 interface IProps {
-  item: IMomentItem<IVideoState>
+  item: IMomentItem
 }
 
 export default function MusicItem({ item }: IProps) {

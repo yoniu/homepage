@@ -8,7 +8,7 @@ import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
 import { parseLrc, getCurrentLyric } from "@/src/utils/lrcParser";
 
-type IProps = IMusicItem & {
+type IProps = Partial<IMusicItem> & {
   direction?: "col" | "row",
 }
 
@@ -75,9 +75,12 @@ export default function MusicPlayerView(props: IProps) {
 
   // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
-    if (!props.url) return;
+    if (!props.url) {
+      dispatch({type: 'CLEAN'})
+      playerRef.current = null
+      return;
+    }
     dispatch({type: 'CLEAN'})
-    if (playerRef.current) return dispatch({type: 'SET', howler: playerRef.current})
     setLoading(true)
     const howler = new Howl({
       src: [props.url],
@@ -119,9 +122,10 @@ export default function MusicPlayerView(props: IProps) {
       if (progressRef.current) {
         clearInterval(progressRef.current);
       }
+      playerRef.current = null
       dispatch({type: 'CLEAN'})
     }
-  }, [])
+  }, [dispatch, props.url])
 
   const togglePlay = () => {
     if (playerRef.current) {

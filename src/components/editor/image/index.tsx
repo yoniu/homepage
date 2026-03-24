@@ -9,29 +9,32 @@ import { IFixedTextItem, ShowFixedText } from "@/src/components/editor/fixedText
 export default function ImageEditor() {
 
   const { state } = useEditorStateContext() 
+  const attributes = state.attributes;
 
   const [bg, setBg] = useState('')
 
   const handleCarouselChange = (current: number) => {
-    const photosets = state.attributes.photosets as IPhotosetItem[];
+    const photosets = (attributes?.photosets ?? []) as IPhotosetItem[];
     const selectedPhotoset = photosets[current];
-    setBg(selectedPhotoset.url)
+    if (selectedPhotoset) {
+      setBg(selectedPhotoset.url)
+    }
   }
 
   useEffect(() => {
-    if (state.attributes && state.attributes.photosets) {
-      const photosets = state.attributes.photosets as IPhotosetItem[];
+    if (attributes?.photosets) {
+      const photosets = attributes.photosets as IPhotosetItem[];
       if (photosets.length) setBg(photosets[0].url)
     }
-  }, [state.attributes])
+  }, [attributes])
 
   const hasCarousel = useMemo(() => {
-    return state.attributes && state.attributes.photosets && state.attributes.photosets.length
-  }, [state.attributes])
+    return Boolean(attributes?.photosets?.length)
+  }, [attributes?.photosets])
 
   const hasFixedText = useMemo(() => {
-    return state.attributes && state.attributes.fixedText && state.attributes.fixedText.length
-  }, [state.attributes])
+    return Boolean(attributes?.fixedText?.length)
+  }, [attributes?.fixedText])
 
   return (
     <>
@@ -39,13 +42,13 @@ export default function ImageEditor() {
         { bg && hasCarousel ? <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> : null }
         {
           hasCarousel ?
-          <CarouselImage images={state.attributes.photosets as IPhotosetItem[]} afterChange={handleCarouselChange} /> :
+          <CarouselImage images={(attributes?.photosets ?? []) as IPhotosetItem[]} afterChange={handleCarouselChange} /> :
           <div className="w-full h-full flex justify-center items-center">
             <p className="text-gray-500">No images found</p>
           </div>
         }
         {
-          hasFixedText && <ShowFixedText fixedText={state.attributes.fixedText as IFixedTextItem[]} />
+          hasFixedText && <ShowFixedText fixedText={(attributes?.fixedText ?? []) as IFixedTextItem[]} />
         }
         { state.content && <ShowPlainContent content={state.content} /> }
       </div>

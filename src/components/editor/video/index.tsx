@@ -11,23 +11,24 @@ export default function VideoEditor() {
 
   const { state, dispatch } = useEditorStateContext() 
   const { modal } = App.useApp()
+  const attributes = state.attributes;
 
   const [bg, setBg] = useState('')
 
   useEffect(() => {
-    if (state.attributes && state.attributes.video) {
-      const video = state.attributes.video as IVideoItem;
+    if (attributes?.video) {
+      const video = attributes.video as IVideoItem;
       if (video && video.cover) setBg(video.cover)
     }
-  }, [state.attributes, state.attributes?.video, state.attributes.video?.cover])
+  }, [attributes?.video])
 
   const hasVideo = useMemo(() => {
-    return state.attributes && state.attributes.video && state.attributes.video.url
-  }, [state.attributes])
+    return Boolean(attributes?.video?.url)
+  }, [attributes?.video?.url])
 
   const hasFixedText = useMemo(() => {
-    return state.attributes && state.attributes.fixedText && state.attributes.fixedText.length
-  }, [state.attributes])
+    return Boolean(attributes?.fixedText?.length)
+  }, [attributes?.fixedText])
 
   const handleVideoSetting = (video?: Partial<IVideoItem>) => {
     if (!video) return;
@@ -46,7 +47,7 @@ export default function VideoEditor() {
   const handleDoubleClick = () => {
     modal.confirm({
       title: '设置视频',
-      content: <UpdateVideoSetting video={state.attributes?.video as IVideoItem} onChange={handleVideoSetting} />,
+      content: <UpdateVideoSetting video={attributes?.video as IVideoItem} onChange={handleVideoSetting} />,
     })
   }
 
@@ -57,9 +58,9 @@ export default function VideoEditor() {
         onDoubleClick={handleDoubleClick}
       >
         { bg && <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> }
-        { hasVideo && <VideoPlayer url={state.attributes.video.url} /> }
+        { hasVideo && attributes?.video?.url && <VideoPlayer url={attributes.video.url} /> }
         {
-          hasFixedText && <ShowFixedText fixedText={state.attributes.fixedText as IFixedTextItem[]} />
+          hasFixedText && <ShowFixedText fixedText={(attributes?.fixedText ?? []) as IFixedTextItem[]} />
         }
         { state.content && <ShowPlainContent content={state.content} /> }
       </div>
@@ -67,7 +68,7 @@ export default function VideoEditor() {
   )
 }
 
-function UpdateVideoSetting({ video, onChange }: { video?: IVideoItem, onChange?: (video?: Partial<IVideoItem>) => void }) {
+function UpdateVideoSetting({ video, onChange }: { video?: Partial<IVideoItem>, onChange?: (video?: Partial<IVideoItem>) => void }) {
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.({ ...video, url: e.target.value })

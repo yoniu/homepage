@@ -11,28 +11,22 @@ import VideoItem from '@/src/components/moments/item/video';
 export default function MomentsTiktok() {
 
   const { state }  = useMomentStateContext();
+  const currentMoment = state.momentList[state.currentIndex] ?? null;
 
   const displayer: Record<EMomentType, (key: number) => JSX.Element> = {
-    text: (key) => <TextItem key={key} item={state.momentList[state.currentIndex]} />,
-    image: (key) => <ImageItem key={key} item={state.momentList[state.currentIndex]} />,
-    video: (key) => <VideoItem key={key} item={state.momentList[state.currentIndex]} />,
+    text: (key) => currentMoment ? <TextItem key={key} item={currentMoment} /> : <></>,
+    image: (key) => currentMoment ? <ImageItem key={key} item={currentMoment} /> : <></>,
+    video: (key) => currentMoment ? <VideoItem key={key} item={currentMoment} /> : <></>,
     live: (key) => <div key={key}>live</div>,
     music: (key) => <div key={key}>music</div>,
   }
 
   const currentMomentType = useMemo<EMomentType>(() => {
-    if (state.momentList[state.currentIndex] && state.momentList[state.currentIndex].attributes && state.momentList[state.currentIndex].attributes.type) {
-      return state.momentList[state.currentIndex].attributes.type
+    if (currentMoment?.attributes?.type) {
+      return currentMoment.attributes.type
     }
-    return 'text'
-  }, [state.momentList[state.currentIndex]])
-
-  const currentMoment = useMemo(() => {
-    if (state.momentList && state.momentList[state.currentIndex]) {
-      return state.momentList[state.currentIndex]
-    }
-    return null
-  }, [state.momentList[state.currentIndex]])
+    return EMomentType.Text
+  }, [currentMoment])
 
   return (
     <>

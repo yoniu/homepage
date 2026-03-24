@@ -8,7 +8,7 @@ import Marquee from "react-fast-marquee";
 import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
 
-type IProps = IMusicItem
+type IProps = Partial<IMusicItem>
 
 export default function MusicPlayer(props: IProps) {
   const {state, dispatch} = useStateContext()
@@ -21,9 +21,12 @@ export default function MusicPlayer(props: IProps) {
 
   // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
-    if (!props.url) return;
+    if (!props.url) {
+      dispatch({type: 'CLEAN'})
+      playerRef.current = null
+      return;
+    }
     dispatch({type: 'CLEAN'})
-    if (playerRef.current) return dispatch({type: 'SET', howler: playerRef.current})
     setLoading(true)
     const howler = new Howl({
       src: [props.url],
@@ -45,9 +48,10 @@ export default function MusicPlayer(props: IProps) {
     })
 
     return () => {
+      playerRef.current = null
       dispatch({type: 'CLEAN'})
     }
-  }, [])
+  }, [dispatch, props.url])
 
   const togglePlay = () => {
     if (state.howler) {

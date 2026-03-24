@@ -11,7 +11,7 @@ export type TMusicMomentBackgroundType = "DEFAULT" | "PLAIN" | "GRADIENT";
  * 音乐动态属性
  */
 export type TMusicMomentAttributes = {
-  music?: IMusicItem;
+  music?: Partial<IMusicItem>;
   textType?: TTextType;
   backgroundType?: TMusicMomentBackgroundType;
   backgroundColor?: string;

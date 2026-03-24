@@ -9,7 +9,7 @@ export enum EFileStatus {
   explicit,
 }
 
-export interface EditorFileItem<T> {
+export interface EditorFileItem<T = Record<string, never>> {
   id: number;
   filename: string;
   url: string;
@@ -64,8 +64,8 @@ export async function getClientIp() {
   return response.data.origin;
 }
 
-export function uploadFile(formData: FormData, options?: AxiosRequestConfig<any>) {
-  return api.put<EditorFileItem<any>>('/file/upload', formData, options);
+export function uploadFile(formData: FormData, options?: AxiosRequestConfig<FormData>) {
+  return api.put<EditorFileItem>('/file/upload', formData, options);
 }
 
 export function deleteFile(id: number) {
@@ -73,7 +73,7 @@ export function deleteFile(id: number) {
 }
 
 export function getMomentFiles(id: number) {
-  return api.get<EditorFileItem<any>[]>(`/file/moment/${id}`);
+  return api.get<EditorFileItem[]>(`/file/moment/${id}`);
 }
 
 export function getLocationByIp(ip: string) {

@@ -9,12 +9,13 @@ import Masonry from 'react-masonry-css';
 import MasonryTextItem from '@/src/components/moments/item/masonry/text';
 import MasonryImageItem from '@/src/components/moments/item/masonry/image';
 import MasonryLoadingItem from '@/src/components/moments/item/masonry/loading';
+import type { MomentEntity } from '@/src/features/moment/api';
 
 export default function MomentsMasonry() {
 
   const { state, dispatch }  = useMomentStateContext();
 
-  const displayer: Record<EMomentType, (key: number, item: IMomentItem<any>) => JSX.Element> = {
+  const displayer: Record<EMomentType, (key: number, item: MomentEntity) => JSX.Element> = {
     text: (key, item) => <MasonryTextItem key={key} item={item} />,
     image: (key, item) => <MasonryImageItem key={key} item={item} />,
     video: (key, item) => <MasonryVideoItem key={key} item={item} />,
@@ -29,7 +30,7 @@ export default function MomentsMasonry() {
         index: state.momentList.length - 1,
       })
     }
-  }, [state.hasNextPage])
+  }, [dispatch, state.hasNextPage, state.momentList.length])
 
   const breakpointColumnsObj = {
     default: 4,
@@ -58,8 +59,8 @@ export default function MomentsMasonry() {
           >
             {
               state.momentList.map((item) => {
-                const type: EMomentType = item.attributes?.type ?? "text";
-                return displayer[type](item.id, item)
+                const type: EMomentType = item.attributes?.type ?? EMomentType.Text;
+                return displayer[type](item.id, item as MomentEntity)
               })
             }
           </Masonry>

@@ -6,7 +6,7 @@ import { IFixedTextItem, ShowFixedText } from "@/src/components/editor/fixedText
 import VideoPlayer from "@/src/components/play/video";
 
 export interface IVideoState {
-  video?: IVideoItem
+  video?: Partial<IVideoItem>
   fixedText?: IFixedTextItem[]
 }
 
@@ -17,20 +17,20 @@ interface IProps {
 export default function VideoItem({ item }: IProps) {
 
   const [bg, setBg] = useState('')
+  const video = item.attributes?.video
 
   useEffect(() => {
-    if (item.attributes && item.attributes.video) {
-      const video = item.attributes.video as IVideoItem;
+    if (video) {
       if (video.cover) setBg(video.cover)
     }
-  }, [item])
+  }, [video])
 
   return (
     <div className="flex flex-col rounded-md overflow-hidden w-full h-full">
       <div className="relative w-full h-full flex-1 bg-white">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden flex items-center justify-center">
           { bg ? <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> : null }
-          {(item && item.attributes && item.attributes.video) ? <VideoPlayer url={item.attributes.video.url} autoPlay /> : null }
+          {video?.url ? <VideoPlayer url={video.url} autoPlay /> : null }
           {
             (item.attributes && item.attributes.fixedText) && <ShowFixedText fixedText={item.attributes.fixedText as IFixedTextItem[]} />
           }

@@ -14,7 +14,7 @@ interface IState {
   page: number;
   pageSize: number;
   hasNextPage: boolean;
-  momentList: IMomentItem<any>[];
+  momentList: IMomentItem[];
   displayType: TDisplayType;
 }
 
@@ -30,7 +30,7 @@ const initialState: IState = {
 };
 
 type TAction = 
-  | { type: 'UPDATELIST', momentList: IMomentItem<any>[], page: number, hasNextPage: boolean } // 更新 list
+  | { type: 'UPDATELIST', momentList: IMomentItem[], page: number, hasNextPage: boolean } // 更新 list
   | { type: 'PREVINDEX' } // 上一条
   | { type: 'NEXTINDEX' } // 下一条
   | { type: 'SETINDEX', index: number } // 切换 index
