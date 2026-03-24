@@ -47,7 +47,7 @@ export function ShowPlainContent(
   }
 ) {
   return (
-    <div className={cn("absolute left-0 bottom-4 w-full py-4 px-6 text-white text-lg sm:text-xl z-index-10", className)}>
+    <div className={cn("pointer-events-none absolute left-0 bottom-4 w-full py-4 px-6 text-white text-lg sm:text-xl z-index-10", className)}>
       { children }
       { 
         content.split('\n').map((line, index) => (

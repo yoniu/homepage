@@ -341,7 +341,7 @@ export function ShowFixedText({ fixedText }: { fixedText: IFixedTextItem[] }) {
 
 const plainText = (item: IFixedTextItem) => (
   <span
-    className="fixed-text_plain absolute text-lg md:text-xl"
+    className="pointer-events-none fixed-text_plain absolute text-lg md:text-xl"
     key={item.id}
     style={{
       top: `${item.top}%`,
@@ -354,7 +354,7 @@ const plainText = (item: IFixedTextItem) => (
 
 const orangeText = (item: IFixedTextItem) => (
   <span
-    className="absolute bg-orange-400 px-2 py-1 text-lg text-white md:text-xl"
+    className="pointer-events-none absolute bg-orange-400 px-2 py-1 text-lg text-white md:text-xl"
     key={item.id}
     style={{
       top: `${item.top}%`,
@@ -367,7 +367,7 @@ const orangeText = (item: IFixedTextItem) => (
 
 const santaclausText = (item: IFixedTextItem) => (
   <span
-    className="fixed-text_santaclaus absolute text-lg md:text-xl"
+    className="pointer-events-none fixed-text_santaclaus absolute text-lg md:text-xl"
     key={item.id}
     style={{
       top: `${item.top}%`,
@@ -380,7 +380,7 @@ const santaclausText = (item: IFixedTextItem) => (
 
 const santaplaneText = (item: IFixedTextItem) => (
   <span
-    className="fixed-text_santaplane absolute text-lg md:text-xl"
+    className="pointer-events-none fixed-text_santaplane absolute text-lg md:text-xl"
     key={item.id}
     style={{
       top: `${item.top}%`,

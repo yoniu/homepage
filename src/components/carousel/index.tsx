@@ -244,6 +244,9 @@ export default function CarouselImage({
               handleMouseActivity()
               handleMovePrevious()
             }}
+            onPointerDown={(event) => {
+              event.stopPropagation()
+            }}
             type="button"
           >
             <LeftOutlined />
@@ -259,6 +262,9 @@ export default function CarouselImage({
             onClick={() => {
               handleMouseActivity()
               handleMoveNext()
+            }}
+            onPointerDown={(event) => {
+              event.stopPropagation()
             }}
             type="button"
           >
@@ -277,6 +283,9 @@ export default function CarouselImage({
               )
             }
             onClick={() => handleSetCurrentIndex(index)}
+            onPointerDown={(event) => {
+              event.stopPropagation()
+            }}
             type="button"
           />
         ))}
