@@ -12,7 +12,7 @@ import { useStateContext as useMomentstateContext } from "@/src/stores/moment";
 import { GlobalOutlined, TikTokOutlined } from "@ant-design/icons";
 
 // 动态导入，禁止服务端渲染
-const MomentLogin = dynamic(() => import("@/src/components/moments/login/v2"), {
+const MenuLoginButton = dynamic(() => import("@/src/features/auth/components/MenuLoginButton"), {
   ssr: false,
 })
 
@@ -91,7 +91,7 @@ export default function List() {
             aItem(item)
           ))
         }
-        { !state.isLogin && <MomentLogin /> }
+        { !state.isLogin && <MenuLoginButton /> }
         { state.isLogin && <Admin /> }
         <Switch />
       </div>

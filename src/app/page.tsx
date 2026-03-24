@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import Menu from "@/src/components/menu/Index";
-import Center from "@/src/components/moments/v2/center/Index";
+import MomentFeed from "@/src/features/moment/components/feed/MomentFeed";
 
 export default function Page() {
 
@@ -11,7 +11,7 @@ export default function Page() {
       <div className="absolute h-full w-full flex items-stretch overflow-hidden">
         <Menu />
         <Suspense fallback={<div>加载中...</div>}>
-          <Center />
+          <MomentFeed />
         </Suspense>
       </div>
     </>

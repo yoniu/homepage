@@ -18,7 +18,7 @@ export default function MomentControl () {
   const searchParams = useSearchParams();
 
   const isHome = useMemo(() => {
-    return pathname === '/' || pathname === '/v2'
+    return pathname === '/'
   }, [pathname])
 
   const handleBackHome = useCallback(() => {
@@ -40,7 +40,7 @@ export default function MomentControl () {
   }, [state.currentIndex, state.momentList])
 
   const currentMomentId = useMemo(() => {
-    if (pathname === '/' || pathname === '/v2') {
+    if (pathname === '/') {
       return currentMoment?.id
     } else {
       // 使用 useSearchParams 替代 window.location.search
