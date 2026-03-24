@@ -1,5 +1,6 @@
 import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
 import { Select } from 'antd';
+import { EMomentType, type EMomentType as TMomentType } from '@/src/types/moment';
 
 export default function SelectType() {
 
@@ -13,7 +14,7 @@ export default function SelectType() {
     { label: '音乐', value: EMomentType.Music },
   ];
 
-  const handleChange = (type: EMomentType) => {
+  const handleChange = (type: TMomentType) => {
     const prevAttributes = state.attributes ?? null;
     dispatch({ type: 'UPDATE', states: {
       attributes: {

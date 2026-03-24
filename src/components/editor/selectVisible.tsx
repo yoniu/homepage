@@ -1,25 +1,28 @@
 import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
 import { Select } from 'antd';
+import { EMomentStatus, type EMomentStatus as TMomentStatus } from '@/src/types/moment';
 
 export default function SelectVisible() {
-
   const { state, dispatch } = useEditorStateContext();
 
-  const options: Array<{value: EMomentStatus, label: string}> = [
-    { value: 0, label: '草稿' },
-    { value: 1, label: '公开' },
-    { value: 2, label: '私密' },
+  const options: Array<{ value: TMomentStatus; label: string }> = [
+    { value: EMomentStatus.Draft, label: '鑽夌' },
+    { value: EMomentStatus.Published, label: '鍏紑' },
+    { value: EMomentStatus.Self, label: '绉佸瘑' },
   ];
 
-  const handleChange = (status: EMomentStatus) => {
-    dispatch({ type: 'UPDATE', states: {
-      status
-    }});
-  }
+  const handleChange = (status: TMomentStatus) => {
+    dispatch({
+      type: 'UPDATE',
+      states: {
+        status,
+      },
+    });
+  };
 
   return (
     <div className="w-full space-y-1">
-      <h4 className="text-gray-500">选择可见范围</h4>
+      <h4 className="text-gray-500">閫夋嫨鍙鑼冨洿</h4>
       <Select
         className="w-full"
         value={state.status}

@@ -1,17 +1,3 @@
-declare enum EMomentStatus {
-  Draft = 0,
-  Published = 1,
-  Self = 2,
-}
-
-declare enum EMomentType {
-  Text = 'text',
-  Image = 'image',
-  Video = 'video',
-  Live = 'live',
-  Music = 'music',
-}
-
 declare type TTextType = "LIGHT" | "DARK";
 declare type TMusicMomentBackgroundType = "DEFAULT" | "PLAIN" | "GRADIENT";
 
@@ -56,7 +42,7 @@ declare interface IMomentLocation {
 }
 
 declare interface IMomentAttributes {
-  type?: EMomentType;
+  type?: import("@/src/types/moment").EMomentType;
   photosets?: IPhotosetItem[];
   fixedText?: IFixedTextItem[];
   music?: Partial<IMusicItem>;
@@ -74,7 +60,7 @@ declare interface IMomentItem<T = IMomentAttributes> {
   content?: string
   author: IUser
   attributes?: T
-  status: EMomentStatus
+  status: import("@/src/types/moment").EMomentStatus
   create_time: Date
   update_time: Date
 }

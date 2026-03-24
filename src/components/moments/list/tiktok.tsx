@@ -7,13 +7,14 @@ import { useMemo } from 'react';
 import TextItem from '@/src/components/moments/item/text';
 import ImageItem from '@/src/components/moments/item/image';
 import VideoItem from '@/src/components/moments/item/video';
+import { EMomentType, type EMomentType as TMomentType } from '@/src/types/moment';
 
 export default function MomentsTiktok() {
 
   const { state }  = useMomentStateContext();
   const currentMoment = state.momentList[state.currentIndex] ?? null;
 
-  const displayer: Record<EMomentType, (key: number) => JSX.Element> = {
+  const displayer: Record<TMomentType, (key: number) => JSX.Element> = {
     text: (key) => currentMoment ? <TextItem key={key} item={currentMoment} /> : <></>,
     image: (key) => currentMoment ? <ImageItem key={key} item={currentMoment} /> : <></>,
     video: (key) => currentMoment ? <VideoItem key={key} item={currentMoment} /> : <></>,
@@ -21,7 +22,7 @@ export default function MomentsTiktok() {
     music: (key) => <div key={key}>music</div>,
   }
 
-  const currentMomentType = useMemo<EMomentType>(() => {
+  const currentMomentType = useMemo<TMomentType>(() => {
     if (currentMoment?.attributes?.type) {
       return currentMoment.attributes.type
     }

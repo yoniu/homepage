@@ -16,6 +16,7 @@ import TextEditorSidebar from "@/src/components/editor/text/sidebar";
 import ImageEditorSidebar from "@/src/components/editor/image/sidebar";
 import VideoEditorSidebar from "@/src/components/editor/video/sidebar";
 import MusicEditorSidebar from "@/src/components/editor/music/sidebar";
+import type { EMomentType } from '@/src/types/moment';
 
 export default function EditorSidebar() {
 

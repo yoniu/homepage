@@ -8,6 +8,7 @@ import ImageItem from '@/src/components/moments/item/image';
 import TextItem from '@/src/components/moments/item/text';
 import VideoItem from '@/src/components/moments/item/video';
 import { useMomentDetail } from "@/src/features/moment/hooks/useMomentDetail";
+import type { EMomentType } from '@/src/types/moment';
 
 export default function Page() {
   return (

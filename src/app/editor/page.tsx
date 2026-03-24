@@ -10,6 +10,7 @@ import VideoEditor from '@/src/components/editor/video';
 import MusicEditor from '@/src/components/editor/music/index';
 import { useEditorInit } from '@/src/features/editor/hooks/useEditorInit';
 import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
+import type { EMomentType } from '@/src/types/moment';
 
 export default function Page() {
   return (

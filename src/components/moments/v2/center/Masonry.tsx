@@ -10,12 +10,13 @@ import MasonryTextItem from '@/src/components/moments/item/masonry/text';
 import MasonryImageItem from '@/src/components/moments/item/masonry/image';
 import MasonryLoadingItem from '@/src/components/moments/item/masonry/loading';
 import type { MomentEntity } from '@/src/features/moment/api';
+import { EMomentType, type EMomentType as TMomentType } from '@/src/types/moment';
 
 export default function MomentsMasonry() {
 
   const { state, dispatch }  = useMomentStateContext();
 
-  const displayer: Record<EMomentType, (key: number, item: MomentEntity) => JSX.Element> = {
+  const displayer: Record<TMomentType, (key: number, item: MomentEntity) => JSX.Element> = {
     text: (key, item) => <MasonryTextItem key={key} item={item} />,
     image: (key, item) => <MasonryImageItem key={key} item={item} />,
     video: (key, item) => <MasonryVideoItem key={key} item={item} />,
@@ -59,7 +60,7 @@ export default function MomentsMasonry() {
           >
             {
               state.momentList.map((item) => {
-                const type: EMomentType = item.attributes?.type ?? EMomentType.Text;
+                const type: TMomentType = item.attributes?.type ?? EMomentType.Text;
                 return displayer[type](item.id, item as MomentEntity)
               })
             }

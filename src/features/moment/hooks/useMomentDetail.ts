@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { normalizeApiError } from '@/src/shared/api/error';
+import { EMomentType, type EMomentType as TMomentType } from '@/src/types/moment';
 
 import { getPublicMomentById, type MomentEntity } from '../api';
 
@@ -75,9 +76,9 @@ export function useMomentDetail() {
       });
   }, [invalidUsage, messageApi, modal, momentId, router]);
 
-  const currentMomentType = useMemo<EMomentType>(() => {
+  const currentMomentType = useMemo<TMomentType>(() => {
     const type = item?.attributes?.type;
-    return typeof type === 'string' ? (type as EMomentType) : EMomentType.Text;
+    return typeof type === 'string' ? (type as TMomentType) : EMomentType.Text;
   }, [item]);
 
   return {
