@@ -19,6 +19,11 @@ export type TTextBackgroundColor = {
 export default function EditorBackgroundColor() {
 
   const { state, dispatch } = useEditorStateContext();
+  const previousBackgroundColor = (
+    typeof state.attributes?.backgroundColor === 'object' && state.attributes.backgroundColor !== null
+      ? state.attributes.backgroundColor
+      : undefined
+  );
 
   const handleChangeTextColor = (color: AggregationColor) => {
     const prevAttributes = state.attributes ?? null;
@@ -26,7 +31,7 @@ export default function EditorBackgroundColor() {
       attributes: {
         ...prevAttributes,
         backgroundColor: {
-          ...prevAttributes?.backgroundColor,
+          ...(previousBackgroundColor ?? { type: 'none' as TBackgroundColor }),
           textColor: color.toRgbString()
         }
       }
@@ -39,7 +44,7 @@ export default function EditorBackgroundColor() {
       attributes: {
         ...prevAttributes,
         backgroundColor: {
-          ...prevAttributes?.backgroundColor,
+          ...(previousBackgroundColor ?? { type: 'none' as TBackgroundColor }),
           type: value
         }
       }
@@ -52,7 +57,7 @@ export default function EditorBackgroundColor() {
       attributes: {
         ...prevAttributes,
         backgroundColor: {
-          ...prevAttributes?.backgroundColor,
+          ...(previousBackgroundColor ?? { type: 'none' as TBackgroundColor }),
           type: 'solid',
           color: color.toRgbString()
         }
@@ -66,7 +71,7 @@ export default function EditorBackgroundColor() {
       attributes: {
         ...prevAttributes,
         backgroundColor: {
-          ...prevAttributes?.backgroundColor,
+          ...(previousBackgroundColor ?? { type: 'none' as TBackgroundColor }),
           type: 'gradient',
           colors: colors.getColors().map(item => `${item.color.toRgbString()} ${item.percent}%`)
         }
@@ -80,7 +85,7 @@ export default function EditorBackgroundColor() {
       attributes: {
         ...prevAttributes,
         backgroundColor: {
-          ...prevAttributes?.backgroundColor,
+          ...(previousBackgroundColor ?? { type: 'none' as TBackgroundColor }),
           type: 'image',
           image: e.target.value
         }
@@ -108,14 +113,14 @@ export default function EditorBackgroundColor() {
   ]
 
   const backgroundColor = useMemo<TTextBackgroundColor>(() => {
-    if (state.attributes?.backgroundColor) {
+    if (typeof state.attributes?.backgroundColor === 'object' && state.attributes.backgroundColor !== null) {
       return state.attributes.backgroundColor
     } else {
       return {
         type: 'none',
       }
     }
-  }, [state.attributes])
+  }, [state.attributes?.backgroundColor])
 
   const gradientColors = useMemo(() => {
     const colors: string[] = backgroundColor.colors ?? [];

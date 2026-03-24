@@ -38,6 +38,8 @@ export default function TextEditor() {
     },
     value: (editor: SlateEditor) => deserializeMd(editor, state.content ?? ''),
   })
+  const markdownApi = editor.api.markdown;
+  const editorTransforms = editor.tf;
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
@@ -61,11 +63,11 @@ export default function TextEditor() {
   useEffect(() => {
     if (initialized) return
     if (state.content) {
-      const content = editor.api.markdown.deserialize(state.content);
-      editor.tf.setValue(content)
+      const content = markdownApi.deserialize(state.content);
+      editorTransforms.setValue(content)
       setInitialized(true)
     }
-  }, [state.content])
+  }, [editorTransforms, initialized, markdownApi, state.content])
 
   return (
     <>

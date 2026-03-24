@@ -1,206 +1,250 @@
-import { useStateContext } from "@/src/stores/audio.tsx"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { Howl } from 'howler';
-import { IMusicItem } from "@/src/components/editor/music";
-import CONST from "@/src/configs/consts";
-import { CaretRightFilled, LoadingOutlined, PauseOutlined } from "@ant-design/icons";
+import {
+  CaretRightFilled,
+  LoadingOutlined,
+  MutedOutlined,
+  PauseOutlined,
+  SoundOutlined,
+} from "@ant-design/icons";
 import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
-import { parseLrc, getCurrentLyric } from "@/src/utils/lrcParser";
+import { Howl } from "howler";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-type IProps = IMusicItem & {
-  direction?: "col" | "row",
-}
+import { IMusicItem } from "@/src/components/editor/music";
+import CONST from "@/src/configs/consts";
+import { disposeHowler, useStateContext } from "@/src/stores/audio.tsx";
+import { getCurrentLyric, parseLrc } from "@/src/utils/lrcParser";
+
+type IProps = Partial<IMusicItem> & {
+  direction?: "col" | "row";
+};
 
 export default function MusicPlayerView(props: IProps) {
-  const {dispatch} = useStateContext()
+  const { state: audioState, dispatch } = useStateContext();
 
-  const [playing, setPlaying] = useState(false)
+  const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [currentLyric, setCurrentLyric] = useState("");
 
-  const [loading, setLoading] = useState(true)
+  const direction = props.direction ?? "row";
 
-  const [progress, setProgress] = useState(0)
+  const playerRef = useRef<Howl | null>(null);
+  const progressRef = useRef<NodeJS.Timeout | null>(null);
+  const lyricsRef = useRef<Array<{ time: number; text: string }>>([]);
 
-  const [duration, setDuration] = useState(0)
-
-  const [currentLyric, setCurrentLyric] = useState('')
-
-  // 使用响应式方向：小屏默认 col，大屏默认 row（如果未指定）
-  const direction = props.direction ?? "row"
-
-  const playerRef = useRef<Howl | null>(null)
-
-  const progressRef = useRef<NodeJS.Timeout | null>(null)
-
-  const lyricsRef = useRef<Array<{ time: number; text: string }>>([])
-
-  // 更新进度
   const updateProgress = () => {
     if (playerRef.current && playerRef.current.playing()) {
       const seek = playerRef.current.seek();
-      const duration = playerRef.current.duration();
-      if (typeof seek === 'number' && typeof duration === 'number') {
+      const total = playerRef.current.duration();
+
+      if (typeof seek === "number" && typeof total === "number") {
         setProgress(seek);
-        setDuration(duration);
-        
-        // 使用 ref 获取最新的 lyrics
-        const currentLyrics = lyricsRef.current;
-        if (currentLyrics.length > 0) {
-          const lyric = getCurrentLyric(currentLyrics, seek);
-          setCurrentLyric(lyric);
-        }
+        setDuration(total);
+
+        const lyric = getCurrentLyric(lyricsRef.current, seek);
+        setCurrentLyric(lyric);
       }
     }
-  }
+  };
 
-  // 加载歌词文件
   useEffect(() => {
     if (!props.lrc) {
-      setCurrentLyric('');
+      setCurrentLyric("");
       lyricsRef.current = [];
       return;
     }
 
+    let cancelled = false;
+
     fetch(props.lrc)
-      .then(res => res.text())
-      .then(lrcContent => {
-        const parsedLyrics = parseLrc(lrcContent);
-        lyricsRef.current = parsedLyrics;
+      .then((res) => res.text())
+      .then((lrcContent) => {
+        if (cancelled) {
+          return;
+        }
+
+        lyricsRef.current = parseLrc(lrcContent);
       })
-      .catch(err => {
-        console.error('Failed to load lyrics:', err);
+      .catch((error) => {
+        console.error("Failed to load lyrics:", error);
         lyricsRef.current = [];
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [props.lrc]);
 
-  // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
-    if (!props.url) return;
-    dispatch({type: 'CLEAN'})
-    if (playerRef.current) return dispatch({type: 'SET', howler: playerRef.current})
-    setLoading(true)
+    if (!props.url) {
+      if (playerRef.current) {
+        dispatch({ type: "CLEAN_MATCH", howler: playerRef.current });
+      }
+
+      playerRef.current = null;
+      setPlaying(false);
+      setLoading(false);
+      setProgress(0);
+      setDuration(0);
+      return;
+    }
+
+    let disposed = false;
+
+    setLoading(true);
+    setPlaying(false);
+    setProgress(0);
+    setDuration(0);
+    setCurrentLyric("");
+
     const howler = new Howl({
       src: [props.url],
       volume: 1.0,
       loop: true,
-      
       onplay() {
-        setPlaying(true)
-        // 开始进度更新
-        if (progressRef.current) clearInterval(progressRef.current);
+        setPlaying(true);
+        if (progressRef.current) {
+          clearInterval(progressRef.current);
+        }
         progressRef.current = setInterval(updateProgress, 100);
       },
       onpause() {
-        setPlaying(false)
-        // 暂停时清除进度更新
+        setPlaying(false);
         if (progressRef.current) {
           clearInterval(progressRef.current);
           progressRef.current = null;
         }
       },
-      onend() {
-        // 循环播放时重置进度
+      onstop() {
+        setPlaying(false);
+        if (progressRef.current) {
+          clearInterval(progressRef.current);
+          progressRef.current = null;
+        }
         setProgress(0);
-        // 重置歌词
-        setCurrentLyric('');
-      }
+      },
+      onend() {
+        setProgress(0);
+        setCurrentLyric("");
+      },
     });
-    dispatch({type: 'SET', howler: howler})
-    playerRef.current = howler
-    howler.once('load', () => {
-      // 播放音频
+
+    dispatch({ type: "SET", howler });
+    playerRef.current = howler;
+
+    howler.once("load", () => {
+      if (disposed) {
+        return;
+      }
+
       howler.play();
-      setLoading(false)
-      // 获取时长
+      setLoading(false);
       setDuration(howler.duration());
-    })
+    });
 
     return () => {
+      disposed = true;
+
       if (progressRef.current) {
         clearInterval(progressRef.current);
+        progressRef.current = null;
       }
-      dispatch({type: 'CLEAN'})
-    }
-  }, [])
+
+      if (playerRef.current === howler) {
+        playerRef.current = null;
+      }
+
+      disposeHowler(howler);
+      dispatch({ type: "CLEAN_MATCH", howler });
+    };
+  }, [dispatch, props.url]);
 
   const togglePlay = () => {
     if (playerRef.current) {
-      playerRef.current[playerRef.current.playing() ? 'pause' : 'play']()
+      playerRef.current[playerRef.current.playing() ? "pause" : "play"]();
     }
-  }
+  };
 
-  // 容器样式 - 响应式：小屏默认 col，大屏默认 row
+  const toggleMuted = () => {
+    dispatch({
+      type: "SET_MUTED",
+      muted: !audioState.muted,
+    });
+  };
+
   const containerCss = useMemo(() => {
-    const baseFlex = "flex justify-center items-center"
-    // 添加响应式类：小屏始终 col，大屏根据 direction
-    const smallScreen = "flex-col space-y-4"
-    const largeScreen = direction === "col" 
-      ? "lg:flex-col lg:space-y-4" 
-      : "lg:flex-row lg:space-x-12"
-    
-    return `${baseFlex} ${smallScreen} ${largeScreen} text-center`
-  }, [direction])
+    const baseFlex = "flex justify-center items-center";
+    const smallScreen = "flex-col space-y-4";
+    const largeScreen = direction === "col" ? "lg:flex-col lg:space-y-4" : "lg:flex-row lg:space-x-12";
 
-  // 左侧样式 - 响应式
+    return `${baseFlex} ${smallScreen} ${largeScreen} text-center`;
+  }, [direction]);
+
   const leftCss = useMemo(() => {
-    // 小屏样式
-    let css = "w-full max-w-[200px] "
-    // 大屏样式
-    if (direction === "row") {
-      css += "lg:w-1/2 lg:max-w-[300px]"
-    } else {
-      css += "lg:w-full lg:max-w-[200px]"
-    }
-    css += " bg-[url('/images/decorate/player/record-border.png')] bg-cover bg-center bg-no-repeat"
-    css += " rounded-full border-4 border-solid border-white/5"
-    return css
-  }, [direction])
+    let css = "w-full max-w-[200px] ";
 
-  // 右侧样式 - 响应式
+    if (direction === "row") {
+      css += "lg:w-1/2 lg:max-w-[300px]";
+    } else {
+      css += "lg:w-full lg:max-w-[200px]";
+    }
+
+    css += " bg-[url('/images/decorate/player/record-border.png')] bg-cover bg-center bg-no-repeat";
+    css += " rounded-full border-4 border-solid border-white/5";
+
+    return css;
+  }, [direction]);
+
   const rightCss = useMemo(() => {
-    // 小屏样式
-    let css = "w-full max-w-[200px] space-y-4 items-center "
-    // 大屏样式
-    if (direction === "row") {
-      css += "lg:w-1/2 lg:max-w-[300px]"
-    } else {
-      css += "lg:w-full lg:max-w-[200px]"
-    }
-    return css
-  }, [direction])
+    let css = "w-full max-w-[200px] space-y-4 items-center ";
 
-  // 进度条点击处理
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!playerRef.current || loading) return;
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const width = rect.width;
-    const percentage = clickX / width;
+    if (direction === "row") {
+      css += "lg:w-1/2 lg:max-w-[300px]";
+    } else {
+      css += "lg:w-full lg:max-w-[200px]";
+    }
+
+    return css;
+  }, [direction]);
+
+  const handleProgressClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!playerRef.current || loading || !duration) {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const percentage = clickX / rect.width;
     const newTime = percentage * duration;
-    
+
     playerRef.current.seek(newTime);
     setProgress(newTime);
-  }
+  };
 
-  // 格式化时间
   const formatTime = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return "0:00";
+    if (!seconds || Number.isNaN(seconds)) {
+      return "0:00";
+    }
+
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }
+
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   return (
-    <div className={cn('flex-1 w-full', containerCss)}>
-      {/* 左侧 */}
-      <div className={cn(
-        "relative flex items-center justify-center aspect-square",
-        "after:box-content",
-        "after:content-[''] after:absolute after:rounded-full after:border-4 after:border-solid after:border-black",
-        "after:w-2 after:h-2 after:bg-white after:top-1/2 after:left-1/2 after:translate-x-[-50%] after:translate-y-[-50%]",
-        leftCss,
-      )}>
+    <div className={cn("flex-1 w-full", containerCss)}>
+      <div
+        className={cn(
+          "relative flex items-center justify-center aspect-square",
+          "after:box-content",
+          "after:content-[''] after:absolute after:rounded-full after:border-4 after:border-solid after:border-black",
+          "after:w-2 after:h-2 after:bg-white after:top-1/2 after:left-1/2 after:translate-x-[-50%] after:translate-y-[-50%]",
+          leftCss
+        )}
+      >
         <img
           className={cn(
             "relative w-[70%] aspect-square rounded-full",
@@ -211,38 +255,23 @@ export default function MusicPlayerView(props: IProps) {
           src={props.cover ?? CONST.LUTHER}
         />
       </div>
-      {/* 右侧 */}
-      <div className={cn(
-        "flex flex-col w-1/2",
-        rightCss,
-      )}>
-        {/* 歌曲信息 */}
+      <div className={cn("flex flex-col w-1/2", rightCss)}>
         <div className="flex flex-col space-y-2">
-          <div className="text-lg font-bold">
-            { props.name }
-          </div>
-          <div className="opacity-60 max-w-64 w-[2/3]">
-            { props.singer }
-          </div>
+          <div className="text-lg font-bold">{props.name}</div>
+          <div className="opacity-60 max-w-64 w-[2/3]">{props.singer}</div>
         </div>
-        
-        {/* 歌词显示 */}
-        {currentLyric && (
-          <div className="w-full text-center text-sm opacity-90">
-            {currentLyric}
-          </div>
-        )}
-        
-        {/* 进度条 - 在播放按钮上方 */}
+
+        {currentLyric && <div className="w-full text-center text-sm opacity-90">{currentLyric}</div>}
+
         {!loading && (
           <div className="w-full space-y-1">
-            <div 
+            <div
               className="relative h-2 bg-white/20 rounded-full cursor-pointer hover:bg-white/30 transition-colors"
               onClick={handleProgressClick}
             >
-              <div 
+              <div
                 className="absolute h-full bg-white rounded-full transition-all duration-100"
-                style={{ width: `${(progress / duration) * 100}%` }}
+                style={{ width: `${duration ? (progress / duration) * 100 : 0}%` }}
               />
             </div>
             <div className="flex justify-between text-xs text-white/60">
@@ -251,25 +280,36 @@ export default function MusicPlayerView(props: IProps) {
             </div>
           </div>
         )}
-        
-        {/* 播放按钮 */}
-        <Tooltip title={ playing ? '暂停' : '播放' } placement="bottom">
-          <button
-            className="
-              border-2 border-solid border-white
-              bg-white/90 backdrop-blur-md rounded-full
-              text-black flex items-center justify-center w-12 p-2 
-            "
-            onClick={togglePlay}
-          >
-              {
-                loading ?
-                <LoadingOutlined /> :
-                playing ? <PauseOutlined /> : <CaretRightFilled />
-              }
-          </button>
-        </Tooltip>
+
+        <div className="flex items-center justify-center gap-3">
+          <Tooltip title={audioState.muted ? "Unmute" : "Mute"} placement="bottom">
+            <button
+              className="
+                border-2 border-solid border-white
+                bg-white/90 backdrop-blur-md rounded-full
+                text-black flex items-center justify-center w-12 p-2
+              "
+              onClick={toggleMuted}
+              type="button"
+            >
+              {audioState.muted ? <MutedOutlined /> : <SoundOutlined />}
+            </button>
+          </Tooltip>
+          <Tooltip title={playing ? "Pause" : "Play"} placement="bottom">
+            <button
+              className="
+                border-2 border-solid border-white
+                bg-white/90 backdrop-blur-md rounded-full
+                text-black flex items-center justify-center w-12 p-2
+              "
+              onClick={togglePlay}
+              type="button"
+            >
+              {loading ? <LoadingOutlined /> : playing ? <PauseOutlined /> : <CaretRightFilled />}
+            </button>
+          </Tooltip>
+        </div>
       </div>
     </div>
-  )
+  );
 }

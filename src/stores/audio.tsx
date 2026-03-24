@@ -1,69 +1,114 @@
 "use client";
-/**
- * Howler 不支持替换音频，所以只能每次对实例重新生成并挂载
- * 2024.11.12 / 油油
- */
-import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+  type ReactNode,
+} from 'react';
+
+type THowl = InstanceType<(typeof import('howler'))['Howl']>;
 
 interface IState {
-  howler?: Howl;
+  howler?: THowl;
+  muted: boolean;
 }
 
-// 定义初始状态
+const MEDIA_MUTED_STORAGE_KEY = 'homepage:media-muted';
+
+export function disposeHowler(howler?: THowl | null) {
+  if (!howler) {
+    return;
+  }
+
+  howler.stop();
+  howler.unload();
+}
+
 const initialState: IState = {
   howler: undefined,
+  muted: true,
 };
 
-type TAction = 
-  | { type: 'SET', howler: Howl } // 设置 Howler
-  | { type: 'CLEAN' } // 清理 Howler
+type TAction =
+  | { type: 'SET'; howler: THowl }
+  | { type: 'CLEAN' }
+  | { type: 'CLEAN_MATCH'; howler: THowl }
+  | { type: 'SET_MUTED'; muted: boolean };
 
-// 定义 reducer 函数
 const reducer = (state: IState, action: TAction): IState => {
   switch (action.type) {
     case 'SET':
+      if (state.howler && state.howler !== action.howler) {
+        disposeHowler(state.howler);
+      }
+
+      action.howler.mute(state.muted);
       return { ...state, howler: action.howler };
     case 'CLEAN':
-      // 如果 Howler 存在则暂停播放并卸载
-      if (state.howler) {
-        state.howler.stop();
-        state.howler.unload();
-        delete state.howler;
+      disposeHowler(state.howler);
+      return { ...state, howler: undefined };
+    case 'CLEAN_MATCH':
+      if (state.howler !== action.howler) {
+        return state;
       }
-      return { ...state };
+
+      disposeHowler(state.howler);
+      return { ...state, howler: undefined };
+    case 'SET_MUTED':
+      state.howler?.mute(action.muted);
+      return { ...state, muted: action.muted };
     default:
       return state;
   }
 };
 
-// 定义 Context 类型
 interface StateContextProps {
   state: IState;
   dispatch: React.Dispatch<TAction>;
 }
 
-// 创建上下文
 const StateContext = createContext<StateContextProps | undefined>(undefined);
 
-// 创建 Provider 组件
 interface StateProviderProps {
   children: ReactNode;
 }
 
 export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  return (
-    <StateContext.Provider value={{ state, dispatch }}>
-      {children}
-    </StateContext.Provider>
-  );
+  const [preferenceReady, setPreferenceReady] = useState(false);
+
+  useEffect(() => {
+    const storedValue = window.localStorage.getItem(MEDIA_MUTED_STORAGE_KEY);
+    if (storedValue !== null) {
+      dispatch({
+        type: 'SET_MUTED',
+        muted: storedValue === 'true',
+      });
+    }
+
+    setPreferenceReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!preferenceReady) {
+      return;
+    }
+
+    window.localStorage.setItem(MEDIA_MUTED_STORAGE_KEY, String(state.muted));
+  }, [preferenceReady, state.muted]);
+
+  return <StateContext.Provider value={{ state, dispatch }}>{children}</StateContext.Provider>;
 };
 
-// 自定义 Hook，用于在组件中使用上下文
 export const useStateContext = (): StateContextProps => {
   const context = useContext(StateContext);
+
   if (!context) {
     throw new Error('useStateContext must be used within a StateProvider');
   }
+
   return context;
 };

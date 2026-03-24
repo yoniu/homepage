@@ -18,7 +18,7 @@ export default function MomentControl () {
   const searchParams = useSearchParams();
 
   const isHome = useMemo(() => {
-    return pathname === '/' || pathname === '/v2'
+    return pathname === '/'
   }, [pathname])
 
   const handleBackHome = useCallback(() => {
@@ -40,7 +40,7 @@ export default function MomentControl () {
   }, [state.currentIndex, state.momentList])
 
   const currentMomentId = useMemo(() => {
-    if (pathname === '/' || pathname === '/v2') {
+    if (pathname === '/') {
       return currentMoment?.id
     } else {
       // 使用 useSearchParams 替代 window.location.search
@@ -51,7 +51,7 @@ export default function MomentControl () {
   // moment 列表分页 加载
   const momentLoading = useMemo(() => {
     return (state.currentIndex + 1 === state.momentList.length) && state.hasNextPage && state.loading;
-  }, [state.currentIndex, state.hasNextPage])
+  }, [state.currentIndex, state.hasNextPage, state.loading, state.momentList.length])
 
   return (
     <div className="absolute bottom-3 left-0 w-full flex items-center justify-center space-x-5">

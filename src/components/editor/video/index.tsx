@@ -1,85 +1,107 @@
 "use client";
 
-import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
+import { EditOutlined } from "@ant-design/icons";
+import { App, Button, Input } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { ShowPlainContent } from "@/src/components/editor/plainContent";
+
 import { IFixedTextItem, ShowFixedText } from "@/src/components/editor/fixedText";
+import { ShowPlainContent } from "@/src/components/editor/plainContent";
 import VideoPlayer from "@/src/components/play/video";
-import { App, Input } from "antd";
+import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 
 export default function VideoEditor() {
+  const { state, dispatch } = useEditorStateContext();
+  const { modal } = App.useApp();
+  const attributes = state.attributes;
 
-  const { state, dispatch } = useEditorStateContext() 
-  const { modal } = App.useApp()
-
-  const [bg, setBg] = useState('')
+  const [bg, setBg] = useState("");
 
   useEffect(() => {
-    if (state.attributes && state.attributes.video) {
-      const video = state.attributes.video as IVideoItem;
-      if (video && video.cover) setBg(video.cover)
-    }
-  }, [state.attributes, state.attributes?.video, state.attributes.video?.cover])
+    const video = attributes?.video as IVideoItem | undefined;
+    setBg(video?.cover ?? "");
+  }, [attributes?.video]);
 
   const hasVideo = useMemo(() => {
-    return state.attributes && state.attributes.video && state.attributes.video.url
-  }, [state.attributes])
+    return Boolean(attributes?.video?.url);
+  }, [attributes?.video?.url]);
 
   const hasFixedText = useMemo(() => {
-    return state.attributes && state.attributes.fixedText && state.attributes.fixedText.length
-  }, [state.attributes])
+    return Boolean(attributes?.fixedText?.length);
+  }, [attributes?.fixedText]);
 
   const handleVideoSetting = (video?: Partial<IVideoItem>) => {
     if (!video) return;
-    const prevAttributes = state.attributes ?? null;
-    const prevVideo = prevAttributes?.video as IVideoItem ?? {};
-    prevVideo.url = video.url ?? "";
-    prevVideo.cover = video.cover ?? "";
-    dispatch({ type: 'UPDATE', states: {
-      attributes: {
-        ...prevAttributes,
-        video: prevVideo
-      }
-    }});
-  }
 
-  const handleDoubleClick = () => {
+    const prevAttributes = state.attributes ?? null;
+    const prevVideo = (prevAttributes?.video as Partial<IVideoItem>) ?? {};
+
+    dispatch({
+      type: "UPDATE",
+      states: {
+        attributes: {
+          ...prevAttributes,
+          video: {
+            ...prevVideo,
+            url: video.url ?? prevVideo.url ?? "",
+            cover: video.cover ?? prevVideo.cover ?? "",
+          },
+        },
+      },
+    });
+  };
+
+  const openVideoSetting = () => {
     modal.confirm({
-      title: '设置视频',
-      content: <UpdateVideoSetting video={state.attributes?.video as IVideoItem} onChange={handleVideoSetting} />,
-    })
-  }
+      title: "设置视频",
+      content: <UpdateVideoSetting video={attributes?.video as IVideoItem} onChange={handleVideoSetting} />,
+    });
+  };
+
+  const handleClickVideoSetting = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    openVideoSetting();
+  };
 
   return (
-    <>
-      <div
-        className="absolute left-0 top-0 w-full h-full rounded-md border bg-black overflow-hidden flex items-center justify-center"
-        onDoubleClick={handleDoubleClick}
-      >
-        { bg && <img src={bg} alt="background" className="absolute w-full h-full object-cover transform scale-125 blur" /> }
-        { hasVideo && <VideoPlayer url={state.attributes.video.url} /> }
-        {
-          hasFixedText && <ShowFixedText fixedText={state.attributes.fixedText as IFixedTextItem[]} />
-        }
-        { state.content && <ShowPlainContent content={state.content} /> }
+    <div
+      className="absolute left-0 top-0 flex h-full w-full items-center justify-center overflow-hidden rounded-md border bg-black"
+      onDoubleClick={openVideoSetting}
+    >
+      <div className="absolute right-3 top-3 z-20">
+        <Button type="primary" size="small" icon={<EditOutlined />} onClick={handleClickVideoSetting}>
+          编辑视频信息
+        </Button>
       </div>
-    </>
-  )
+      <div className="pointer-events-none absolute bottom-3 left-3 z-20 rounded-full bg-black/60 px-3 py-1 text-xs text-white">
+        双击视频也可快速打开设置
+      </div>
+      {bg && <img src={bg} alt="background" className="absolute h-full w-full scale-125 transform object-cover blur" />}
+      {hasVideo && attributes?.video?.url && <VideoPlayer url={attributes.video.url} />}
+      {hasFixedText && <ShowFixedText fixedText={(attributes?.fixedText ?? []) as IFixedTextItem[]} />}
+      {state.content && <ShowPlainContent content={state.content} />}
+    </div>
+  );
 }
 
-function UpdateVideoSetting({ video, onChange }: { video?: IVideoItem, onChange?: (video?: Partial<IVideoItem>) => void }) {
-
+function UpdateVideoSetting({
+  video,
+  onChange,
+}: {
+  video?: Partial<IVideoItem>;
+  onChange?: (video?: Partial<IVideoItem>) => void;
+}) {
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.({ ...video, url: e.target.value })
-  }
+    onChange?.({ ...video, url: e.target.value });
+  };
+
   const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.({ ...video, cover: e.target.value })
-  }
+    onChange?.({ ...video, cover: e.target.value });
+  };
 
   return (
     <div className="space-y-2">
       <Input addonBefore="视频 URL" value={video?.url} onChange={handleUrlChange} />
       <Input addonBefore="视频封面图" value={video?.cover} onChange={handleCoverChange} />
     </div>
-  )
+  );
 }

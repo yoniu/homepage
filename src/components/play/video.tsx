@@ -1,67 +1,129 @@
-import { LoadingOutlined, MutedOutlined, SoundOutlined } from '@ant-design/icons';
-import { PauseIcon, PlayIcon } from '@radix-ui/react-icons';
-import React, { useState } from 'react';
-import ReactPlayer from 'react-player';
+import {
+  LoadingOutlined,
+  MutedOutlined,
+  PauseOutlined,
+  PlayCircleOutlined,
+  SoundOutlined,
+} from "@ant-design/icons";
+import ReactPlayer from "react-player";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-export default function VideoPlayer({ url, autoPlay = false }: { url: string, autoPlay?: boolean }) {
+import { cn } from "@/lib/utils";
+import { useStateContext as useAudioStateContext } from "@/src/stores/audio";
 
+export default function VideoPlayer({
+  url,
+  autoPlay = false,
+}: {
+  url: string
+  autoPlay?: boolean
+}) {
+  const { state: audioState, dispatch } = useAudioStateContext()
   const [loading, setLoading] = useState(true)
-
   const [playing, setPlaying] = useState(autoPlay)
-  const [muted, setMuted] = useState(true)
+  const [controlsVisible, setControlsVisible] = useState(true)
 
-  const handlePlay = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setPlaying(!playing)
+  const controlsHideTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  const scheduleControlsHide = useCallback(() => {
+    if (controlsHideTimerRef.current) {
+      clearTimeout(controlsHideTimerRef.current)
+    }
+
+    controlsHideTimerRef.current = setTimeout(() => {
+      setControlsVisible(false)
+    }, 5000)
+  }, [])
+
+  const showControls = useCallback(() => {
+    setControlsVisible(true)
+    scheduleControlsHide()
+  }, [scheduleControlsHide])
+
+  useEffect(() => {
+    showControls()
+
+    return () => {
+      if (controlsHideTimerRef.current) {
+        clearTimeout(controlsHideTimerRef.current)
+      }
+      controlsHideTimerRef.current = null
+    }
+  }, [showControls])
+
+  const handleTogglePlay = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setPlaying((prev) => !prev)
+    showControls()
   }
 
+  const handleToggleMuted = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    dispatch({
+      type: "SET_MUTED",
+      muted: !audioState.muted,
+    })
+    showControls()
+  }
+
+  const controlsClassName = cn(
+    "flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white shadow-lg backdrop-blur-sm transition-all hover:bg-black/75",
+    controlsVisible
+      ? "pointer-events-auto opacity-100"
+      : "pointer-events-none opacity-0"
+  )
+
   return (
-    <div className="absolute top-0 left-0 bottom-0 right-0 flex items-center justify-center text-white group/video">
-      {/* 播放器 */}
+    <div
+      className="absolute inset-0 flex items-center justify-center text-white"
+      onMouseEnter={showControls}
+      onMouseLeave={() => setControlsVisible(false)}
+      onMouseMove={showControls}
+    >
       <ReactPlayer
         loop
         url={url}
-        muted={muted}
+        muted={audioState.muted}
         playing={playing}
         config={{
           file: {
             attributes: {
-              playsInline: true,        // iOS 内联播放 (标准属性用布尔值)
-              webkitplaysinline: "true",  // 兼容 Safari (非标准属性用小写字符串)
-              x5videoplayertype: "h5-page", // 用于腾讯浏览器 (非标准属性用小写字符串)
+              playsInline: true,
+              webkitplaysinline: "true",
+              x5videoplayertype: "h5-page",
             },
           },
         }}
         onStart={() => setLoading(false)}
-        className="absolute top-0 left-0 bottom-0 right-0"
+        className="absolute inset-0"
         width="100%"
         height="100%"
       />
-      {/* 播放控制 */}
-      <div className="absolute top-0 left-0 right-0 bottom-0 text-white p-3 flex items-center justify-center space-x-3 cursor-pointer opacity-0 hover:opacity-100 transition-all" onClick={() => setMuted(!muted)}>
-        <div
-          className="w-[48px] h-[48px] flex items-center justify-center bg-black/50 rounded-full"
-          onClick={handlePlay}
-        >
-          {
-            playing ? <PauseIcon width="24" height="24" /> : <PlayIcon width="24" height="24" />
-          }
+      <div className="pointer-events-none absolute inset-0 z-20">
+        <div className="pointer-events-auto absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-3">
+          <button
+            aria-label={playing ? "Pause video" : "Play video"}
+            className={controlsClassName}
+            onClick={handleTogglePlay}
+            type="button"
+          >
+            {playing ? <PauseOutlined /> : <PlayCircleOutlined />}
+          </button>
+          <button
+            aria-label={audioState.muted ? "Unmute video" : "Mute video"}
+            className={controlsClassName}
+            onClick={handleToggleMuted}
+            type="button"
+          >
+            {audioState.muted ? <MutedOutlined /> : <SoundOutlined />}
+          </button>
         </div>
-        {
-          !muted ?
-          <div className="w-[48px] h-[48px] flex items-center justify-center bg-black/50 rounded-full">
-            <SoundOutlined width="24" height="24" />
-          </div> :
-          <div className="flex items-center space-x-2">
-            <div className="w-[48px] h-[48px] flex items-center justify-center bg-black/50 rounded-full">
-              <MutedOutlined className="-m-3" width="24" height="24" />
-            </div>
-          </div>
-        }
       </div>
-      {/* 加载效果 */}
-      { loading && <LoadingOutlined className="drop-shadow-md text-2xl" /> }
+      {loading ? (
+        <LoadingOutlined className="pointer-events-none z-10 text-2xl drop-shadow-md" />
+      ) : null}
     </div>
   );
 }

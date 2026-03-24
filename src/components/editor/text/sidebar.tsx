@@ -7,10 +7,9 @@ import EditorLocation from "@/src/components/editor/location";
 import EditorBackgroundColor from "@/src/components/editor/backgroundColor";
 
 export default function TextEditorSidebar() {
-
   const { state, dispatch } = useEditorStateContext();
 
-  const handleClickUploadFileItem = (item: IFileItem<any>) => {
+  const handleClickUploadFileItem = (item: IFileItem) => {
     const prevAttributes = state.attributes ?? null;
     const prevPhotosets = (prevAttributes?.photosets ?? []) as IPhotosetItem[];
     const photo: IPhotosetItem = {
@@ -18,24 +17,31 @@ export default function TextEditorSidebar() {
       url: item.url,
       type: item.type,
       name: item.filename,
-    }
+    };
     const photosets: IPhotosetItem[] = [...prevPhotosets];
-    if (photosets.find(photo => photo.id === item.id)) return;
+
+    if (photosets.find((photoItem) => photoItem.id === item.id)) {
+      return;
+    }
+
     photosets.push(photo);
-    dispatch({ type: 'UPDATE', states: {
-      attributes: {
-        ...prevAttributes,
-        photosets
-      }
-    }});
-  }
+    dispatch({
+      type: "UPDATE",
+      states: {
+        attributes: {
+          ...prevAttributes,
+          photosets,
+        },
+      },
+    });
+  };
 
   return (
     <>
-      <Upload onClickItem={handleClickUploadFileItem} />
+      <Upload multiple onClickItem={handleClickUploadFileItem} />
       <EditorMusic />
       <EditorLocation />
       <EditorBackgroundColor />
     </>
-  )
+  );
 }

@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import { withProps } from '@udecode/cn';
 import {
   BoldPlugin,

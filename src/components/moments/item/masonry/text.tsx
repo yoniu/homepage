@@ -5,7 +5,7 @@ import { TTextBackgroundColor } from "@/src/components/editor/backgroundColor"
 
 export interface ITextItem {
   photosets?: IPhotosetItem[]
-  backgroundColor?: TTextBackgroundColor
+  backgroundColor?: TTextBackgroundColor | string
 }
 
 interface IProps {
@@ -20,10 +20,13 @@ export default function MasonryTextItem({ item }: IProps) {
   
   
   const backgroundColor = useMemo<TTextBackgroundColor | undefined>(() => {
-    if (item.attributes?.backgroundColor) {
+    if (
+      item.attributes?.backgroundColor &&
+      typeof item.attributes.backgroundColor === 'object'
+    ) {
       return item.attributes.backgroundColor
     }
-  }, [item.attributes])
+  }, [item.attributes?.backgroundColor])
 
   const textColor = useMemo(() => {
     return backgroundColor?.textColor ?? '#333'

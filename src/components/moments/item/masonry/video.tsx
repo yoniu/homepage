@@ -3,7 +3,7 @@ import Link from "next/link"
 import { useMemo } from "react"
 
 export interface IVideoState {
-  video?: IVideoItem
+  video?: Partial<IVideoItem>
 }
 
 interface IProps {

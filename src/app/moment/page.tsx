@@ -1,106 +1,56 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation"
-import TextItem from '@/src/components/moments/item/text';
-import ImageItem from '@/src/components/moments/item/image';
-import VideoItem from '@/src/components/moments/item/video';
-import api from "@/src/utils/api";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { App, Spin } from "antd";
-import { TResponseError } from "@/src/utils/axiosInstance";
-import Sidebar from "@/src/components/sidebar"
+import { Spin } from "antd";
+import { Suspense } from "react";
+
+import Menu from "@/src/components/menu/Index";
+import MomentDetailControls from "@/src/features/moment/components/detail/MomentDetailControls";
+import MomentFeedLoading from "@/src/features/moment/components/feed/MomentFeedLoading";
+import ImageMomentPanel from "@/src/features/moment/components/feed/renderers/ImageMomentPanel";
+import MusicMomentPanel from "@/src/features/moment/components/feed/renderers/MusicMomentPanel";
+import TextMomentPanel from "@/src/features/moment/components/feed/renderers/TextMomentPanel";
+import VideoMomentPanel from "@/src/features/moment/components/feed/renderers/VideoMomentPanel";
+import { useMomentDetail } from "@/src/features/moment/hooks/useMomentDetail";
+import type { EMomentType } from '@/src/types/moment';
 
 export default function Page() {
   return (
-    <Suspense>
+    <Suspense fallback={<div>加载中...</div>}>
       <Moment />
     </Suspense>
   )
 }
 
 function Moment() {
-
-  const router = useRouter()
-  const query = useSearchParams()
-
-  const { modal, message: messageApi } = App.useApp()
-
-  const confirm = useRef<any>(null)
-
-  const [loading, setLoading] = useState(true)
-  const [item, setItem] = useState<IMomentItem<any>>()
+  const { currentMomentType, item, loading } = useMomentDetail()
 
   const displayer: Record<EMomentType, () => JSX.Element> = {
-    text: () => item ? <TextItem key={item.id} item={item} /> : <></>,
-    image: () => item ? <ImageItem key={item.id} item={item} /> : <></>,
-    video: () => item ? <VideoItem key={item.id} item={item} /> : <></>,
+    text: () => item ? <TextMomentPanel key={item.id} item={item} /> : <></>,
+    image: () => item ? <ImageMomentPanel key={item.id} item={item} /> : <></>,
+    video: () => item ? <VideoMomentPanel key={item.id} item={item} /> : <></>,
     live: () => item ? <div key={item.id}>live</div> : <></>,
-    music: () => item ? <div key={item.id}>music</div> : <></>,
+    music: () => item ? <MusicMomentPanel key={item.id} item={item} /> : <></>,
   }
-  
-  const currentMomentType = useMemo<EMomentType>(() => {
-    if (item && item.attributes && item.attributes.type) {
-      return item.attributes.type
-    }
-    return 'text'
-  }, [item])
-
-  useEffect(() => {
-    if (query.has('id')) {
-      const id = query.get('id')
-      if (id) {
-        setLoading(true)
-        getMomentDetail(+id).then(res => {
-          if (res.data) {
-            setItem(res.data)
-          } else {
-            messageApi.error('请使用正确的食用姿势')
-            router.replace('/')
-          }
-        }).catch(err => {
-          const { message } = err as TResponseError
-          if (Array.isArray(message)) {
-            message.map((msg) => messageApi.error(msg))
-          } else {
-            messageApi.error(message)
-          }
-        }).finally(() => {
-          setLoading(false)
-        })
-      } else {
-        if (confirm.current) return
-        confirm.current = modal.confirm({
-          title: '提示',
-          content: "请使用正确的食用姿势",
-          closable: true,
-          onOk: () => {
-            router.replace('/')
-          },
-          onCancel: () => {
-            router.replace('/')
-          }
-        })
-      }
-    }
-  }, [query])
 
   return (
     <>
-      <Spin spinning={loading} fullscreen={true} />
-      <div id="main">
-        <div id="content" className="relative flex items-center justify-center w-full h-full shadow-lg border rounded bg-white overflow-hidden">
-          {
-            item ? displayer[currentMomentType]() : <></>
-          }
+      <div className="absolute h-full w-full flex items-stretch overflow-hidden">
+        <Menu />
+        <div className="relative w-full sm:w-[80%] h-full">
+          <Spin spinning={loading} fullscreen={true} />
+          <div className="relative w-full h-full overflow-hidden">
+            {item && (
+              <div className="absolute top-0 left-0 w-full py-4 z-20">
+                <MomentDetailControls item={item} />
+              </div>
+            )}
+            <div className="header-filter absolute w-full h-24 top-0 left-0 bg-white/10 backdrop-blur-xl z-10"></div>
+            <div id="content" className="relative w-full h-full">
+              {!item ? <MomentFeedLoading /> : displayer[currentMomentType]()}
+            </div>
+          </div>
         </div>
-      </div>
-      <div id="sidebar">
-        <Sidebar />
       </div>
     </>
   )
-}
-
-function getMomentDetail(id: number) {
-  return api.get<IMomentItem<any>>(`/moment/public/${id}`)
 }

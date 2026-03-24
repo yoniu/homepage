@@ -1,96 +1,28 @@
 'use client';
 
-import { useEffect, useState } from "react"
-import { App, Button, Popconfirm } from "antd"
-
-import api from "@/src/utils/api";
-
-import { TResponseError } from "@/src/utils/axiosInstance"
-
-import dayFormat from "@/src/utils/dayFormat"
+import { Button, Popconfirm } from "antd"
 import Link from "next/link";
 
+import { useAdminMomentList } from "@/src/features/moment/hooks/useAdminMomentList";
+
+import dayFormat from "@/src/utils/dayFormat"
+
 export default function AdminMomentList() {
-  
-  const { message: messageApi } = App.useApp()
-
-  const pageSize = 5;
-
-  const [loading, setLoading] = useState(true)
-
-  const [page, setPage] = useState(1)
-
-  const [hasNextPage, setHasNextPage] = useState(false)
-  const [items, setItems] = useState<IMomentItem<any>[]>([])
-
-  // 进入页面获取列表
-  useEffect(() => {
-    getMomentList()
-  }, [])
-
-  // 点击加载更多
-  const handlePageChange = () => {
-    if (!hasNextPage) return
-    setPage(page + 1)
-    getMomentList()
-  }
-
-  // 点击删除确认
-  const handleDelete = (id: number) => {
-    if (loading) return
-    setLoading(true)
-    deleteMoment(id).then(() => {
-      messageApi.success('删除成功')
-      setPage(1)
-      getMomentList()
-    }).catch(err => {
-      const { message } = err as TResponseError
-      if (Array.isArray(message)) {
-        message.map((msg) => messageApi.error(msg))
-      } else {
-        messageApi.error(message)
-      }
-    }).finally(() => {
-      setLoading(false)
-    })
-  }
-
-  // 获取动态列表
-  const getMomentList = () => {
-    setLoading(true)
-    getList(page, pageSize).then(res => {
-      setHasNextPage(res.data.hasNextPage)
-      // 如果当前分页大于 1 则推入栈，否则直接赋值
-      if (page > 1) {
-        setItems([...items, ...res.data.moments])
-      } else {
-        setItems(res.data.moments)
-      }
-    }).catch(err => {
-      const { message } = err as TResponseError
-      if (Array.isArray(message)) {
-        message.map((msg) => messageApi.error(msg))
-      } else {
-        messageApi.error(message)
-      }
-    }).finally(() => {
-      setLoading(false)
-    })
-  }
+  const { hasNextPage, items, loadMore, loading, remove } = useAdminMomentList()
 
   /**
    * Moment Item
    * @param item 
    * @returns 
    */
-  const MomentItem = (item: IMomentItem<any>) => {
+  const MomentItem = (item: typeof items[number]) => {
 
     const { id, title, content, create_time, update_time, attributes } = item
 
     let type = 'text'
 
     if (attributes && Object.keys(attributes).includes('type')) {
-      type = attributes.type
+      type = String(attributes.type)
     }
 
     return (
@@ -118,7 +50,7 @@ export default function AdminMomentList() {
               description="Are you sure to delete this Moment?"
               okText="Yes"
               cancelText="No"
-              onConfirm={() => handleDelete(id)}
+              onConfirm={() => remove(id)}
             >
               <button className="text-red-500 hover:underline">
                 删除
@@ -139,18 +71,10 @@ export default function AdminMomentList() {
         }
       </div>
       <div className="flex items-center justify-center">
-        <Button onClick={handlePageChange} disabled={!hasNextPage} loading={loading}>
+        <Button onClick={loadMore} disabled={!hasNextPage} loading={loading}>
           { hasNextPage ? "Load More" : "No More" }
         </Button>
       </div>
     </div>
   )
-}
-
-function getList(page: number, pageSize: number) {
-  return api.get<IGetMomentListResponse>('/moment/all', { page, pageSize })
-}
-
-function deleteMoment(id: number) {
-  return api.del('/moment/' + id)
 }

@@ -1,49 +1,91 @@
 "use client";
 
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
-import api from "@/src/utils/api";
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  CustomerServiceOutlined,
+  DeleteOutlined,
+  FileImageOutlined,
+  FileOutlined,
+  FilePdfOutlined,
+  FileTextOutlined,
+  FileZipOutlined,
+  UploadOutlined,
+  VideoCameraOutlined,
+} from "@ant-design/icons";
 import { App, Button, Col, Popconfirm, Row, Spin, Upload as UploadAntd, UploadProps } from "antd";
-import { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "next/navigation";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import React from "react";
+
+import { deleteFile, getMomentFiles, uploadFile, type EditorFileItem } from "@/src/features/editor/api";
+import { normalizeApiError } from "@/src/shared/api/error";
+
 import SidebarCollapse from "./collapse"; 
 
-export enum EFileStatus {
-  deleted,
-  normal,
-  explicit,
-}
+export type IFileItem<T = Record<string, never>> = EditorFileItem<T>;
 
-export interface IFileItem<T> {
-    id: number,
-    filename: string,
-    url: string,
-    size: number,
-    format: string, // "image/jpeg"
-    type: string, // "image/jpeg"
-    moment: number,
-    author: number,
-    create_time: Date,
-    update_time: Date,
-    status: EFileStatus,
-    meta: T
-}
+const getFileMime = (item: IFileItem) => item.format || item.type || "";
+
+const isImageFile = (item: IFileItem) => getFileMime(item).includes("image");
+
+const isVideoFile = (item: IFileItem) => getFileMime(item).includes("video");
+
+const isAudioFile = (item: IFileItem) => getFileMime(item).includes("audio");
+
+const isPdfFile = (item: IFileItem) => getFileMime(item).includes("pdf");
+
+const isTextFile = (item: IFileItem) => {
+  const mime = getFileMime(item);
+  return ["text", "json", "xml", "markdown"].some((keyword) => mime.includes(keyword));
+};
+
+const isArchiveFile = (item: IFileItem) => {
+  const mime = getFileMime(item);
+  return ["zip", "rar", "7z", "tar", "gzip"].some((keyword) => mime.includes(keyword));
+};
+
+const formatFileSize = (size: number) => {
+  if (!size) return "0 B";
+
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let nextSize = size;
+  let unitIndex = 0;
+
+  while (nextSize >= 1024 && unitIndex < units.length - 1) {
+    nextSize /= 1024;
+    unitIndex += 1;
+  }
+
+  const fixed = nextSize >= 10 || unitIndex === 0 ? 0 : 1;
+  return `${nextSize.toFixed(fixed)} ${units[unitIndex]}`;
+};
+
+const getFileTypeIcon = (item: IFileItem) => {
+  if (isVideoFile(item)) return <VideoCameraOutlined className="text-xl text-blue-500" />;
+  if (isAudioFile(item)) return <CustomerServiceOutlined className="text-xl text-emerald-500" />;
+  if (isPdfFile(item)) return <FilePdfOutlined className="text-xl text-rose-500" />;
+  if (isTextFile(item)) return <FileTextOutlined className="text-xl text-amber-500" />;
+  if (isArchiveFile(item)) return <FileZipOutlined className="text-xl text-violet-500" />;
+  if (isImageFile(item)) return <FileImageOutlined className="text-xl text-sky-500" />;
+
+  return <FileOutlined className="text-xl text-gray-500" />;
+};
 
 export default function Upload(
   {
     title = '上传文件',
     type = 'image/*',
+    multiple = false,
     fileItemDecorate,
     onClickItem,
   }:
   {
     title?: string,
     type?: string, // "image/jpeg"
-    fileItemDecorate?: (item: IFileItem<any>) => React.JSX.Element
-    onClickItem?: (item: IFileItem<any>) => void,
+    multiple?: boolean,
+    fileItemDecorate?: (item: IFileItem) => React.JSX.Element
+    onClickItem?: (item: IFileItem) => void,
   }
 ) {
 
@@ -51,11 +93,27 @@ export default function Upload(
   const { message } = App.useApp();
   const { state } = useEditorStateContext();
 
-  const [ fileList, setFileList ] = useState<IFileItem<any>[]>([]);
+  const [ fileList, setFileList ] = useState<IFileItem[]>([]);
 
   const [ loading, setLoading ] = useState(false);
+  type CustomUploadRequest = NonNullable<UploadProps['customRequest']>;
 
-  const handleUpload: UploadProps['customRequest'] = (options) =>  {
+  const handleGetFileList = useCallback(async (id: number) => {
+    setLoading(true);
+
+    try {
+      const response = await getMomentFiles(id);
+      if (response.data) {
+        setFileList(response.data);
+      }
+    } catch (error) {
+      normalizeApiError(message, error);
+    } finally {
+      setLoading(false);
+    }
+  }, [message])
+
+  const handleUpload: CustomUploadRequest = useCallback((options) =>  {
     const moment = query.get('id');
     if (!moment) return;
 
@@ -78,52 +136,43 @@ export default function Upload(
     })
     .catch(error => {
       if (onError) onError(error);
-      message.error('上传失败');
+      normalizeApiError(message, error);
     }).finally(() => {
       setLoading(false);
-      if (state.id) handleGetFileList(state.id);
-    });
-  }
-
-  const handleGetFileList = (id: number) => {
-    setLoading(true);
-    getList(id).then(res => {
-      const list = res.data
-      if (list) {
-        setFileList(list)
+      if (state.id) {
+        void handleGetFileList(state.id);
       }
-    }).catch(() => {
-      message.error('获取图片列表失败');
-    }).finally(() => {
-      setLoading(false);
     });
-  }
+  }, [handleGetFileList, message, query, state.id])
 
-  const handleDeleteFile = (id: number) => {
+  const handleDeleteFile = useCallback((id: number) => {
     setLoading(true);
     deleteFile(id).then(() => {
       message.success('删除成功');
-      if (state.id) handleGetFileList(state.id);
-    }).catch(() => {
-      message.error('删除失败');
+      if (state.id) {
+        return handleGetFileList(state.id);
+      }
+    }).catch((error) => {
+      normalizeApiError(message, error);
     }).finally(() => {
       setLoading(false);
     });
-  }
+  }, [handleGetFileList, message, state.id])
 
   useEffect(() => {
     if (state.id) {
-      handleGetFileList(state.id);
+      void handleGetFileList(state.id);
     }
-  }, [state.id])
+  }, [handleGetFileList, state.id])
 
   const uploadProps: UploadProps = useMemo(() => ({
     name: 'file',
     type: 'select',
     accept: type,
+    multiple,
     customRequest: handleUpload,
     showUploadList: false,
-  }), [type, handleUpload]);
+  }), [handleUpload, multiple, type]);
 
   const Container = () => (
     <Spin spinning={loading}>
@@ -134,82 +183,50 @@ export default function Upload(
     </Spin>
   )
 
-  const ImageList = memo((
-    {
-      list = fileList
-    }:
-    {
-      list?: IFileItem<any>[]
-    }
-  ) => {
-    if (!list) return <></>;
-
-    const handleClickItem = (item: IFileItem<any>) => {
-      if (onClickItem) onClickItem(item);
-    }
-
-    return (
-      <Row gutter={[6, 6]}>
-        {
-          list.filter(item => item.format.includes('image')).map(item => (
-            <Col className="space-y-1" span={8} key={item.id}>
-              <div
-                className="relative aspect-square border border-gray-200 rounded overflow-hidden cursor-pointer"
-                onClick={() => handleClickItem(item)}
-              >
-                <img src={item.url} alt={item.filename} className="absolute w-full h-full object-cover" />
-                { fileItemDecorate && fileItemDecorate(item)  }
-              </div>
-              <div className="text-right">
-                <Popconfirm
-                  title="删除图片"
-                  description="是否删除该图片？"
-                  placement="bottom"
-                  onConfirm={ () => handleDeleteFile(item.id)}
-                  okText="确认"
-                  cancelText="取消"
-                >
-                  <button className="text-red-600">
-                    <DeleteOutlined />
-                  </button>
-                </Popconfirm>
-              </div>
-            </Col>
-          ))
-        }
-      </Row>
-    )
-  })
-  ImageList.displayName = 'FileList'
-
   const FileList = memo((
     {
       list = fileList
     }:
     {
-      list?: IFileItem<any>[]
+      list?: IFileItem[]
     }
   ) => {
     if (!list) return <></>;
 
-    const handleClickItem = (item: IFileItem<any>) => {
+    const handleClickItem = (item: IFileItem) => {
       if (onClickItem) onClickItem(item);
     }
 
     return (
-      <div className="space-y-1">
+      <div className="space-y-2">
         {
           list.map(item => (
             <div
-              className="flex items-center justify-between space-x-2"
+              className="flex items-center space-x-3 rounded-md border border-gray-200 p-2"
               key={item.id}
             >
               <div
-                className="flex-1 truncate"
+                className="flex min-w-0 flex-1 cursor-pointer items-center space-x-3"
                 title={item.filename}
                 onClick={() => handleClickItem(item)}
               >
-                { item.filename }
+                <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                  {
+                    isImageFile(item) ? (
+                      <img src={item.url} alt={item.filename} className="absolute h-full w-full object-cover" />
+                    ) : (
+                      getFileTypeIcon(item)
+                    )
+                  }
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-medium text-gray-900">
+                    { item.filename }
+                  </div>
+                  <div className="truncate text-xs text-gray-500">
+                    { getFileMime(item) || "unknown" } · { formatFileSize(item.size) }
+                  </div>
+                </div>
               </div>
               <Popconfirm
                 title="删除图片"
@@ -236,19 +253,48 @@ export default function Upload(
       title={title}
       defaultOpen={true}
     >
-      <Container />
+      <Spin spinning={loading}>
+        {
+          type.includes('image') ? (
+            <Row gutter={[6, 6]}>
+              {
+                fileList.filter(item => isImageFile(item)).map(item => (
+                  <Col className="space-y-1" span={8} key={item.id}>
+                    <div
+                      className="relative aspect-square border border-gray-200 rounded overflow-hidden cursor-pointer"
+                      onClick={() => onClickItem?.(item)}
+                    >
+                      <img src={item.url} alt={item.filename} className="absolute w-full h-full object-cover" />
+                      { fileItemDecorate && fileItemDecorate(item) }
+                    </div>
+                    <div className="text-right">
+                      <Popconfirm
+                        title="删除图片"
+                        description="是否删除该图片？"
+                        placement="bottom"
+                        onConfirm={() => handleDeleteFile(item.id)}
+                        okText="确认"
+                        cancelText="取消"
+                      >
+                        <button className="text-red-600">
+                          <DeleteOutlined />
+                        </button>
+                      </Popconfirm>
+                    </div>
+                  </Col>
+                ))
+              }
+            </Row>
+          ) : (
+            <Container />
+          )
+        }
+        { type.includes('image') && (
+          <UploadAntd {...uploadProps}>
+            <Button className="mt-2" icon={<UploadOutlined />} size="small">Upload</Button>
+          </UploadAntd>
+        )}
+      </Spin>
     </SidebarCollapse>
   )
-}
-
-function uploadFile(data: object, options?: AxiosRequestConfig<any>) {
-  return api.put('/file/upload', data, options)
-}
-
-function deleteFile(id: number) {
-  return api.del(`/file/remove/${id}`)
-}
-
-function getList(id: number) {
-  return api.get<IFileItem<any>[]>(`/file/moment/${id}`)
 }

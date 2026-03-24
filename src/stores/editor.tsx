@@ -5,7 +5,9 @@
  */
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 
-type TState = Partial<IMomentItem<any>>
+type TState = Partial<IMomentItem> & {
+  selectedPhotosetId?: number;
+}
 
 // 定义初始状态
 const initialState: TState = {
@@ -14,6 +16,7 @@ const initialState: TState = {
   content: '',
   author: undefined,
   attributes: undefined,
+  selectedPhotosetId: undefined,
   status: undefined,
   create_time: undefined,
   update_time: undefined

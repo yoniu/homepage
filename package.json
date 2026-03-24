@@ -30,7 +30,6 @@
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
-    "graphql-hooks": "^8.0.1",
     "howler": "^2.2.4",
     "lucide-react": "^0.454.0",
     "markdown-it": "^14.1.0",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { App } from "antd"
 
 import { cn } from "@/lib/utils"
@@ -10,20 +10,18 @@ import useIcon from '@/src/hooks/icon'
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { login } from "@/src/utils/login";
-import { TResponseError } from "@/src/utils/axiosInstance";
-import { useStateContext as useUserStateContext } from "@/src/stores/user";
+import { useAuth } from "@/src/features/auth/hooks/useAuth";
+import { normalizeApiError } from "@/src/shared/api/error";
 import ReactDOM from "react-dom";
 
 export default function MomentLogin() {
   
   const { message: messageApi } = App.useApp()
-
-  const { dispatch } = useUserStateContext()
+  const { login, syncLoginState } = useAuth()
 
   useEffect(() => {
-    dispatch({ type: 'UPDATELOGIN' })
-  }, [dispatch])
+    syncLoginState()
+  }, [syncLoginState])
 
   const IconFont = useIcon()
 
@@ -45,24 +43,27 @@ export default function MomentLogin() {
   }
 
   const handleLogin = () => {
+    if (loading) {
+      return
+    }
+
     setLoading(true)
     login({ name: username, password }).then((user) => {
       // 登录成功
       messageApi.success("欢迎回来，" + user.name)
       setVisible(false)
-      dispatch({ type: 'UPDATELOGIN' })
     })
     .catch((error) => {
-      const err = error as TResponseError
-      if (Array.isArray(err.message)) {
-        err.message.map((msg) => messageApi.error(msg))
-      } else {
-        messageApi.error(err.message)
-      }
+      normalizeApiError(messageApi, error)
     })
     .finally(() => {
       setLoading(false)
     })
+  }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    handleLogin()
   }
 
   return (
@@ -76,7 +77,7 @@ export default function MomentLogin() {
           <div className={cn("fixed top-0 left-0 size-full flex flex-col items-center justify-center z-50", isVisible())}>
             <div className="absolute top-0 left-0 size-full bg-black bg-opacity-50 backdrop-blur-sm" onClick={() => setVisible(false)}></div>
             <div className="bg-white pt-6 pb-4 px-4 rounded-lg shadow-sm z-10 min-w-80">
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="grid w-full items-center gap-4">
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="username">Username</Label>
@@ -87,11 +88,11 @@ export default function MomentLogin() {
                     <Input type="password" id="password" placeholder="Your Password" value={password} onChange={handlePasswordChange} />
                   </div>
                 </div>
+                <div className="flex items-center justify-between mt-3">
+                  <Button type="button" variant="outline" onClick={() => setVisible(false)}>Cancel</Button>
+                  <Button type="submit" disabled={loading}>Login</Button>
+                </div>
               </form>
-              <div className="flex items-center justify-between mt-3">
-                <Button variant="outline" onClick={() => setVisible(false)}>Cancel</Button>
-                <Button onClick={handleLogin} disabled={loading}>Login</Button>
-              </div>
             </div>
           </div>,
           document.body

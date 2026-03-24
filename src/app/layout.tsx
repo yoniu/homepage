@@ -17,7 +17,7 @@ export const metadata = {
   }
 }
 
-export default function V2Layout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -36,7 +36,7 @@ export default function V2Layout({
                 <PlayerStateProvider>
                   <EditorStateProvider>
                     <EditorMomentProvider>
-                      <div id="v2-root" className="w-full h-full min-h-[100vh] bg-gray-100">
+                      <div id="app-root" className="w-full h-full min-h-[100vh] bg-gray-100">
                         { children }
                       </div>
                     </EditorMomentProvider>
