@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import ReactDOM from 'react-dom';
 import { App } from 'antd';
 
@@ -29,6 +29,10 @@ export default function MenuLoginButton() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
     login({ name: username, password })
       .then((user) => {
@@ -41,6 +45,11 @@ export default function MenuLoginButton() {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleLogin();
   };
 
   return (
@@ -64,7 +73,7 @@ export default function MenuLoginButton() {
             onClick={() => setVisible(false)}
           ></div>
           <div className="bg-white pt-6 pb-4 px-4 rounded-lg shadow-sm z-10 min-w-80">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="grid w-full items-center gap-4">
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="username">Username</Label>
@@ -86,15 +95,19 @@ export default function MenuLoginButton() {
                   />
                 </div>
               </div>
+              <div className="flex items-center justify-between mt-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setVisible(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={loading}>
+                  Login
+                </Button>
+              </div>
             </form>
-            <div className="flex items-center justify-between mt-3">
-              <Button variant="outline" onClick={() => setVisible(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleLogin} disabled={loading}>
-                Login
-              </Button>
-            </div>
           </div>
         </div>,
         document.body
