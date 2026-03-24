@@ -7,6 +7,7 @@ import Masonry from 'react-masonry-css';
 
 import MasonryImageItem from '@/src/components/moments/item/masonry/image';
 import MasonryLoadingItem from '@/src/components/moments/item/masonry/loading';
+import MasonryMusicItem from '@/src/components/moments/item/masonry/music';
 import MasonryTextItem from '@/src/components/moments/item/masonry/text';
 import MasonryVideoItem from '@/src/components/moments/item/masonry/video';
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
@@ -22,7 +23,7 @@ export default function MomentMasonryView() {
     image: (key, item) => <MasonryImageItem key={key} item={item} />,
     video: (key, item) => <MasonryVideoItem key={key} item={item} />,
     live: (key) => <div key={key}>live</div>,
-    music: (key) => <div key={key}>music</div>,
+    music: (key, item) => <MasonryMusicItem key={key} item={item} />,
   };
 
   const loadNext = useCallback(() => {

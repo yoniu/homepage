@@ -7,6 +7,7 @@ import Sidebar from "@/src/components/sidebar"
 import ImageItem from '@/src/components/moments/item/image';
 import TextItem from '@/src/components/moments/item/text';
 import VideoItem from '@/src/components/moments/item/video';
+import MusicMomentPanel from "@/src/features/moment/components/feed/renderers/MusicMomentPanel";
 import { useMomentDetail } from "@/src/features/moment/hooks/useMomentDetail";
 import type { EMomentType } from '@/src/types/moment';
 
@@ -26,7 +27,7 @@ function Moment() {
     image: () => item ? <ImageItem key={item.id} item={item} /> : <></>,
     video: () => item ? <VideoItem key={item.id} item={item} /> : <></>,
     live: () => item ? <div key={item.id}>live</div> : <></>,
-    music: () => item ? <div key={item.id}>music</div> : <></>,
+    music: () => item ? <MusicMomentPanel key={item.id} item={item} /> : <></>,
   }
 
   return (
