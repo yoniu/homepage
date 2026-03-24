@@ -7,11 +7,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { IMusicItem } from '@/src/components/editor/music';
 import CONST from '@/src/configs/consts';
-import { useStateContext as useAudioStateContext } from '@/src/stores/audio.tsx';
+import { disposeHowler, useStateContext as useAudioStateContext } from '@/src/stores/audio.tsx';
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 
 function MomentAudioPlayer(props: Partial<IMusicItem>) {
-  const { state, dispatch } = useAudioStateContext();
+  const { dispatch } = useAudioStateContext();
 
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -20,13 +20,20 @@ function MomentAudioPlayer(props: Partial<IMusicItem>) {
 
   useEffect(() => {
     if (!props.url) {
-      dispatch({ type: 'CLEAN' });
+      if (playerRef.current) {
+        dispatch({ type: 'CLEAN_MATCH', howler: playerRef.current });
+      }
+
       playerRef.current = null;
+      setPlaying(false);
+      setLoading(false);
       return;
     }
 
-    dispatch({ type: 'CLEAN' });
+    let disposed = false;
+
     setLoading(true);
+    setPlaying(false);
 
     const howler = new Howl({
       src: [props.url],
@@ -38,25 +45,38 @@ function MomentAudioPlayer(props: Partial<IMusicItem>) {
       onpause() {
         setPlaying(false);
       },
+      onstop() {
+        setPlaying(false);
+      },
     });
 
     dispatch({ type: 'SET', howler });
     playerRef.current = howler;
 
     howler.once('load', () => {
+      if (disposed) {
+        return;
+      }
+
       howler.play();
       setLoading(false);
     });
 
     return () => {
-      playerRef.current = null;
-      dispatch({ type: 'CLEAN' });
+      disposed = true;
+
+      if (playerRef.current === howler) {
+        playerRef.current = null;
+      }
+
+      disposeHowler(howler);
+      dispatch({ type: 'CLEAN_MATCH', howler });
     };
   }, [dispatch, props.url]);
 
   const togglePlay = () => {
-    if (state.howler) {
-      state.howler[state.howler.playing() ? 'pause' : 'play']();
+    if (playerRef.current) {
+      playerRef.current[playerRef.current.playing() ? 'pause' : 'play']();
     }
   };
 

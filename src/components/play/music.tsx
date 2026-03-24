@@ -1,63 +1,85 @@
-import { useStateContext } from "@/src/stores/audio.tsx"
-import { useEffect, useRef, useState } from "react"
-import { Howl } from 'howler';
-import { IMusicItem } from "@/src/components/editor/music";
-import CONST from "@/src/configs/consts";
 import { CaretRightFilled, LoadingOutlined, PauseOutlined } from "@ant-design/icons";
-import Marquee from "react-fast-marquee";
 import { Tooltip } from "antd";
 import { cn } from "@udecode/cn";
+import { Howl } from "howler";
+import Marquee from "react-fast-marquee";
+import { useEffect, useRef, useState } from "react";
 
-type IProps = Partial<IMusicItem>
+import { IMusicItem } from "@/src/components/editor/music";
+import CONST from "@/src/configs/consts";
+import { disposeHowler, useStateContext } from "@/src/stores/audio.tsx";
+
+type IProps = Partial<IMusicItem>;
 
 export default function MusicPlayer(props: IProps) {
-  const {state, dispatch} = useStateContext()
+  const { dispatch } = useStateContext();
 
-  const [playing, setPlaying] = useState(false)
+  const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] = useState(true)
+  const playerRef = useRef<Howl | null>(null);
 
-  const playerRef = useRef<Howl | null>(null)
-
-  // todo: 这里可能由于 howler 的 once 是异步方法，不能自动播放音乐
   useEffect(() => {
     if (!props.url) {
-      dispatch({type: 'CLEAN'})
-      playerRef.current = null
+      if (playerRef.current) {
+        dispatch({ type: "CLEAN_MATCH", howler: playerRef.current });
+      }
+
+      playerRef.current = null;
+      setPlaying(false);
+      setLoading(false);
       return;
     }
-    dispatch({type: 'CLEAN'})
-    setLoading(true)
+
+    let disposed = false;
+
+    setLoading(true);
+    setPlaying(false);
+
     const howler = new Howl({
       src: [props.url],
       volume: 1.0,
       loop: true,
       onplay() {
-        setPlaying(true)
+        setPlaying(true);
       },
       onpause() {
-        setPlaying(false)
-      }
+        setPlaying(false);
+      },
+      onstop() {
+        setPlaying(false);
+      },
     });
-    dispatch({type: 'SET', howler: howler})
-    playerRef.current = howler
-    howler.once('load', () => {
-      // 播放音频
+
+    dispatch({ type: "SET", howler });
+    playerRef.current = howler;
+
+    howler.once("load", () => {
+      if (disposed) {
+        return;
+      }
+
       howler.play();
-      setLoading(false)
-    })
+      setLoading(false);
+    });
 
     return () => {
-      playerRef.current = null
-      dispatch({type: 'CLEAN'})
-    }
-  }, [dispatch, props.url])
+      disposed = true;
+
+      if (playerRef.current === howler) {
+        playerRef.current = null;
+      }
+
+      disposeHowler(howler);
+      dispatch({ type: "CLEAN_MATCH", howler });
+    };
+  }, [dispatch, props.url]);
 
   const togglePlay = () => {
-    if (state.howler) {
-      state.howler[state.howler.playing() ? 'pause' : 'play']()
+    if (playerRef.current) {
+      playerRef.current[playerRef.current.playing() ? "pause" : "play"]();
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-between px-3 py-2 border-b space-x-2">
@@ -67,20 +89,14 @@ export default function MusicPlayer(props: IProps) {
           src={props.cover ?? CONST.LUTHER}
         />
         <div className="text-gray-500 max-w-64 w-[2/3]">
-          <Marquee play={playing}>
-            { `${props.name} - ${props.singer}` }
-          </Marquee>
+          <Marquee play={playing}>{`${props.name} - ${props.singer}`}</Marquee>
         </div>
       </div>
-      <Tooltip title={ playing ? '暂停' : '播放' } placement="bottom">
+      <Tooltip title={playing ? "暂停" : "播放"} placement="bottom">
         <button onClick={togglePlay}>
-            {
-              loading ?
-              <LoadingOutlined /> :
-              playing ? <PauseOutlined /> : <CaretRightFilled />
-            }
+          {loading ? <LoadingOutlined /> : playing ? <PauseOutlined /> : <CaretRightFilled />}
         </button>
       </Tooltip>
     </div>
-  )
+  );
 }
