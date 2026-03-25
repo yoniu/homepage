@@ -16,7 +16,7 @@ export default function MomentSpotlightView() {
   const { state } = useMomentStateContext();
   const currentMoment = state.momentList[state.currentIndex] ?? null;
 
-  const displayer: Record<TMomentType, (key: number) => JSX.Element> = {
+  const displayer: Record<TMomentType, (key: number) => React.JSX.Element> = {
     text: (key) => (currentMoment ? <TextMomentPanel key={key} item={currentMoment} /> : <></>),
     image: (key) => (currentMoment ? <ImageMomentPanel key={key} item={currentMoment} /> : <></>),
     video: (key) => (currentMoment ? <VideoMomentPanel key={key} item={currentMoment} /> : <></>),

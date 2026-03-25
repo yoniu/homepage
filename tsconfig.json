@@ -4,7 +4,7 @@
       "DOM",
       "ES2020"
     ],
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "target": "ES2020",
     "noEmit": true,
     "skipLibCheck": true,
@@ -37,7 +37,9 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "src",
-    "dist/types/**/*.ts"
+    "dist/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "dist/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

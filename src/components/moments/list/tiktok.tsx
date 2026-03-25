@@ -14,7 +14,7 @@ export default function MomentsTiktok() {
   const { state }  = useMomentStateContext();
   const currentMoment = state.momentList[state.currentIndex] ?? null;
 
-  const displayer: Record<TMomentType, (key: number) => JSX.Element> = {
+  const displayer: Record<TMomentType, (key: number) => React.JSX.Element> = {
     text: (key) => currentMoment ? <TextItem key={key} item={currentMoment} /> : <></>,
     image: (key) => currentMoment ? <ImageItem key={key} item={currentMoment} /> : <></>,
     video: (key) => currentMoment ? <VideoItem key={key} item={currentMoment} /> : <></>,

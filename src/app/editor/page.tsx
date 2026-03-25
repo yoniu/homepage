@@ -24,7 +24,7 @@ function Editor() {
   const { state } = useEditorStateContext()
   const { loading } = useEditorInit()
 
-  const editors: Record<EMomentType, JSX.Element> = {
+  const editors: Record<EMomentType, React.JSX.Element> = {
     text: <TextEditor />,
     image: <ImageEditor />,
     video: <VideoEditor />,

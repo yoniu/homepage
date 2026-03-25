@@ -28,5 +28,5 @@ export default [
       "@typescript-eslint/no-explicit-any": ["warn"]
     },
   },
-  { ignores: ['dist/', 'components/ui/'] },
+  { ignores: ['.next/', '.edgeone/', 'dist/', 'node_modules/', 'components/ui/'] },
 ];
