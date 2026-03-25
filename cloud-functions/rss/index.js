@@ -5,7 +5,7 @@ const DEFAULT_FEED_DESCRIPTION = 'Latest public moments';
 const DEFAULT_FEED_LANGUAGE = 'zh-CN';
 const DEFAULT_CACHE_TTL = 600;
 
-export default async function onRequest(context) {
+export async function onRequest(context) {
   const { request, env, waitUntil } = context;
 
   if (request.method !== 'GET' && request.method !== 'HEAD') {
@@ -126,7 +126,7 @@ function resolveSiteUrl(env, requestUrl) {
 }
 
 function normalizeFeedUrl(siteUrl) {
-  return new URL('rss.xml', ensureTrailingSlash(siteUrl)).toString();
+  return new URL('rss', ensureTrailingSlash(siteUrl)).toString();
 }
 
 function normalizeAbsoluteUrl(value) {

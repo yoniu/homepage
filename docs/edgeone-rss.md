@@ -1,11 +1,11 @@
 # EdgeOne RSS
 
-This project can expose a dynamic RSS feed through EdgeOne Pages Edge Functions.
+This project can expose a dynamic RSS feed through EdgeOne Pages Cloud Functions.
 
 ## Route
 
-- Function file: `edge-functions/rss.xml.js`
-- Public URL: `/rss.xml`
+- Function file: `cloud-functions/rss/index.js`
+- Public URL: `/rss`
 
 ## Required environment variables
 
@@ -28,8 +28,8 @@ npm install -g edgeone
 edgeone pages dev
 ```
 
-Then visit `/rss.xml`.
+Then visit `/rss`.
 
 ## Deploy
 
-Push the repository to the remote branch used by EdgeOne Pages. During Pages build, EdgeOne will publish the static `dist` output and generate the `/rss.xml` function route from the `edge-functions` directory.
+Push the repository to the remote branch used by EdgeOne Pages. During Pages build, EdgeOne will publish the static `dist` output and generate the `/rss` function route from the `cloud-functions` directory.
