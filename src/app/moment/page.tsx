@@ -24,7 +24,7 @@ export default function Page() {
 function Moment() {
   const { currentMomentType, item, loading } = useMomentDetail()
 
-  const displayer: Record<EMomentType, () => JSX.Element> = {
+  const displayer: Record<EMomentType, () => React.JSX.Element> = {
     text: () => item ? <TextMomentPanel key={item.id} item={item} /> : <></>,
     image: () => item ? <ImageMomentPanel key={item.id} item={item} /> : <></>,
     video: () => item ? <VideoMomentPanel key={item.id} item={item} /> : <></>,

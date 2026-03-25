@@ -21,7 +21,7 @@ export default function MomentsMasonry() {
     setIsClient(true);
   }, []);
 
-  const displayer: Record<TMomentType, (key: number, item: MomentEntity) => JSX.Element> = {
+  const displayer: Record<TMomentType, (key: number, item: MomentEntity) => React.JSX.Element> = {
     text: (key, item) => <MasonryTextItem key={key} item={item} />,
     image: (key, item) => <MasonryImageItem key={key} item={item} />,
     video: (key, item) => <MasonryVideoItem key={key} item={item} />,

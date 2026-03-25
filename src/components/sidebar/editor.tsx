@@ -23,7 +23,7 @@ export default function EditorSidebar() {
   const { state } = useEditorStateContext()
   const [show, setShow] = useState(false)
 
-  const editorSidebar: Record<EMomentType, JSX.Element> = {
+  const editorSidebar: Record<EMomentType, React.JSX.Element> = {
     text: <TextEditorSidebar />,
     image: <ImageEditorSidebar />,
     video: <VideoEditorSidebar />,
