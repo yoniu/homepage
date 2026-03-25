@@ -44,7 +44,7 @@ export default function ArtalkComment({ id }: ArtalkCommentProps) {
 
         artalk = Artalk.init({
           el: container,
-          pageKey: `/moment/?id=${id}`,
+          pageKey: `/moment?id=${id}`,
           pageTitle: `Moment #${id}`,
           server,
           site,

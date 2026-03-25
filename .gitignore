@@ -16,3 +16,9 @@ dist/
 
 .next
 *.tsbuildinfo
+
+# Tencent Cloud EdgeOne
+.env
+.edgeone/*
+.tef_dist/*
+  
