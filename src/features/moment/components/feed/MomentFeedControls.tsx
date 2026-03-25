@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   ArrowDownOutlined,
@@ -6,22 +6,19 @@ import {
   ArrowUpOutlined,
   CommentOutlined,
   LoadingOutlined,
-  MenuOutlined,
 } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import Twikoo from '@/src/components/moments/comment/twikoo';
+import CommentPanel from '@/src/components/moments/comment';
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
-import { useStateContext as useUserStateContext } from '@/src/stores/user';
 
 import MomentAudioControl from './MomentAudioControl';
 
 export default function MomentFeedControls() {
   const { state, dispatch } = useMomentStateContext();
-  const { state: userState, dispatch: userDispatch } = useUserStateContext();
 
   const [showComment, setShowComment] = useState(false);
 
@@ -45,7 +42,9 @@ export default function MomentFeedControls() {
 
   const { run: handleWheel } = useDebounceFn(
     (event: WheelEvent) => {
-      if (document.getElementById('text-item')?.contains(event.target as Node)) {
+      if (
+        document.getElementById('text-item')?.contains(event.target as Node)
+      ) {
         return;
       }
 
@@ -55,7 +54,7 @@ export default function MomentFeedControls() {
         handlePrev();
       }
     },
-    { wait: 500 }
+    { wait: 500 },
   );
 
   useEffect(() => {
@@ -86,17 +85,20 @@ export default function MomentFeedControls() {
   }, [currentMoment, pathname, searchParams]);
 
   const momentLoading = useMemo(() => {
-    return state.currentIndex + 1 === state.momentList.length && state.hasNextPage && state.loading;
-  }, [state.currentIndex, state.hasNextPage, state.loading, state.momentList.length]);
+    return (
+      state.currentIndex + 1 === state.momentList.length &&
+      state.hasNextPage &&
+      state.loading
+    );
+  }, [
+    state.currentIndex,
+    state.hasNextPage,
+    state.loading,
+    state.momentList.length,
+  ]);
 
   return (
-    <div className="relative w-full flex items-center justify-between px-3 z-10">
-      <button
-        className="flex-shrink-0 w-auto p-3 flex sm:hidden items-center justify-center bg-white/90 border-2 border-white rounded-full shadow-lg transition-all"
-        onClick={() => userDispatch({ type: 'SETMENUSHOW', show: !userState.menuShow })}
-      >
-        <MenuOutlined />
-      </button>
+    <div className="relative z-10 flex w-full items-center justify-end px-3 sm:justify-start">
       <div className="relative flex items-center flex-row-reverse sm:flex-row space-x-3 space-x-reverse sm:space-x-5">
         {isHome ? (
           <div className="group/control flex items-center bg-white/90 rounded-full border-2 border-white space-x-1 p-1 shadow-lg transition-all">
@@ -118,7 +120,7 @@ export default function MomentFeedControls() {
           <button
             className={cn(
               publicClassName,
-              'w-auto p-3 bg-white/90 border-2 border-white rounded-full shadow-lg transition-all'
+              'w-auto p-3 bg-white/90 border-2 border-white rounded-full shadow-lg transition-all',
             )}
             onClick={handleBackHome}
           >
@@ -128,13 +130,19 @@ export default function MomentFeedControls() {
         <button
           className={cn(
             publicClassName,
-            'w-auto p-3 bg-white/90 border-2 border-white rounded-full shadow-lg transition-all'
+            'w-auto p-3 bg-white/90 border-2 border-white rounded-full shadow-lg transition-all',
           )}
           onClick={() => setShowComment(!showComment)}
         >
           <CommentOutlined />
         </button>
-        {currentMomentId && <Twikoo id={+currentMomentId} show={showComment} setShow={setShowComment} />}
+        {currentMomentId && (
+          <CommentPanel
+            id={+currentMomentId}
+            show={showComment}
+            setShow={setShowComment}
+          />
+        )}
         {!isMusic && <MomentAudioControl />}
       </div>
     </div>

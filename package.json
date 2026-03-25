@@ -24,6 +24,7 @@
     "@udecode/plate-markdown": "^40.0.5",
     "ahooks": "^3.8.1",
     "antd": "^6.2.0",
+    "artalk": "^2.9.1",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",

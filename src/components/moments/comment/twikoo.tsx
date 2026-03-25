@@ -1,99 +1,132 @@
-import { cn } from '@/lib/utils';
-import { useCallback, useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import "./twikoo.scss";
+'use client';
 
-export default function Twikoo(
-  {
-    id,
-    show = false,
-    setShow,
-  }:
-  {
-    id: number,
-    show?: boolean,
-    setShow: (value: boolean) => void
+import { useEffect, useId, useState } from 'react';
+
+import CommentNotice from './CommentNotice';
+import './twikoo.scss';
+
+interface TwikooCommentProps {
+  id: number;
+}
+
+declare global {
+  interface Window {
+    twikoo?: {
+      init: (options: { envId: string; el: string; path: string }) => void;
+    };
   }
-) {
-  
+}
 
-  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-  }, [])
+const TWIKOO_SCRIPT_SELECTOR = 'script[data-comment-provider="twikoo"]';
+
+function loadTwikooScript() {
+  return new Promise<void>((resolve, reject) => {
+    if (typeof window === 'undefined') {
+      resolve();
+      return;
+    }
+
+    if (window.twikoo) {
+      resolve();
+      return;
+    }
+
+    let script = document.querySelector<HTMLScriptElement>(
+      TWIKOO_SCRIPT_SELECTOR,
+    );
+
+    const handleLoad = () => {
+      cleanup();
+      resolve();
+    };
+
+    const handleError = () => {
+      cleanup();
+      reject(new Error('Failed to load Twikoo script.'));
+    };
+
+    const cleanup = () => {
+      script?.removeEventListener('load', handleLoad);
+      script?.removeEventListener('error', handleError);
+    };
+
+    if (!script) {
+      script = document.createElement('script');
+      script.src = '/js/twikoo.all.min.js';
+      script.async = true;
+      script.dataset.commentProvider = 'twikoo';
+      document.body.appendChild(script);
+    }
+
+    script.addEventListener('load', handleLoad);
+    script.addEventListener('error', handleError);
+  });
+}
+
+export default function TwikooComment({ id }: TwikooCommentProps) {
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const twikooEnvId = process.env.NEXT_PUBLIC_TWIKOO_ENVID?.trim();
+  const containerId = `tcomment-${useId().replace(/:/g, '')}`;
 
   useEffect(() => {
-    if (!id) return
-    // 通过 CDN 引入 twikoo js 文件
-    const cdnScript = document.createElement('script')
-    cdnScript.src = '/js/twikoo.all.min.js'
-    cdnScript.async = true
-
-    const loadSecondScript = () => {
-      // 执行 twikoo.init() 函数
-      const initScript = document.createElement('script')
-      initScript.innerHTML = `
-            twikoo.init({
-              envId: "${process.env.NEXT_PUBLIC_TWIKOO_ENVID as string}",
-              el: '#tcomment',
-              path: '/moment/?id=${id}'
-            });
-          `
-      initScript.id = 'twikoo-init-id' // 添加唯一的 ID
-      document.body.appendChild(initScript)
+    if (!id || !twikooEnvId) {
+      return;
     }
 
-    // 在 twikoo js 文件加载完成后，再加载执行 twikoo.init() 函数的 js 文件
-    cdnScript.addEventListener('load', loadSecondScript)
-    document.body.appendChild(cdnScript)
+    let disposed = false;
+
+    setLoadError(null);
+
+    const initTwikoo = async () => {
+      try {
+        await loadTwikooScript();
+
+        if (disposed || !window.twikoo) {
+          return;
+        }
+
+        const container = document.getElementById(containerId);
+        container?.replaceChildren();
+
+        window.twikoo.init({
+          envId: twikooEnvId,
+          el: `#${containerId}`,
+          path: `/moment/?id=${id}`,
+        });
+      } catch {
+        if (!disposed) {
+          setLoadError(
+            'Twikoo script failed to load. Check public/js/twikoo.all.min.js and env config.',
+          );
+        }
+      }
+    };
+
+    void initTwikoo();
 
     return () => {
-      if (loadSecondScript) {
-        cdnScript.removeEventListener('load', loadSecondScript)
-      }
-      if (cdnScript) {
-        document.body?.removeChild(cdnScript)
-      }
-      const secondScript = document.querySelector('#twikoo-init-id')
-      if (secondScript) {
-        document.body?.removeChild(secondScript)
-      }
-    }
-  }, [id, handleWheel])
+      disposed = true;
+      document.getElementById(containerId)?.replaceChildren();
+    };
+  }, [containerId, id, twikooEnvId]);
 
-  // 解决客户端未渲染报错
-  const [client, setClient] = useState(false)
-  // 解决客户端未渲染报错
-  useEffect(()  => {
-    setClient(true);
-  }, [])
-  // 解决客户端未渲染报错
-  if (!client) return null
+  if (!twikooEnvId) {
+    return (
+      <CommentNotice
+        title="Twikoo not configured"
+        hint="Set NEXT_PUBLIC_TWIKOO_ENVID in .env."
+      />
+    );
+  }
 
-  return createPortal(
-    (
-      <>
-        <div className={
-            cn(
-              "absolute z-10 top-0 left-0 w-full h-full bg-black/60 transition-all",
-              show ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            )
-          }
-          onClick={() => setShow(false)}
-        ></div>
-        <div
-          className={
-            cn(
-              "absolute w-full max-w-[500px] bottom-0 sm:bottom-4 z-20 left-1/2 -translate-x-1/2 bg-white rounded-t-2xl rounded-b-none sm:rounded-b-2xl overflow-hidden transition-all",
-              show ? 'h-3/5 max-h-[400px] border' : 'h-0 border-transparent'
-            )
-          }
-          onWheel={handleWheel}
-        >
-          <div id="tcomment"></div>
-          <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-b from-transparent via-white/80 to-white"></div>
-        </div>
-      </>
-    ),
-    document.querySelector('#content') as Element
-  )
+  if (loadError) {
+    return <CommentNotice title="Twikoo failed to load" hint={loadError} />;
+  }
+
+  return (
+    <div
+      id={containerId}
+      className="comment-provider comment-provider--twikoo"
+    />
+  );
 }
