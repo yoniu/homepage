@@ -51,6 +51,11 @@ NEXT_PUBLIC_ARTALK_SITE_NAME=<Artalk 站点名>
 NEXT_PUBLIC_ENABLE_V6_ANALYZE=<true/false，默认建议 false>
 NEXT_PUBLIC_V6_ID=<51LA V6 ID>
 NEXT_PUBLIC_V6_CK=<51LA V6 CK>
+NEXT_PUBLIC_SITE_URL=<站点域名，可选，用于 RSS 绝对链接>
+RSS_FEED_TITLE=<RSS 标题，可选，默认 Yoniu Moment>
+RSS_FEED_DESCRIPTION=<RSS 描述，可选，默认 Latest public moments>
+RSS_FEED_LANGUAGE=<RSS 语言，可选，默认 zh-CN>
+RSS_CACHE_TTL=<RSS 缓存秒数，可选，默认 600>
 ```
 
 其中 `NEXT_PUBLIC_COMMENT_PROVIDER=artalk` 时，需要额外配置 `NEXT_PUBLIC_ARTALK_SERVER` / `NEXT_PUBLIC_ARTALK_SITE_NAME`；`NEXT_PUBLIC_ENABLE_V6_ANALYZE=true` 时才会注入 51LA 脚本；如果不需要统计，可以不填 `NEXT_PUBLIC_V6_ID` / `NEXT_PUBLIC_V6_CK`。
@@ -74,3 +79,11 @@ pnpm dev
 ```bash
 pnpm build
 ```
+
+## RSS
+
+- RSS 使用 EdgeOne Pages Cloud Functions 动态生成，函数文件在 `cloud-functions/rss/index.js`
+- RSS 路径为 `/rss`
+- 本地调试 RSS 请使用 `edgeone pages dev`，不是 `pnpm dev`
+- 至少需要配置 `NEXT_PUBLIC_HOMEPAGE_API`
+- 如果希望 RSS 中的分享链接是绝对地址，请配置 `NEXT_PUBLIC_SITE_URL`

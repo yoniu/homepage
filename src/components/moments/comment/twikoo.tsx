@@ -91,7 +91,7 @@ export default function TwikooComment({ id }: TwikooCommentProps) {
         window.twikoo.init({
           envId: twikooEnvId,
           el: `#${containerId}`,
-          path: `/moment/?id=${id}`,
+          path: `/moment?id=${id}`,
         });
       } catch {
         if (!disposed) {
