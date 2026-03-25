@@ -98,7 +98,7 @@ export default function MomentFeedControls() {
   ]);
 
   return (
-    <div className="relative z-10 flex w-full items-center justify-end px-3">
+    <div className="relative z-10 flex w-full items-center justify-end px-3 sm:justify-start">
       <div className="relative flex items-center flex-row-reverse sm:flex-row space-x-3 space-x-reverse sm:space-x-5">
         {isHome ? (
           <div className="group/control flex items-center bg-white/90 rounded-full border-2 border-white space-x-1 p-1 shadow-lg transition-all">
