@@ -46,7 +46,7 @@ export default function MomentMasonryView() {
   };
 
   return (
-    <div id="content" className="relative h-full overflow-y-auto py-4 pl-4">
+    <div id="content" className="relative h-full overflow-y-auto pb-4 pl-4 pt-20 sm:pt-4">
       <InfiniteScroll
         dataLength={state.momentList.length}
         next={loadNext}
