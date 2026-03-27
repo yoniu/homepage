@@ -69,7 +69,6 @@ export default function TextItem({ item }: IProps) {
                     wrapperStyle={{ position: 'relative', aspectRatio: '1/1', width: '100%', overflow: 'hidden', borderRadius: '0.25rem' }}
                     src={photo.url}
                     alt={photo.name}
-                    preview={false}
                   />
                 </Col>
               ))

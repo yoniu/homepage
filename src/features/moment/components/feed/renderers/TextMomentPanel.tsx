@@ -88,7 +88,6 @@ export default function TextMomentPanel({ item }: IProps) {
                 }}
                 src={photo.url}
                 alt={photo.name}
-                preview={false}
               />
             </Col>
           ))}
