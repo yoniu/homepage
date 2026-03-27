@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { logged } from '@/src/features/auth/api';
 import { createMoment, getOwnerMoment } from '@/src/features/moment/api';
+import { markMomentFeedStale } from '@/src/features/moment/utils/feedRefresh';
 import { normalizeApiError } from '@/src/shared/api/error';
 import { useStateContext as useEditorStateContext } from '@/src/stores/editor';
 
@@ -26,6 +27,7 @@ export function useEditorInit() {
 
     try {
       const response = await createMoment();
+      markMomentFeedStale();
       router.replace(`/editor?id=${response.data.id}`);
     } catch (error) {
       normalizeApiError(messageApi, error);

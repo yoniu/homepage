@@ -1,39 +1,41 @@
-import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
-import { updateMoment } from "@/src/features/moment/api";
-import { normalizeApiError } from "@/src/shared/api/error";
-import { SaveOutlined } from "@ant-design/icons";
+import { useState } from "react";
 import { App, Button } from "antd";
-import { useState } from "react"; 
+import { SaveOutlined } from "@ant-design/icons";
+
+import { updateMoment } from "@/src/features/moment/api";
+import { markMomentFeedStale } from "@/src/features/moment/utils/feedRefresh";
+import { normalizeApiError } from "@/src/shared/api/error";
+import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 
 export default function Save() {
+  const { state } = useEditorStateContext();
+  const { message } = App.useApp();
 
-  const { state } = useEditorStateContext()
-  const { message } = App.useApp()
-
-  const [ loading, setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleSave = () => {
-    if (loading) return
+    if (loading) return;
 
-    const { id, title, content, status, attributes } = state
+    const { id, title, content, status, attributes } = state;
     if (!id) {
-      message.error('未找到可保存的 Moment')
-      return
+      message.error('未找到可保存的 Moment');
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     updateMoment(id, {
       id, title, content, status, attributes
     }).then(() => {
-      message.success('保存成功')
+      markMomentFeedStale();
+      message.success('保存成功');
     })
     .catch((error) => {
-      normalizeApiError(message, error)
+      normalizeApiError(message, error);
     })
     .finally(() => {
-      setLoading(false)
-    })
-  }
+      setLoading(false);
+    });
+  };
 
   return (
     <div className="flex justify-end">
@@ -45,5 +47,5 @@ export default function Save() {
         icon={<SaveOutlined />}
       >保存</Button>
     </div>
-  )
+  );
 }

@@ -7,6 +7,7 @@ import { normalizeApiError } from '@/src/shared/api/error';
 import { useStateContext as useMomentStateContext } from '@/src/stores/moment';
 
 import { getPublicMoments } from '../api';
+import { consumeMomentFeedStale } from '../utils/feedRefresh';
 
 export function useMomentFeed() {
   const { state, dispatch } = useMomentStateContext();
@@ -17,7 +18,7 @@ export function useMomentFeed() {
   const initializedRef = useRef(false);
   const fetchingRef = useRef(false);
 
-  const handleGetPublicAll = useCallback(async () => {
+  const handleGetPublicAll = useCallback(async (targetPage: number, replace = false) => {
     if (fetchingRef.current) {
       return;
     }
@@ -25,18 +26,18 @@ export function useMomentFeed() {
     fetchingRef.current = true;
     dispatch({ type: 'SETLOADING', state: true });
 
-    if (state.page === 1 && state.momentList.length === 0) {
+    if (replace || (targetPage === 1 && state.momentList.length === 0)) {
       setLoading(true);
     }
 
     try {
-      const response = await getPublicMoments(state.page, state.pageSize);
+      const response = await getPublicMoments(targetPage, state.pageSize);
       const { hasNextPage, moments } = response.data;
 
       dispatch({
         type: 'UPDATELIST',
-        momentList: state.page > 1 ? [...state.momentList, ...moments] : moments,
-        page: state.page + 1,
+        momentList: replace ? moments : [...state.momentList, ...moments],
+        page: targetPage + 1,
         hasNextPage,
       });
     } catch (error) {
@@ -46,7 +47,7 @@ export function useMomentFeed() {
       dispatch({ type: 'SETLOADING', state: false });
       fetchingRef.current = false;
     }
-  }, [dispatch, messageApi, state.momentList, state.page, state.pageSize]);
+  }, [dispatch, messageApi, state.momentList, state.pageSize]);
 
   useEffect(() => {
     if (initializedRef.current) {
@@ -54,8 +55,22 @@ export function useMomentFeed() {
     }
 
     initializedRef.current = true;
-    void handleGetPublicAll();
-  }, [handleGetPublicAll]);
+
+    const shouldRefresh = consumeMomentFeedStale();
+
+    if (shouldRefresh) {
+      dispatch({ type: 'RESETFEED' });
+      void handleGetPublicAll(1, true);
+      return;
+    }
+
+    if (state.momentList.length === 0) {
+      void handleGetPublicAll(1, true);
+      return;
+    }
+
+    setLoading(false);
+  }, [dispatch, handleGetPublicAll, state.momentList.length]);
 
   useEffect(() => {
     if (!state.hasNextPage || fetchingRef.current) {
@@ -66,8 +81,8 @@ export function useMomentFeed() {
       return;
     }
 
-    void handleGetPublicAll();
-  }, [handleGetPublicAll, state.currentIndex, state.hasNextPage, state.momentList.length]);
+    void handleGetPublicAll(state.page);
+  }, [handleGetPublicAll, state.currentIndex, state.hasNextPage, state.momentList.length, state.page]);
 
   return {
     displayType: state.displayType,
