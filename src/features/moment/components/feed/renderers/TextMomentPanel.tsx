@@ -79,12 +79,14 @@ export default function TextMomentPanel({ item }: IProps) {
             <Col key={photo.id} span={8}>
               <Image
                 style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }}
-                wrapperStyle={{
-                  position: 'relative',
-                  aspectRatio: '1/1',
-                  width: '100%',
-                  overflow: 'hidden',
-                  borderRadius: '0.25rem',
+                styles={{
+                  root: {
+                    position: 'relative',
+                    aspectRatio: '1/1',
+                    width: '100%',
+                    overflow: 'hidden',
+                    borderRadius: '0.25rem',
+                  },
                 }}
                 src={photo.url}
                 alt={photo.name}
