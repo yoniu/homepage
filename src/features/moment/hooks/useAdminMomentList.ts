@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { normalizeApiError } from '@/src/shared/api/error';
 
 import { deleteMoment, getAllMoments, type MomentEntity } from '../api';
+import { markMomentFeedStale } from '../utils/feedRefresh';
 
 export function useAdminMomentList(pageSize = 12) {
   const { message: messageApi } = App.useApp();
@@ -53,6 +54,7 @@ export function useAdminMomentList(pageSize = 12) {
     setLoading(true);
     deleteMoment(id)
       .then(() => {
+        markMomentFeedStale();
         messageApi.success('删除成功');
         setPage(1);
         return getMomentList(1, true);

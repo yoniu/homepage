@@ -1,7 +1,7 @@
 "use client";
 /**
  * Moment Store
- * 2024.11.17 / 娌规补
+ * 2024.11.17 / 油
  */
 import React, { createContext, useContext, useEffect, useReducer, type ReactNode } from "react";
 
@@ -58,6 +58,7 @@ type TAction =
   | { type: "NEXTINDEX" }
   | { type: "SETINDEX"; index: number }
   | { type: "SETLOADING"; state: boolean }
+  | { type: "RESETFEED" }
   | { type: "SETDISPLAYTYPE"; displayType: TDisplayType };
 
 const reducer = (state: IState, action: TAction): IState => {
@@ -74,6 +75,15 @@ const reducer = (state: IState, action: TAction): IState => {
       return { ...state, currentIndex: action.index };
     case "SETLOADING":
       return { ...state, loading: action.state };
+    case "RESETFEED":
+      return {
+        ...state,
+        loading: false,
+        currentIndex: 0,
+        page: 1,
+        hasNextPage: false,
+        momentList: [],
+      };
     case "SETDISPLAYTYPE":
       if (state.displayType === action.displayType) {
         return state;

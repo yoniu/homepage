@@ -6,14 +6,14 @@
 
 后端基于 NestJS / TypeScript / TypeORM 开发。
 
-后端仓库（开发中，未开放）：<https://gitee.com/yoniu/homepage-api>
+后端仓库（持续开发中）：<https://gitee.com/yoniu/homepage-api>
 
 ![主页展示](./screenshot.png)
 
 ## 特性
 
 - 移动端支持，随时随地发布 Moment📱💻
-- 多种展示方式：Image Item、Text Item
+- 多种展示方式：图片、视频、音乐、文字
 - 每一条 Moment 可以搭配一条音乐，切换 moment 自动播放
 - Moment 详情页（信息流可能导致过往日期太久的 moment 无人问津）
 - Image Item 图片自动轮播，搭配背景音乐，米米的
@@ -82,7 +82,7 @@ pnpm build
 
 ## RSS
 
-- RSS 使用 EdgeOne Pages Cloud Functions 动态生成，函数文件在 `cloud-functions/rss/index.js`
+- RSS 使用 **[EdgeOne](https://console.cloud.tencent.com/edgeone/pages)** 作为 Pages Cloud Functions 动态生成，函数文件在 `cloud-functions/rss/index.js`
 - RSS 路径为 `/rss`
 - 本地调试 RSS 请使用 `edgeone pages dev`，不是 `pnpm dev`
 - 至少需要配置 `NEXT_PUBLIC_HOMEPAGE_API`
