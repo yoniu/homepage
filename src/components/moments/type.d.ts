@@ -1,5 +1,6 @@
 declare type TTextType = "LIGHT" | "DARK";
 declare type TMusicMomentBackgroundType = "DEFAULT" | "PLAIN" | "GRADIENT";
+declare type TMusicBackgroundIconPlacement = "FULL" | "TOP" | "BOTTOM";
 
 declare interface IUser {
   email: string
@@ -41,6 +42,12 @@ declare interface IMomentLocation {
   address: string;
 }
 
+declare interface TMusicBackgroundIconEntry {
+  content: string;
+  placement?: TMusicBackgroundIconPlacement;
+  coverageHeight?: number;
+}
+
 declare interface IMomentAttributes {
   type?: import("@/src/types/moment").EMomentType;
   photosets?: IPhotosetItem[];
@@ -52,6 +59,9 @@ declare interface IMomentAttributes {
   textType?: TTextType;
   backgroundType?: TMusicMomentBackgroundType;
   gradientColors?: string[];
+  backgroundIcons?: Array<string | TMusicBackgroundIconEntry>;
+  backgroundIconPlacement?: TMusicBackgroundIconPlacement;
+  backgroundIconCoverageHeight?: number;
 }
 
 declare interface IMomentItem<T = IMomentAttributes> {

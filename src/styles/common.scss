@@ -58,3 +58,33 @@ body {
 .scrollbar-hide {
     scrollbar-width: none;
 }
+
+.music-background-icon {
+    animation-name: music-icon-twinkle;
+    animation-duration: 4.6s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.12));
+    opacity: var(--music-icon-base-opacity, 0.16);
+    will-change: transform, opacity;
+}
+
+[data-music-bg-icon-svg],
+[data-music-bg-icon-svg] svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@keyframes music-icon-twinkle {
+    0%,
+    100% {
+        opacity: var(--music-icon-base-opacity, 0.16);
+        transform: translate3d(0, 0, 0) scale(0.78);
+    }
+
+    50% {
+        opacity: calc(var(--music-icon-base-opacity, 0.16) + 0.42);
+        transform: translate3d(0, calc(var(--music-icon-drift, 8px) * -1), 0) scale(1.05);
+    }
+}
