@@ -1,81 +1,75 @@
 "use client";
 
 import { useMemo } from "react";
-import { useStateContext as useEditorStateContext } from "@/src/stores/editor"
+
 import { ShowMusicPlainContent } from "@/src/components/editor/plainContent";
-import { TMusicMomentAttributes } from "@/src/types/moments";
+import {
+  DecorativeMusicBackgroundIcons,
+  getMusicBackgroundIconEntries,
+  getMusicMomentBackground,
+  getMusicMomentTextColor,
+} from "@/src/components/music/DecorativeBackground";
 import PlayerView from "@/src/components/play/PlayerView";
+import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
+import { TMusicMomentAttributes } from "@/src/types/moments";
 
 export default function MusicEditor() {
-
-  const { state } = useEditorStateContext() 
-
+  const { state } = useEditorStateContext();
   const musicAttributes = state.attributes as TMusicMomentAttributes;
 
-  const textType = useMemo(() => musicAttributes?.textType ?? "LIGHT", [musicAttributes]);
+  const textColor = useMemo(() => getMusicMomentTextColor(musicAttributes), [musicAttributes]);
+  const background = useMemo(() => getMusicMomentBackground(musicAttributes), [musicAttributes]);
+  const backgroundIconEntries = useMemo(() => getMusicBackgroundIconEntries(musicAttributes), [musicAttributes]);
 
-  const textColor = useMemo(() => {
-    return textType === "LIGHT" ? "#fff" : "#000"
-  }, [textType])
+  const name = useMemo(() => musicAttributes?.music?.name, [musicAttributes.music?.name]);
+  const cover = useMemo(() => musicAttributes?.music?.cover, [musicAttributes.music?.cover]);
+  const url = useMemo(() => musicAttributes?.music?.url, [musicAttributes.music?.url]);
+  const singer = useMemo(() => musicAttributes?.music?.singer, [musicAttributes.music?.singer]);
 
-  const bg = useMemo(() => {
-    if (musicAttributes.backgroundType === 'PLAIN') {
-      return musicAttributes.backgroundColor || '#951B1B'
-    } else if (musicAttributes.backgroundType === 'GRADIENT') {
-      return `linear-gradient(${musicAttributes.gradientColors?.join(', ')})`
-    }
-    return '#951B1B'
-  }, [musicAttributes.backgroundColor, musicAttributes.backgroundType, musicAttributes.gradientColors])
+  const hasMusic = useMemo(() => Boolean(musicAttributes && name && cover && url && singer), [musicAttributes, name, cover, url, singer]);
 
-  const name = useMemo(() => {
-    return musicAttributes?.music?.name
-  }, [musicAttributes.music?.name])
-
-  const cover = useMemo(() => {
-    return musicAttributes?.music?.cover
-  }, [musicAttributes.music?.cover])
-
-  const url = useMemo(() => {
-    return musicAttributes?.music?.url
-  }, [musicAttributes.music?.url])
-
-  const singer = useMemo(() => {
-    return musicAttributes?.music?.singer
-  }, [musicAttributes.music?.singer])
-
-  const hasMusic = useMemo(() => {
-    return musicAttributes && name && cover && url && singer
-  }, [musicAttributes, name, cover, url, singer])
+  const decorativeSeed = useMemo(() => {
+    return `${state.id ?? "editor"}:${url ?? ""}:${name ?? ""}:${singer ?? ""}`;
+  }, [name, singer, state.id, url]);
 
   return (
-    <>
-      <div
-        className="
-          border overflow-hidden
-          flex flex-col items-center justify-center
-          absolute left-0 top-0 w-full h-full rounded-md
-          text-[var(--text-color)]
-        "
-        style={{ 
-          background: bg,
-          '--text-color': textColor 
-        } as React.CSSProperties}
-      >
+    <div
+      className="
+        absolute left-0 top-0 h-full w-full overflow-hidden rounded-md border
+        text-[var(--text-color)]
+      "
+      style={
         {
-          hasMusic ?
+          background,
+          "--text-color": textColor,
+        } as React.CSSProperties
+      }
+    >
+      <DecorativeMusicBackgroundIcons
+        icons={backgroundIconEntries}
+        seed={decorativeSeed}
+        color={textColor}
+      />
+
+      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center">
+        {hasMusic ? (
           <PlayerView
             name={name ?? ""}
             cover={cover ?? ""}
             url={url ?? ""}
             singer={singer ?? ""}
             direction="col"
-          /> :
-          <div className="w-full h-full flex justify-center items-center">
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
             <p className="text-gray-500">No music found</p>
           </div>
-        }
-        { state.content && <ShowMusicPlainContent content={state.content} author={state.author?.name} mail={state.author?.email} /> }
+        )}
+
+        {state.content && (
+          <ShowMusicPlainContent content={state.content} author={state.author?.name} mail={state.author?.email} />
+        )}
       </div>
-    </>
-  )
+    </div>
+  );
 }
