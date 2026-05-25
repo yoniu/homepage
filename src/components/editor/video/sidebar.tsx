@@ -2,6 +2,7 @@ import Upload, { IFileItem } from "@/src/components/editor/Upload";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import EditorPlainContent from "@/src/components/editor/plainContent";
 import EditorFixedText from "@/src/components/editor/fixedText";
+import EditorLocation from "@/src/components/editor/location";
 import { App } from "antd";
 
 export default function VideoEditorSidebar() {
@@ -38,6 +39,7 @@ export default function VideoEditorSidebar() {
     <>
       <EditorPlainContent />
       <Upload title="上传文件" type="*" onClickItem={handleClickUploadFileItem} />
+      <EditorLocation />
       <EditorFixedText />
     </>
   )

@@ -3,6 +3,7 @@ import EditorMusic from "@/src/components/editor/music";
 import { useStateContext as useEditorStateContext } from "@/src/stores/editor";
 import EditorPlainContent from "@/src/components/editor/plainContent";
 import EditorFixedText from "@/src/components/editor/fixedText";
+import EditorLocation from "@/src/components/editor/location";
 
 export default function ImageEditorSidebar() {
   const { state, dispatch } = useEditorStateContext();
@@ -47,6 +48,7 @@ export default function ImageEditorSidebar() {
       <EditorPlainContent />
       <Upload multiple title="上传图片" onClickItem={handleClickUploadFileItem} />
       <EditorMusic />
+      <EditorLocation />
       <EditorFixedText scope="photoset" />
     </>
   );

@@ -1,9 +1,10 @@
-import { VideoCameraOutlined } from "@ant-design/icons"
+import { EnvironmentOutlined, VideoCameraOutlined } from "@ant-design/icons"
 import Link from "next/link"
 import { useMemo } from "react"
 
 export interface IVideoState {
   video?: Partial<IVideoItem>
+  location?: IMomentLocation
 }
 
 interface IProps {
@@ -31,12 +32,19 @@ export default function MasonryVideoItem({ item }: IProps) {
         <img className="absolute inset-0 w-full h-full object-cover" src={item.attributes?.video?.cover} />
         <div className="absolute top-0 left-0 w-full h-full bg-black/25 text-white group-hover/item:bg-black/10 transition-all">
           <VideoCameraOutlined className="absolute top-2 right-2" />
-          {
-            content &&
-            <div className="absolute bottom-2 left-2 text-sm">
-              {content}
-            </div>
-          }
+          <div className="absolute bottom-2 left-2 right-2 text-sm">
+            {
+              content &&
+              <div>{content}</div>
+            }
+            {
+              item.attributes?.location?.address &&
+              <div className="flex items-center space-x-1 text-xs mt-1">
+                <EnvironmentOutlined />
+                <span className="line-clamp-1">{item.attributes.location.address}</span>
+              </div>
+            }
+          </div>
         </div>
       </div>
       {
