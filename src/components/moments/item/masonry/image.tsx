@@ -1,9 +1,10 @@
 import { useMemo } from "react";
-import { PictureOutlined } from "@ant-design/icons";
+import { EnvironmentOutlined, PictureOutlined } from "@ant-design/icons";
 import Link from "next/link";
 
 export interface IImageItem {
   photosets?: IPhotosetItem[]
+  location?: IMomentLocation
 }
 
 interface IProps {
@@ -38,12 +39,19 @@ export default function MasonryImageItem({ item }: IProps) {
         <img className="absolute inset-0 w-full h-full object-cover" src={photosets[0].url} />
         <div className="absolute top-0 left-0 w-full h-full bg-black/25 text-white group-hover/item:bg-black/10 transition-all">
           <PictureOutlined className="absolute top-2 right-2" />
-          {
-            content &&
-            <div className="absolute bottom-2 left-2 text-sm">
-              {content}
-            </div>
-          }
+          <div className="absolute bottom-2 left-2 right-2 text-sm">
+            {
+              content &&
+              <div>{content}</div>
+            }
+            {
+              item.attributes?.location?.address &&
+              <div className="flex items-center space-x-1 text-xs mt-1">
+                <EnvironmentOutlined />
+                <span className="line-clamp-1">{item.attributes.location.address}</span>
+              </div>
+            }
+          </div>
         </div>
       </div>
     </Link>

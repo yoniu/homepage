@@ -14,7 +14,12 @@ export const metadata = {
   description: 'A Website For My Self',
   icons: {
     icon: "https://p2.music.126.net/cPyfIo_ZV6lfQnZa7J-HOg==/109951165991680568.jpg"
-  }
+  },
+  alternates: {
+    types: {
+      'application/rss+xml': '/rss',
+    },
+  },
 }
 
 export default function RootLayout({

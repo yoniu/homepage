@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import friend_links from '@/src/configs/friends.json'
 
 interface ILink {
@@ -8,6 +10,8 @@ interface ILink {
   link: string;
   image: string;
 }
+
+import { cn } from "@/lib/utils";
 
 function Friend_Item(item: ILink) {
   return (
@@ -18,17 +22,48 @@ function Friend_Item(item: ILink) {
   )
 }
 
-export default function Friends() {
+export default function Friends({ className }: { className?: string }) {
+  const [collapsed, setCollapsed] = useState(false)
+  const [overflowHidden, setOverflowHidden] = useState(false)
+
+  const handleToggle = () => {
+    if (!collapsed) {
+      // 即将收起，先加 overflow-hidden
+      setOverflowHidden(true)
+    }
+    setCollapsed(!collapsed)
+  }
 
   return (
-    <div className="space-y-2">
-      <h4 className="text-xs leading-none opacity-60">Links</h4>
-      <div className="flex flex-col">
-        {
-          friend_links.map((link: ILink) => {
-            return Friend_Item(link)
-          })
-        }
+    <div className={cn("space-y-2", className)}>
+      <button
+        className="flex items-center space-x-1 text-xs leading-none opacity-60 hover:opacity-100 transition-all"
+        onClick={handleToggle}
+      >
+        <span>Links</span>
+        {collapsed ? <DownOutlined className="text-[10px]" /> : <UpOutlined className="text-[10px]" />}
+      </button>
+      <div
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          overflowHidden && "overflow-hidden",
+          collapsed ? "max-h-0 opacity-0" : "max-h-96 opacity-100"
+        )}
+        onTransitionEnd={() => {
+          if (collapsed) {
+            setOverflowHidden(true)
+          } else {
+            setOverflowHidden(false)
+          }
+        }}
+      >
+        <div className="flex flex-col">
+          {
+            friend_links.map((link: ILink) => {
+              return Friend_Item(link)
+            })
+          }
+        </div>
       </div>
     </div>
   )

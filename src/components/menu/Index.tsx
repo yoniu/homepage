@@ -2,6 +2,7 @@ import Friends from "./Friends";
 import Author from "./Author";
 import List from "./List";
 import { cn } from "@/lib/utils";
+import consts from "@/src/configs/consts";
 import { useStateContext as useUserstateContext } from "@/src/stores/user";
 import { CloseOutlined } from "@ant-design/icons";
 
@@ -23,13 +24,17 @@ export default function Menu() {
         state.menuShow ? '  translate-x-0' : '-translate-x-full transition-all'
       )
     }>
-      <div className="relative bg-white/50 p-4 rounded-3xl shadow-lg h-full border-2 border-white space-y-4 overflow-y-auto">
+      <div className="relative bg-white/50 p-4 rounded-3xl shadow-lg h-full border-2 border-white space-y-4 overflow-y-auto flex flex-col">
         <button onClick={handleClose} className="sm:hidden absolute top-4 right-4 w-12 h-12 flex items-center justify-center bg-white/50 border-2 border-white rounded-full shadow-lg transition-all">
           <CloseOutlined />
         </button>
         <Author />
         <List />
-        <Friends />
+        <Friends className="flex-1" />
+        <div className="flex items-center space-x-3 text-[10px] opacity-40 pt-2">
+          <a href="/rss" target="_blank" rel="noreferrer" className="hover:opacity-100 transition-all">RSS</a>
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" className="hover:opacity-100 transition-all">{consts.ICP_BEIAN}</a>
+        </div>
       </div>
     </div>
   )
