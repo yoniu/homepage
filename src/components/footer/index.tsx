@@ -1,3 +1,5 @@
+import consts from "@/src/configs/consts";
+
 export default function Footer() {
 
   return (
@@ -7,7 +9,7 @@ export default function Footer() {
       </span>
       <span>
         <a className="hover:underline underline-offset-4" href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
-          粤ICP备18152975号
+          {consts.ICP_BEIAN}
         </a>
       </span>
     </div>

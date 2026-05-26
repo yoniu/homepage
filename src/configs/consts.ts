@@ -3,4 +3,5 @@ export default {
   LS_DISPLAYTYPE: 'yy-displayType',
   SS_MOMENT_FEED_STALE: 'yy-moment-feed-stale',
   LUTHER: 'https://p2.music.126.net/cPyfIo_ZV6lfQnZa7J-HOg==/109951165991680568.jpg', // 默认头像
+  ICP_BEIAN: '粤ICP备18152975号-5', // 备案号
 }
