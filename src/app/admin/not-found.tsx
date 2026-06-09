@@ -1,3 +1,5 @@
+'use client'
+
 import { LeftOutlined } from '@ant-design/icons'
 import { Button, Empty } from 'antd'
 import Link from 'next/link'
