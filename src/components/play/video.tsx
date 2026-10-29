@@ -51,6 +51,10 @@ export default function VideoPlayer({
     }
   }, [showControls])
 
+  useEffect(() => {
+    setLoading(true)
+  }, [url])
+
   const handleTogglePlay = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     event.stopPropagation()
@@ -96,7 +100,11 @@ export default function VideoPlayer({
             },
           },
         }}
+        onReady={() => setLoading(false)}
         onStart={() => setLoading(false)}
+        onBuffer={() => setLoading(true)}
+        onBufferEnd={() => setLoading(false)}
+        onError={() => setLoading(false)}
         className="absolute inset-0"
         width="100%"
         height="100%"
